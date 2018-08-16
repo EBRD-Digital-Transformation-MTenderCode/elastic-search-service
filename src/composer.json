@@ -1,0 +1,53 @@
+{
+    "name": "yiisoft/yii2-app-advanced",
+    "description": "Yii 2 Advanced Project Template",
+    "keywords": ["yii2", "framework", "advanced", "project template"],
+    "homepage": "http://www.yiiframework.com/",
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "support": {
+        "issues": "https://github.com/yiisoft/yii2/issues?state=open",
+        "forum": "http://www.yiiframework.com/forum/",
+        "wiki": "http://www.yiiframework.com/wiki/",
+        "irc": "irc://irc.freenode.net/yii",
+        "source": "https://github.com/yiisoft/yii2"
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.0",
+        "codeception/codeception": "*",
+        "codeception/specify": "*",
+        "codeception/verify": "*",
+        "fxp/composer-asset-plugin": "^1.2.0",
+        "gbksoft/yii2-swagger": "~1.0.0",
+        "thamtech/yii2-uuid": "^1.0",
+        "ustudio/service_mandatory": "~4.0",
+        "ustudio/swagger_parser": "~4.0",
+        "yiisoft/yii2": "~2.0.6",
+        "yiisoft/yii2-bootstrap": "~2.0.0",
+        "yiisoft/yii2-httpclient": "~2.0.0"
+    },
+    "require-dev": {
+        "yiisoft/yii2-debug": "~2.0.0",
+        "yiisoft/yii2-gii": "~2.0.0",
+        "yiisoft/yii2-faker": "~2.0.0"
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://pbox-reader@bitbucket.org/ustudio-llc/swagger_api_get_methods-composer_package.git"
+        },
+        {
+            "type": "git",
+            "url": "https://pbox-reader@bitbucket.org/ustudio-llc/service_mandatory_parts-composer_package.git"
+        }
+    ],
+    "config": {
+        "process-timeout": 1800
+    },
+    "autoload": {
+        "psr-4": {
+            "rest\\": "rest/"
+        }
+    }
+}
