@@ -22,12 +22,18 @@ return [
     ],
     'components' => [
         'log' => [
+            'flushInterval' => 1,
             'targets' => [
                 [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
+                    'class' => 'ustudio\service_mandatory\components\ConsoleLog',
+                    'categories' => ['console-msg'],
+                    'exportInterval' => 1,
+                    'logVars' => [],
                 ],
             ],
+        ],
+        'errorHandler' => [
+            'class'=>'ustudio\service_mandatory\ExceptionHandler',
         ],
     ],
     'params' => $params,

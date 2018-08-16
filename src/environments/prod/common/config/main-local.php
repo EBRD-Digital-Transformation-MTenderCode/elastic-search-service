@@ -3,11 +3,18 @@ use yii\db\Connection;
 
 return [
     'components' => [
-        'db' => [
+        'db_budgets' => [
             'class' => Connection::class,
-            'dsn' => 'pgsql:host={{environments_DB_HOST}};port=5432;dbname={{environments_DB_NAME}}',
-            'username' => '{{environments_DB_USERNAME}}',
-            'password' => '{{environments_DB_PASSWORD}}',
+            'dsn' => 'pgsql:host={{environments_DB_BUDGETS_HOST}};port=5432;dbname={{environments_DB_BUDGETS_NAME}}',
+            'username' => '{{environments_DB_BUDGETS_USERNAME}}',
+            'password' => '{{environments_DB_BUDGETS_PASSWORD}}',
+            'charset' => 'utf8',
+        ],
+        'db_tenders' => [
+            'class' => Connection::class,
+            'dsn' => 'pgsql:host={{environments_DB_TENDERS_HOST}};port=5432;dbname={{environments_DB_TENDERS_NAME}}',
+            'username' => '{{environments_DB_TENDERS_USERNAME}}',
+            'password' => '{{environments_DB_TENDERS_PASSWORD}}',
             'charset' => 'utf8',
         ],
         'mailer' => [

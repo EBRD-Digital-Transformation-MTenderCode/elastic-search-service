@@ -18,7 +18,7 @@ return array(
     'ustudio\\service_mandatory\\' => array($vendorDir . '/ustudio/service_mandatory'),
     'thamtech\\uuid\\' => array($vendorDir . '/thamtech/yii2-uuid/src'),
     'rest\\' => array($baseDir . '/rest'),
-    'phpDocumentor\\Reflection\\' => array($vendorDir . '/phpdocumentor/reflection-common/src', $vendorDir . '/phpdocumentor/type-resolver/src', $vendorDir . '/phpdocumentor/reflection-docblock/src'),
+    'phpDocumentor\\Reflection\\' => array($vendorDir . '/phpdocumentor/reflection-common/src', $vendorDir . '/phpdocumentor/reflection-docblock/src', $vendorDir . '/phpdocumentor/type-resolver/src'),
     'gbksoft\\modules\\swagger\\' => array($vendorDir . '/gbksoft/yii2-swagger'),
     'cebe\\markdown\\' => array($vendorDir . '/cebe/markdown'),
     'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),
