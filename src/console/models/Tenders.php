@@ -63,7 +63,6 @@ class Tenders extends ActiveRecord
     /**
      * indexing of tenders to elastic
      *
-     * @return bool
      * @throws \yii\web\ForbiddenHttpException
      * @throws \yii\web\HttpException
      */
@@ -74,25 +73,34 @@ class Tenders extends ActiveRecord
         $offset = 0;
         $elastic = new Elastic();
         while (true) {
-            $tenders = self::find()->asArray()->limit($limit)->offset($offset)->all();
-            $countBudgets = count($tenders);
-            if (!$countBudgets) {
-                break;
-            }
-            $offset += $limit;
-            foreach ($tenders as $tender) {
-                $docArr = $this->getDocForElastic($tender);
-                if (!empty($docArr)) {
-                    $elastic->indexDoc("tenders", $docArr);
-                } else {
-                    //@todo error
+            // block the update of selected records in the database
+            $transaction = Yii::$app->db_tenders->beginTransaction();
+                $tenders = Yii::$app->db_tenders->createCommand("SELECT * FROM tenders FOR UPDATE LIMIT {$limit} OFFSET {$offset}")->queryAll();
+                $countBudgets = count($tenders);
+                if (!$countBudgets) {
+                    break;
                 }
-            }
+                $offset += $limit;
+                foreach ($tenders as $tender) {
+                    $docArr = $this->getDocForElastic($tender);
+                    if (!empty($docArr)) {
+                        $result = $elastic->indexDoc("tenders", $docArr);
+
+                        if ($result['code'] != 200 && $result['code'] != 201 && $result['code'] != 100) {
+                            Yii::error("Elastic indexing budgets error. Http-code: " . $result['code'], 'sync-info');
+                            exit(0);
+                        }
+
+                    } else {
+                        //@todo error
+                    }
+                }
+            $transaction->commit();
             Yii::info("Updated {$countBudgets} tenders", 'console-msg');
             // delay 0.3 sec
             usleep(300000);
         }
-        return true;
+
     }
 
 

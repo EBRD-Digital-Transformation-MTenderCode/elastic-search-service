@@ -1,6 +1,5 @@
 <?php
 
-
 namespace console\controllers;
 use console\models\Budgets;
 use console\models\Elastic;
@@ -18,23 +17,31 @@ class ReindexElasticController extends Controller
     {
         try {
             $elastic = new Elastic();
-            $result = $elastic->dropIndex();
+            $elastic->dropIndex();
+
+            // budgets
             $budgets = new Budgets();
             $result = $budgets->elasticMapping();
-            $result = $budgets->indexItemsToElastic();
+            if ((int)$result['code'] != 200) {
+                Yii::error("Elastic mapping budgets error", 'console-msg');
+                exit(0);
+            }
+            $budgets->indexItemsToElastic();
 
-//            if ($result['code'] != 200 && $result['code'] != 201 && $result['code'] != 100) {
-//                Yii::error("Elastic indexing error. Http-code: " . $result['code'], 'sync-info');
-//                return $result;
-//            }
-
-
+            // tenders
             $tenders = new Tenders();
             $result = $tenders->elasticMapping();
-            $result = $tenders->indexItemsToElastic();
+            if ((int)$result['code'] != 200) {
+                Yii::error("Elastic mapping tenders error", 'console-msg');
+                exit(0);
+            }
+            $tenders->indexItemsToElastic();
+
         } catch (HttpException $e) {
             Yii::error($e->getMessage(), 'console-msg');
             exit(0);
         }
+
+        Yii::info("Elastic indexing is complete", 'console-msg');
     }
 }

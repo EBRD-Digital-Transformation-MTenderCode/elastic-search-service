@@ -27,6 +27,7 @@ class Curl
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
         curl_setopt($curl, CURLOPT_HEADER, true);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 5);
         // Gather additional optional options:
         foreach ($curlOptions as $key => $value) {
             curl_setopt($curl, constant('CURLOPT_' . $key), $value);
@@ -35,7 +36,7 @@ class Curl
         $content = curl_exec($curl); //false or string
 
         if(curl_errno($curl)){
-            throw new HttpException(500, 'Request Error: ' . curl_strerror(curl_errno($curl)), curl_errno($curl));
+            throw new HttpException(500, 'Request Error (' . $url . '): ' . curl_strerror(curl_errno($curl)), curl_errno($curl));
         }
 
         if ($content === false) {

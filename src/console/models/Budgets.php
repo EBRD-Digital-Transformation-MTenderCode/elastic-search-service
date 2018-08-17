@@ -73,20 +73,29 @@ class Budgets extends ActiveRecord
         $offset = 0;
         $elastic = new Elastic();
         while (true) {
-            $budgets = self::find()->asArray()->limit($limit)->offset($offset)->all();
-            $countBudgets = count($budgets);
-            if (!$countBudgets) {
-                break;
-            }
-            $offset += $limit;
-            foreach ($budgets as $budget) {
-                $docArr = $this->getDocForElastic($budget);
-                if (!empty($docArr)) {
-                    $elastic->indexDoc("budgets", $docArr);
-                } else {
-                    //@todo error
+            // block the update of selected records in the database
+            $transaction = Yii::$app->db_budgets->beginTransaction();
+                $budgets = Yii::$app->db_budgets->createCommand("SELECT * FROM budgets FOR UPDATE LIMIT {$limit} OFFSET {$offset}")->queryAll();
+                $countBudgets = count($budgets);
+                if (!$countBudgets) {
+                    break;
                 }
-            }
+                $offset += $limit;
+                foreach ($budgets as $budget) {
+                    $docArr = $this->getDocForElastic($budget);
+                    if (!empty($docArr)) {
+                        $result = $elastic->indexDoc("budgets", $docArr);
+
+                        if ($result['code'] != 200 && $result['code'] != 201 && $result['code'] != 100) {
+                            Yii::error("Elastic indexing budgets error. Http-code: " . $result['code'], 'sync-info');
+                            exit(0);
+                        }
+
+                    } else {
+                        //@todo error
+                    }
+                }
+            $transaction->commit();
             Yii::info("Updated {$countBudgets} budgets", 'console-msg');
             // delay 0.3 sec
             usleep(300000);
