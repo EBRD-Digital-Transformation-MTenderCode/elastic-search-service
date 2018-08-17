@@ -1,0 +1,24 @@
+AddDefaultCharset UTF-8
+DirectoryIndex index.php index.html
+
+RewriteEngine on
+
+RewriteCond %{REQUEST_URI} ^/rest-api\/v\d(\/.+)?$
+RewriteRule (.*) /rest/web/ [END]
+
+RewriteCond %{REQUEST_URI} ^/rest-api\/health$
+RewriteRule (.*) /rest/web/ [END]
+
+RewriteCond %{REQUEST_URI} ^/swagger(\/.*)?$
+RewriteRule (.*) /backend/web/ [END]
+
+RewriteCond %{REQUEST_URI} ^/assets(\/.*)?$
+RewriteRule (.*) /backend/web/$1
+
+RewriteCond %{REQUEST_URI} ^/backend/web
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /backend/web/index.php [END]
+
+RewriteCond %{REQUEST_URI} ^/favicon.ico
+RewriteRule (.*) /backend/web/favicon.ico [END]
