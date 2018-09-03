@@ -1,9 +1,9 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Примірник для розгортання нового сервісу",
+        "description": "Elastic Search service является сервисом по поиску данных в ElasticSearch.",
         "version": "1.0.0",
-        "title": "Код цього додатка використовується як база для створення оркемого мікросервісу."
+        "title": "Elastic Search service"
     },
     "basePath": "/rest-api",
     "schemes": [
@@ -45,278 +45,133 @@
                 }
             }
         },
-        "/v1/examples": {
+        "/v1/budgets/search": {
             "get": {
                 "tags": [
-                    "example"
+                    "Budgets"
                 ],
-                "summary": "Примірник запиту GET",
-                "description": "Запит GET",
+                "summary": "Get all budgets with ElasticSearch (Получение всех бюджетов через Elasticsearch)",
+                "description": "получение всех записей о бюджетах через Elasticsearch",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "responses": {
-                    "200": {
-                        "description": "Вдале виведення тіла (Response Body)",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "string": {
-                                    "type": "string",
-                                    "example": "here"
-                                },
-                                "some status": {
-                                    "type": "string",
-                                    "example": "success"
-                                },
-                                "some data": {
-                                    "type": "object",
-                                    "properties": {
-                                        "id": {
-                                            "type": "string",
-                                            "example": "d1261e4b-a0a5-4bdc-b58d-f1214290eebf"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "tags": [
-                    "example"
-                ],
-                "summary": "Примірник запиту POST",
-                "description": "Запит POST. Використовується для створення нового об'єкта або даних",
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
+                "parameters":[
                     {
-                        "name": "name",
-                        "in": "formData",
-                        "type": "string",
-                        "description": "Примірник поля для вводу. При необхідності скопіювати в потрібній кількості"
+                        "in":"query",
+                        "name":"ocid",
+                        "type":"string",
+                        "required":false,
+                        "description": "ocid бюджета"
+                    },
+                    {
+                        "in":"query",
+                        "name":"title",
+                        "type":"string",
+                        "required":false,
+                        "description": "заголовок бюджета"
+                    },
+                    {
+                        "in":"query",
+                        "name":"description",
+                        "type":"string",
+                        "required":false,
+                        "description": "описание бюджета"
+                    },
+                    {
+                        "in":"query",
+                        "name":"pageSize",
+                        "type":"string",
+                        "required":false,
+                        "description": "Кол-во записей на странице (значение -1 выводит все записи)"
+                    },
+                    {
+                        "in":"query",
+                        "name":"page",
+                        "type":"string",
+                        "required":false,
+                        "description": "Номер страницы для отображения"
                     }
                 ],
-                "responses": {
-                    "200": {
-                        "description": "Вдале виведення",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "code": {
-                                    "type": "integer",
-                                    "example": "200"
-                                },
-                                "status": {
-                                    "type": "string",
-                                    "example": "success"
-                                },
-                                "data": {
-                                    "type": "object",
-                                    "properties": {
-                                        "name": {
-                                            "type": "string",
-                                            "example": "Field name"
-                                        }
-                                    }
-                                }
-                            }
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "schema":{
+                            "$ref":"#/definitions/200Budget2"
+                        }
+                    },
+                    "400":{
+                        "description":"Bad Request",
+                        "schema":{
+                            "$ref":"#/definitions/ErrorModel"
                         }
                     }
                 }
             }
         },
-        "/v1/examples/id/{id}": {
+        "/v1/tenders/search": {
             "get": {
                 "tags": [
-                    "example"
+                    "Tenders"
                 ],
-                "summary": "Примірник запиту GET з параметром",
-                "description": "Запит GET з параметром. Використовується для отримання певного об'єкта (зазвичай за його ідентифікатором)",
+                "summary": "Get all tenders with ElasticSearch (Получение всех тендеров через Elasticsearch)",
+                "description": "получение всех записей о тендерах через Elasticsearch",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "parameters": [
+                "parameters":[
                     {
-                        "in": "path",
-                        "name": "id",
-                        "type": "string",
-                        "description": "Примірник поля для заповнення параметра, що використовується у адресному рядку URN.",
-                        "required": true
+                        "in":"query",
+                        "name":"ocid",
+                        "type":"string",
+                        "required":false,
+                        "description": "ocid тендера"
                     },
                     {
-                        "in": "query",
-                        "name": "name",
-                        "type": "string",
-                        "description": "Примірник поля для вводу, що сформує GET-параметр (..?name=value&..)"
+                        "in":"query",
+                        "name":"title",
+                        "type":"string",
+                        "required":false,
+                        "description": "заголовок тендера"
+                    },
+                    {
+                        "in":"query",
+                        "name":"description",
+                        "type":"string",
+                        "required":false,
+                        "description": "описание тендера"
+                    },
+                    {
+                        "in":"query",
+                        "name":"pageSize",
+                        "type":"string",
+                        "required":false,
+                        "description": "Кол-во записей на странице (значение -1 выводит все записи)"
+                    },
+                    {
+                        "in":"query",
+                        "name":"page",
+                        "type":"string",
+                        "required":false,
+                        "description": "Номер страницы для отображения"
                     }
                 ],
-                "responses": {
-                    "200": {
-                        "description": "Вдале виведення",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "code": {
-                                    "type": "integer",
-                                    "example": "200"
-                                },
-                                "status": {
-                                    "type": "string",
-                                    "example": "success"
-                                },
-                                "data": {
-                                    "type": "object",
-                                    "properties": {
-                                        "id": {
-                                            "type": "string",
-                                            "example": "d1261e4b-a0a5-4bdc-b58d-f1214290eebf"
-                                        },
-                                        "name": {
-                                            "type": "string",
-                                            "example": "Name"
-                                        }
-                                    }
-                                }
-                            }
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "schema":{
+                            "$ref":"#/definitions/200Tender2"
                         }
-                    }
-                }
-            },
-            "patch": {
-                "tags": [
-                    "example"
-                ],
-                "summary": "Примірник запиту PATCH з параметром",
-                "description": "Запит PATCH з параметром. Використовується для модифікації/оновлення певного об'єкта (за його ідентифікатором)",
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "type": "string",
-                        "description": "Примірник поля для заповнення параметра, що використовується у адресному рядку.",
-                        "required": true
                     },
-                    {
-                        "in": "formData",
-                        "name": "name",
-                        "type": "string",
-                        "description": "Примірник поля 'форми' для весення нових даних для параметра, який необхідно оновити."
-                    },
-                    {
-                        "in": "formData",
-                        "name": "new_name",
-                        "type": "string",
-                        "description": "Ще одне поле."
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Вдале виведення",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "code": {
-                                    "type": "integer",
-                                    "example": "200"
-                                },
-                                "status": {
-                                    "type": "string",
-                                    "example": "success"
-                                },
-                                "data": {
-                                    "type": "object",
-                                    "properties": {
-                                        "id": {
-                                            "type": "string",
-                                            "example": "d1261e4b-a0a5-4bdc-b58d-f1214290eebf"
-                                        },
-                                        "name": {
-                                            "type": "string",
-                                            "example": "Name"
-                                        },
-                                        "new_name": {
-                                            "type": "string",
-                                            "example": "New Name"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "example"
-                ],
-                "summary": "Примірник запиту DELETE з параметром",
-                "description": "Запит DELETE з параметром. Використовується для видалення певного об'єкта за його ідентифікатором або для позначки його таким, що видалили",
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "type": "string",
-                        "description": "Примірник поля для заповнення параметра, що використовується у адресному рядку.",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Вдале виведення",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "code": {
-                                    "type": "integer",
-                                    "example": "200"
-                                },
-                                "status": {
-                                    "type": "string",
-                                    "example": "success"
-                                },
-                                "data": {
-                                    "type": "object",
-                                    "properties": {
-                                        "id": {
-                                            "type": "string",
-                                            "example": "d1261e4b-a0a5-4bdc-b58d-f1214290eebf"
-                                        },
-                                        "name": {
-                                            "type": "string",
-                                            "example": "Name"
-                                        },
-                                        "new_name": {
-                                            "type": "string",
-                                            "example": "New Name"
-                                        }
-                                    }
-                                }
-                            }
+                    "400":{
+                        "description":"Bad Request",
+                        "schema":{
+                            "$ref":"#/definitions/ErrorModel"
                         }
                     }
                 }
