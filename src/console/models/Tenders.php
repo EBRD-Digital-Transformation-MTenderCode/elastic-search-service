@@ -123,16 +123,26 @@ class Tenders extends ActiveRecord
     public function getDocForElastic($tender) {
         $response = $tender['response'];
         $jsonArr = json_decode($response, 1);
-        $records = $jsonArr['records'];
-        $docArr = [];
-        foreach ($records as $record) {
-            if ($record['ocid'] == $tender['tender_id']) {
-                $ocid = $record['ocid'];
-                $title = ($record['compiledRelease']['tender']['title']) ?? "";
-                $description = ($record['compiledRelease']['tender']['description']) ?? "";
-                $docArr = ['tender_id' => $ocid, 'title' => $title, 'description' => $description];
-                break;
+
+        if (isset($jsonArr['records'])) {
+            // ocds tender
+            $records = $jsonArr['records'];
+            $docArr = [];
+            foreach ($records as $record) {
+                if ($record['ocid'] == $tender['tender_id']) {
+                    $tender_id = $record['ocid'];
+                    $title = ($record['compiledRelease']['tender']['title']) ?? "";
+                    $description = ($record['compiledRelease']['tender']['description']) ?? "";
+                    $docArr = ['tender_id' => $tender_id, 'title' => $title, 'description' => $description];
+                    break;
+                }
             }
+        } else {
+            // prozorro tender
+            $tender_id = $jsonArr['data']['id'];
+            $title = $jsonArr['data']['title'] ?? '';
+            $description = $jsonArr['data']['description'] ?? '';
+            $docArr = ['tender_id' => $tender_id, 'title' => $title, 'description' => $description];
         }
         return $docArr;
     }
