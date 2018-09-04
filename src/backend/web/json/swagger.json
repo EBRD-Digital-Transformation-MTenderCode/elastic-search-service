@@ -1,10 +1,24 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Elastic Search service является сервисом по поиску данных в ElasticSearch.",
+        "description": "сервис для поиска данных о тендерах и бюджетах в ElasticSearch.",
         "version": "1.0.0",
         "title": "Elastic Search service"
     },
+  "tags":[
+    {
+      "name":"methods",
+      "description":"API-справочник методов сервиса ElasticSearch."
+    },    
+    {
+      "name":"Budgets",
+      "description":"Бюджеты."
+    },
+    {
+      "name":"Tenders",
+      "description":"Тендера."
+    }
+  ],    
     "basePath": "/rest-api",
     "schemes": [
         "http"
@@ -16,7 +30,7 @@
                     "methods"
                 ],
                 "summary":"Get all methods (Получение всех methods)",
-                "description":"Метод используется для получения всех существующих методов, а также каждого отдельного метода с их свойствами в сервисе MDM.",
+                "description":"Метод является API-справочником методов ElasticSearch и используется для получения информации о каждом методе сервиса ElasticSearch в формате JSON. Это позволяет клиенту выполнить свою автоматическую подстройку под сервис, либо воспользоватся полученными данными в качестве API-версии help page.",
                 "produces":[
                     "application/json"
                 ],
@@ -36,11 +50,8 @@
                             "$ref":"#/definitions/200Methods"
                         }
                     },
-                    "422":{
-                        "description":"Data Validation Failed.",
-                        "schema":{
-                            "$ref":"#/definitions/ErrorModel"
-                        }
+                    "400":{
+                        "description":"Data Validation Failed."
                     }
                 }
             }
@@ -99,15 +110,12 @@
                     "200":{
                         "description":"OK",
                         "schema":{
-                            "$ref":"#/definitions/200Budget2"
+                            "$ref":"#/definitions/200Budget"
                         }
                     },
                     "400":{
-                        "description":"Bad Request",
-                        "schema":{
-                            "$ref":"#/definitions/ErrorModel"
-                        }
-                    }
+                        "description":"Data Validation Failed."
+                    }  
                 }
             }
         },
@@ -165,17 +173,152 @@
                     "200":{
                         "description":"OK",
                         "schema":{
-                            "$ref":"#/definitions/200Tender2"
+                            "$ref":"#/definitions/200Tender"
                         }
                     },
                     "400":{
-                        "description":"Bad Request",
-                        "schema":{
-                            "$ref":"#/definitions/ErrorModel"
-                        }
-                    }
+                        "description":"Data Validation Failed."
                 }
-            }
+             }
+           }
         }
-    }
+    },
+  "definitions":{
+    "200Budget":{
+      "type":"object",
+      "required":[
+        "code",
+        "status",
+        "data"
+      ],
+      "properties":{
+        "code":{
+          "type":"integer",
+          "format":"int32",
+          "example":"200"
+        },
+        "status":{
+          "type":"string",
+          "example":"OK"
+        },
+        "data":{
+          "type":"array",
+          "items":{
+            "$ref":"#/definitions/Budget"
+          }
+        }
+      }
+    }, 
+    "Budget":{
+      "type":"object",
+      "required":[
+        "ocid",
+        "title",
+        "description"
+      ],
+      "properties":{
+        "ocid":{
+          "type":"string",
+          "example":"ocds-t1s2t3-MD-1533819752081"
+        },
+         "title":{   
+          "type":"string",
+          "example":"Stuff hot magazine religious staff."
+        },       
+        "description":{
+          "type":"string",
+          "example":"Become those state remain gas floor story south war imagine end card sing important risk less nothing mention lay region rich draw about degree."
+        }
+      }
+    },  
+    "200Tender":{
+      "type":"object",
+      "required":[
+        "code",
+        "status",
+        "data"
+      ],
+      "properties":{
+        "code":{
+          "type":"integer",
+          "format":"int32",
+          "example":"200"
+        },
+        "status":{
+          "type":"string",
+          "example":"OK"
+        },
+        "data":{
+          "type":"array",
+          "items":{
+            "$ref":"#/definitions/Tender"
+          }
+        }
+      }
+    }, 
+    "Tender":{
+      "type":"object",
+      "required":[
+        "tender_id",
+        "title",
+        "description"
+      ],
+      "properties":{
+        "tender_id":{
+          "type":"string",
+          "example":"6c440d4ff3364cac9d9b6bb00ccdaa14"
+        },
+         "title":{   
+          "type":"string",
+          "example":"[ТЕСТУВАННЯ] Тест документів 6121323"
+        },       
+        "description":{
+          "type":"string",
+          "example":"Тестовий mod"
+        }
+      }
+    },  
+    "200Methods":{
+      "type":"object",
+      "required":[
+        "code",
+        "status",
+        "data"
+      ],
+      "properties":{
+        "code":{
+          "type":"integer",
+          "format":"int32",
+          "example":"200"
+        },
+        "status":{
+          "type":"string",
+          "example":"OK"
+        },
+        "data":{
+          "type":"array",
+          "items":{
+            "$ref":"#/definitions/Methods"
+          }
+        }
+      }
+    },
+    "Methods":{
+      "type":"object",
+      "required":[
+        "id",
+        "name"
+      ],
+      "properties":{
+        "id":{
+          "type":"string",
+          "example":"/v1/company-customer-types"
+        },
+        "name":{
+          "type":"string",
+          "example":"Замовник, що здійснює закупівлі для потреб оборони"
+        }
+      }
+    }    
+  }
 }
