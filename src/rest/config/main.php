@@ -60,13 +60,9 @@ return [
                         'v1/example'
                     ],
                     'extraPatterns' => [
-                        'GET' => 'index',
-                        'POST' => 'create',
-                        'GET id/<id:[\w\-]+>' => 'view',
-                        'DELETE id/<id:[\w\-]+>' => 'delete',
-                        'PATCH id/<id:[\w\-]+>' => 'update',
-                        'OPTIONS' => 'options'
+                        'GET search' => 'search',
                     ],
+                    'pluralize' => false
                 ],
             ],
             'class' => 'common\components\urlManager\LangUrlManager',

@@ -3,6 +3,8 @@ namespace console\models;
 use yii\db\ActiveRecord;
 use Yii;
 use yii\web\ForbiddenHttpException;
+use PDOException;
+use yii\db\Exception;
 
 class Tenders extends ActiveRecord
 {
@@ -49,7 +51,7 @@ class Tenders extends ActiveRecord
         $mapArr = [
             'dynamic' => 'strict',
             'properties' => [
-                'ocid' => ['type' => 'keyword'],
+                'tender_id' => ['type' => 'keyword'],
                 'title' => ['type' => 'text'],
                 'description' => ['type' => 'text'],
             ]
@@ -73,8 +75,9 @@ class Tenders extends ActiveRecord
         $offset = 0;
         $elastic = new Elastic();
         while (true) {
-            // block the update of selected records in the database
-            $transaction = Yii::$app->db_tenders->beginTransaction();
+            try {
+                // block the update of selected records in the database
+                $transaction = Yii::$app->db_tenders->beginTransaction();
                 $tenders = Yii::$app->db_tenders->createCommand("SELECT * FROM tenders FOR UPDATE LIMIT {$limit} OFFSET {$offset}")->queryAll();
                 $countBudgets = count($tenders);
                 if (!$countBudgets) {
@@ -84,7 +87,7 @@ class Tenders extends ActiveRecord
                 foreach ($tenders as $tender) {
                     $docArr = $this->getDocForElastic($tender);
                     if (!empty($docArr)) {
-                        $result = $elastic->indexDoc("tenders", $docArr);
+                        $result = $elastic->indexTender($docArr, $this->elastic_type);
 
                         if ($result['code'] != 200 && $result['code'] != 201 && $result['code'] != 100) {
                             Yii::error("Elastic indexing budgets error. Http-code: " . $result['code'], 'sync-info');
@@ -95,7 +98,14 @@ class Tenders extends ActiveRecord
                         //@todo error
                     }
                 }
-            $transaction->commit();
+                $transaction->commit();
+            } catch(PDOException $exception) {
+                Yii::error("PDOException. " . $exception->getMessage(), 'console-msg');
+                exit(0);
+            } catch(Exception $exception) {
+                Yii::error("DB exception. " . $exception->getMessage(), 'console-msg');
+                exit(0);
+            }
             Yii::info("Updated {$countBudgets} tenders", 'console-msg');
             // delay 0.3 sec
             usleep(300000);
@@ -113,16 +123,26 @@ class Tenders extends ActiveRecord
     public function getDocForElastic($tender) {
         $response = $tender['response'];
         $jsonArr = json_decode($response, 1);
-        $records = $jsonArr['records'];
-        $docArr = [];
-        foreach ($records as $record) {
-            if ($record['ocid'] == $tender['ocid']) {
-                $ocid = $record['ocid'];
-                $title = ($record['compiledRelease']['tender']['title']) ?? "";
-                $description = ($record['compiledRelease']['tender']['description']) ?? "";
-                $docArr = ['ocid' => $ocid, 'title' => $title, 'description' => $description];
-                break;
+
+        if (isset($jsonArr['records'])) {
+            // ocds tender
+            $records = $jsonArr['records'];
+            $docArr = [];
+            foreach ($records as $record) {
+                if ($record['ocid'] == $tender['tender_id']) {
+                    $tender_id = $record['ocid'];
+                    $title = ($record['compiledRelease']['tender']['title']) ?? "";
+                    $description = ($record['compiledRelease']['tender']['description']) ?? "";
+                    $docArr = ['tender_id' => $tender_id, 'title' => $title, 'description' => $description];
+                    break;
+                }
             }
+        } else {
+            // prozorro tender
+            $tender_id = $jsonArr['data']['id'];
+            $title = $jsonArr['data']['title'] ?? '';
+            $description = $jsonArr['data']['description'] ?? '';
+            $docArr = ['tender_id' => $tender_id, 'title' => $title, 'description' => $description];
         }
         return $docArr;
     }

@@ -2,7 +2,9 @@
 namespace console\models;
 use yii\db\ActiveRecord;
 use Yii;
+use yii\db\Exception;
 use yii\web\ForbiddenHttpException;
+use PDOException;
 
 class Budgets extends ActiveRecord
 {
@@ -73,8 +75,9 @@ class Budgets extends ActiveRecord
         $offset = 0;
         $elastic = new Elastic();
         while (true) {
-            // block the update of selected records in the database
-            $transaction = Yii::$app->db_budgets->beginTransaction();
+            try {
+                // block the update of selected records in the database
+                $transaction = Yii::$app->db_budgets->beginTransaction();
                 $budgets = Yii::$app->db_budgets->createCommand("SELECT * FROM budgets FOR UPDATE LIMIT {$limit} OFFSET {$offset}")->queryAll();
                 $countBudgets = count($budgets);
                 if (!$countBudgets) {
@@ -84,7 +87,7 @@ class Budgets extends ActiveRecord
                 foreach ($budgets as $budget) {
                     $docArr = $this->getDocForElastic($budget);
                     if (!empty($docArr)) {
-                        $result = $elastic->indexDoc("budgets", $docArr);
+                        $result = $elastic->indexBudget($docArr, $this->elastic_type);
 
                         if ($result['code'] != 200 && $result['code'] != 201 && $result['code'] != 100) {
                             Yii::error("Elastic indexing budgets error. Http-code: " . $result['code'], 'sync-info');
@@ -95,7 +98,14 @@ class Budgets extends ActiveRecord
                         //@todo error
                     }
                 }
-            $transaction->commit();
+                $transaction->commit();
+            } catch(PDOException $exception) {
+                Yii::error("PDOException. " . $exception->getMessage(), 'console-msg');
+                exit(0);
+            } catch(Exception $exception) {
+                Yii::error("DB exception. " . $exception->getMessage(), 'console-msg');
+                exit(0);
+            }
             Yii::info("Updated {$countBudgets} budgets", 'console-msg');
             // delay 0.3 sec
             usleep(300000);

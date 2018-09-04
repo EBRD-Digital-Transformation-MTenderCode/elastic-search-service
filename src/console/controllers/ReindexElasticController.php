@@ -44,4 +44,60 @@ class ReindexElasticController extends Controller
 
         Yii::info("Elastic indexing is complete", 'console-msg');
     }
+//
+//    public function actionTenders()
+//    {
+//        try {
+//            $elastic = new Elastic();
+//            $elastic->dropType("tenders");
+//
+////            // tenders
+////            $tenders = new Tenders();
+////            $result = $tenders->elasticMapping();
+////            if ((int)$result['code'] != 200) {
+////                Yii::error("Elastic mapping tenders error", 'console-msg');
+////                exit(0);
+////            }
+////            $tenders->indexItemsToElastic();
+//
+//        } catch (HttpException $e) {
+//            Yii::error($e->getMessage(), 'console-msg');
+//            exit(0);
+//        }
+//    }
+//
+//    public function actionBudgets()
+//    {
+//        try {
+//            $elastic = new Elastic();
+//            $result = $elastic->dropTypeData("budgets");
+//            if ((int)$result['code'] != 200) {
+//                Yii::error("Elastic delete type data error", 'console-msg');
+//                exit(0);
+//            }
+//            $result = $elastic->dropTypeMapping("budgets");
+//            if ((int)$result['code'] != 200) {
+//                Yii::error("Elastic delete type data error", 'console-msg');
+//                exit(0);
+//            }
+//
+//
+//            //echo "<pre>" . print_r($result,1) . "</pre>"; die;
+//
+//            // tenders
+//            $tenders = new Tenders();
+//            $result = $tenders->elasticMapping();
+//            if ((int)$result['code'] != 200) {
+//                Yii::error("Elastic mapping tenders error", 'console-msg');
+//                exit(0);
+//            }
+//            $tenders->indexItemsToElastic();
+//
+//        } catch (HttpException $e) {
+//            Yii::error($e->getMessage(), 'console-msg');
+//            exit(0);
+//        }
+//
+//    }
+
 }
