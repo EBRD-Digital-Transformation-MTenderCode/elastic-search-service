@@ -53,13 +53,13 @@ Class Elastic
      * @return array
      * @throws HttpException
      */
-    public function indexDoc($docArr, $type)
+    public function indexBudget($docArr, $type)
     {
         $elastic_url = Yii::$app->params['elastic_url'] ?? "";
         $elastic_request_url = $elastic_url . "/" . $this->index . "/" . $type . "/";
         $data_string = json_encode($docArr);
         $curl_options = ['HTTPHEADER' => ['Content-Type:application/json']];
-        $result = Curl::sendRequest($elastic_request_url . $docArr['ocid'], "POST", $data_string, $curl_options);
+        $result = Curl::sendRequest($elastic_request_url . $docArr['budget_id'], "POST", $data_string, $curl_options);
         return $result;
     }
 
