@@ -51,7 +51,7 @@ class Tenders extends ActiveRecord
         $mapArr = [
             'dynamic' => 'strict',
             'properties' => [
-                'ocid' => ['type' => 'keyword'],
+                'tender_id' => ['type' => 'keyword'],
                 'title' => ['type' => 'text'],
                 'description' => ['type' => 'text'],
             ]
@@ -126,11 +126,11 @@ class Tenders extends ActiveRecord
         $records = $jsonArr['records'];
         $docArr = [];
         foreach ($records as $record) {
-            if ($record['ocid'] == $tender['ocid']) {
+            if ($record['ocid'] == $tender['tender_id']) {
                 $ocid = $record['ocid'];
                 $title = ($record['compiledRelease']['tender']['title']) ?? "";
                 $description = ($record['compiledRelease']['tender']['description']) ?? "";
-                $docArr = ['ocid' => $ocid, 'title' => $title, 'description' => $description];
+                $docArr = ['tender_id' => $ocid, 'title' => $title, 'description' => $description];
                 break;
             }
         }
