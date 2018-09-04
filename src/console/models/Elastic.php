@@ -75,5 +75,43 @@ Class Elastic
         $result = Curl::sendRequest($elastic_request_url, "DELETE", "", $curl_options);
         return $result;
     }
+//
+//    /**
+//     * @param $type
+//     * @return array
+//     * @throws HttpException
+//     */
+//    public function dropTypeData($type) {
+//        if (!$type) {
+//            Yii::error("Type param is empty ", 'console-msg');
+//            exit(0);
+//        }
+//        Yii::info("Deleting type: " . $this->index . "/" . $type, 'console-msg');
+//        $elastic_url = Yii::$app->params['elastic_url'] ?? "";
+//        $elastic_request_url = $elastic_url . "/" . $this->index . "/" . $type . "/_delete_by_query";
+//        $json = '{"query": {"match_all": {}}}';
+//        $curl_options = ['HTTPHEADER' => ['Content-Type:application/json']];
+//        $result = Curl::sendRequest($elastic_request_url, "POST", $json, $curl_options);
+//        return $result;
+//    }
+//
+//    /**
+//     * @param $type
+//     * @return array
+//     * @throws HttpException
+//     */
+//    public function dropTypeMapping($type) {
+//        if (!$type) {
+//            Yii::error("Type param is empty ", 'console-msg');
+//            exit(0);
+//        }
+//        Yii::info("Deleting type: " . $this->index . "/" . $type, 'console-msg');
+//        $elastic_url = Yii::$app->params['elastic_url'] ?? "";
+//        $elastic_request_url = $elastic_url . "/" . $this->index . "/" . $type . "/_delete_by_query";
+//        $json = '{"query": {"match_all": {}}}';
+//        $curl_options = ['HTTPHEADER' => ['Content-Type:application/json']];
+//        $result = Curl::sendRequest($elastic_request_url, "POST", $json, $curl_options);
+//        return $result;
+//    }
 
 }

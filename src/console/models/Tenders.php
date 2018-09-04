@@ -4,6 +4,7 @@ use yii\db\ActiveRecord;
 use Yii;
 use yii\web\ForbiddenHttpException;
 use PDOException;
+use yii\db\Exception;
 
 class Tenders extends ActiveRecord
 {
@@ -74,9 +75,9 @@ class Tenders extends ActiveRecord
         $offset = 0;
         $elastic = new Elastic();
         while (true) {
-            // block the update of selected records in the database
-            $transaction = Yii::$app->db_tenders->beginTransaction();
             try {
+                // block the update of selected records in the database
+                $transaction = Yii::$app->db_tenders->beginTransaction();
                 $tenders = Yii::$app->db_tenders->createCommand("SELECT * FROM tenders FOR UPDATE LIMIT {$limit} OFFSET {$offset}")->queryAll();
                 $countBudgets = count($tenders);
                 if (!$countBudgets) {
@@ -99,8 +100,11 @@ class Tenders extends ActiveRecord
                 }
                 $transaction->commit();
             } catch(PDOException $exception) {
-                $transaction->rollBack();
-                Yii::error("PDOException. " . $exception->getMessage(), 'sync-info');
+                Yii::error("PDOException. " . $exception->getMessage(), 'console-msg');
+                exit(0);
+            } catch(Exception $exception) {
+                Yii::error("DB exception. " . $exception->getMessage(), 'console-msg');
+                exit(0);
             }
             Yii::info("Updated {$countBudgets} tenders", 'console-msg');
             // delay 0.3 sec
