@@ -87,7 +87,7 @@ class Tenders extends ActiveRecord
                 foreach ($tenders as $tender) {
                     $docArr = $this->getDocForElastic($tender);
                     if (!empty($docArr)) {
-                        $result = $elastic->indexDoc("tenders", $docArr);
+                        $result = $elastic->indexTender($docArr, $this->elastic_type);
 
                         if ($result['code'] != 200 && $result['code'] != 201 && $result['code'] != 100) {
                             Yii::error("Elastic indexing budgets error. Http-code: " . $result['code'], 'sync-info');

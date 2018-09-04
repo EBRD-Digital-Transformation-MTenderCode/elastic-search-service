@@ -87,7 +87,7 @@ class Budgets extends ActiveRecord
                 foreach ($budgets as $budget) {
                     $docArr = $this->getDocForElastic($budget);
                     if (!empty($docArr)) {
-                        $result = $elastic->indexDoc("budgets", $docArr);
+                        $result = $elastic->indexBudget($docArr, $this->elastic_type);
 
                         if ($result['code'] != 200 && $result['code'] != 201 && $result['code'] != 100) {
                             Yii::error("Elastic indexing budgets error. Http-code: " . $result['code'], 'sync-info');
