@@ -3,6 +3,7 @@ namespace console\models;
 use yii\db\ActiveRecord;
 use Yii;
 use yii\web\ForbiddenHttpException;
+use PDOException;
 
 class Tenders extends ActiveRecord
 {
@@ -75,6 +76,7 @@ class Tenders extends ActiveRecord
         while (true) {
             // block the update of selected records in the database
             $transaction = Yii::$app->db_tenders->beginTransaction();
+            try {
                 $tenders = Yii::$app->db_tenders->createCommand("SELECT * FROM tenders FOR UPDATE LIMIT {$limit} OFFSET {$offset}")->queryAll();
                 $countBudgets = count($tenders);
                 if (!$countBudgets) {
@@ -95,7 +97,11 @@ class Tenders extends ActiveRecord
                         //@todo error
                     }
                 }
-            $transaction->commit();
+                $transaction->commit();
+            } catch(PDOException $exception) {
+                $transaction->rollBack();
+                Yii::error("PDOException. " . $exception->getMessage(), 'sync-info');
+            }
             Yii::info("Updated {$countBudgets} tenders", 'console-msg');
             // delay 0.3 sec
             usleep(300000);
