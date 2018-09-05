@@ -1,13 +1,21 @@
 <?php
 namespace console\models;
-use yii\db\ActiveRecord;
+
 use Yii;
+use yii\db\Exception;
+use yii\db\ActiveRecord;
 use yii\web\ForbiddenHttpException;
 use PDOException;
-use yii\db\Exception;
 
+/**
+ * Class Tenders
+ * @package console\models
+ */
 class Tenders extends ActiveRecord
 {
+    const CDU_V_1 = 'mtender1';
+    const CDU_V_2 = 'mtender2';
+
     private $elastic_type;
 
     /**
@@ -33,7 +41,6 @@ class Tenders extends ActiveRecord
         return '{{%tenders}}';
     }
 
-
     /**
      * @return mixed|\yii\db\Connection
      */
@@ -54,6 +61,7 @@ class Tenders extends ActiveRecord
                 'tender_id' => ['type' => 'keyword'],
                 'title' => ['type' => 'text'],
                 'description' => ['type' => 'text'],
+                'cdu-v' => ['type' => 'keyword'],
             ]
         ];
         $jsonMap = json_encode($mapArr);
@@ -133,7 +141,12 @@ class Tenders extends ActiveRecord
                     $tender_id = $record['ocid'];
                     $title = ($record['compiledRelease']['tender']['title']) ?? "";
                     $description = ($record['compiledRelease']['tender']['description']) ?? "";
-                    $docArr = ['tender_id' => $tender_id, 'title' => $title, 'description' => $description];
+                    $docArr = [
+                        'tender_id' => $tender_id,
+                        'title' => $title,
+                        'description' => $description,
+                        'cdu-v' => self::CDU_V_2,
+                    ];
                     break;
                 }
             }
@@ -142,7 +155,12 @@ class Tenders extends ActiveRecord
             $tender_id = $jsonArr['data']['id'];
             $title = $jsonArr['data']['title'] ?? '';
             $description = $jsonArr['data']['description'] ?? '';
-            $docArr = ['tender_id' => $tender_id, 'title' => $title, 'description' => $description];
+            $docArr = [
+                'tender_id' => $tender_id,
+                'title' => $title,
+                'description' => $description,
+                'cdu-v' => self::CDU_V_1,
+            ];
         }
         return $docArr;
     }
