@@ -88,7 +88,7 @@ class TenderSearch extends Tender
     {
         $client = new Client(['transport' => 'yii\httpclient\CurlTransport']);
         $url = Yii::$app->params['elastic_url'] . DIRECTORY_SEPARATOR
-            . Yii::$app->params['elastic_index'] . DIRECTORY_SEPARATOR
+            . Yii::$app->params['elastic_tenders_index'] . DIRECTORY_SEPARATOR
             . Yii::$app->params['elastic_tenders_type'] . DIRECTORY_SEPARATOR . '_search';
 
         if (!empty($searchAttributes)) {

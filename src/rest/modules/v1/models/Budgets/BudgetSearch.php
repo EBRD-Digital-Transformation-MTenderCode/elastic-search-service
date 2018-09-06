@@ -78,7 +78,7 @@ class BudgetSearch extends Budget
     {
         $client = new Client(['transport' => 'yii\httpclient\CurlTransport']);
         $url = Yii::$app->params['elastic_url'] . DIRECTORY_SEPARATOR
-            . Yii::$app->params['elastic_index'] . DIRECTORY_SEPARATOR
+            . Yii::$app->params['elastic_budgets_index'] . DIRECTORY_SEPARATOR
             . Yii::$app->params['elastic_budgets_type'] . DIRECTORY_SEPARATOR . '_search';
 
         if (!empty($searchAttributes)) {
