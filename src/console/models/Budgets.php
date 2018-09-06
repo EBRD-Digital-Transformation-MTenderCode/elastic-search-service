@@ -1,38 +1,11 @@
 <?php
 namespace console\models;
-use yii\db\ActiveRecord;
 use Yii;
 use yii\db\Exception;
-use yii\web\ForbiddenHttpException;
 use PDOException;
 
-class Budgets extends ActiveRecord
+class Budgets
 {
-    private $elastic_type;
-
-    /**
-     * Budgets constructor.
-     * @param array $config
-     * @throws ForbiddenHttpException
-     */
-    public function __construct(array $config = [])
-    {
-        $this->elastic_type = Yii::$app->params['elastic_budgets_type'] ?? "";
-        if (!$this->elastic_type) {
-            throw new ForbiddenHttpException("Elastic params not set.");
-        }
-
-        parent::__construct($config);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return '{{%budgets}}';
-    }
-
     /**
      * @return mixed|\yii\db\Connection
      */
@@ -55,9 +28,13 @@ class Budgets extends ActiveRecord
                 'description' => ['type' => 'text'],
             ]
         ];
+
         $jsonMap = json_encode($mapArr);
-        $elastic = new Elastic();
-        $result = $elastic->mapping($jsonMap, $this->elastic_type);
+        $url = Yii::$app->params['elastic_url'];
+        $index = Yii::$app->params['elastic_budgets_index'];
+        $type = Yii::$app->params['elastic_budgets_type'];
+        $elastic = new Elastic($url, $index, $type);
+        $result = $elastic->mapping($jsonMap);
         return $result;
     }
 
@@ -73,7 +50,10 @@ class Budgets extends ActiveRecord
         Yii::info("Indexing budgets", 'console-msg');
         $limit = 25;
         $offset = 0;
-        $elastic = new Elastic();
+        $url = Yii::$app->params['elastic_url'];
+        $index = Yii::$app->params['elastic_budgets_index'];
+        $type = Yii::$app->params['elastic_budgets_type'];
+        $elastic = new Elastic($url, $index, $type);
         while (true) {
             try {
                 // block the update of selected records in the database
@@ -87,7 +67,7 @@ class Budgets extends ActiveRecord
                 foreach ($budgets as $budget) {
                     $docArr = $this->getDocForElastic($budget);
                     if (!empty($docArr)) {
-                        $result = $elastic->indexBudget($docArr, $this->elastic_type);
+                        $result = $elastic->indexBudget($docArr);
 
                         if ($result['code'] != 200 && $result['code'] != 201 && $result['code'] != 100) {
                             Yii::error("Elastic indexing budgets error. Http-code: " . $result['code'], 'sync-info');
