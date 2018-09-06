@@ -11,93 +11,111 @@ use yii\web\HttpException;
 class ReindexElasticController extends Controller
 {
     /**
-     *
+     * reindex all indexes
      */
-    public function actionIndex()
+    public function actionAll()
+    {
+        $this->indexBudgets();
+
+        $this->indexTenders();
+
+        Yii::info("Elastic indexing is complete", 'console-msg');
+    }
+
+    /**
+     * reindex budgets
+     */
+    public function actionBudgets()
     {
         try {
-            $elastic = new Elastic();
-            $elastic->dropIndex();
+            $this->indexBudgets();
+        } catch (HttpException $e) {
+            Yii::error($e->getMessage(), 'console-msg');
+            exit(0);
+        }
 
-            // budgets
+        Yii::info("Elastic indexing Budgets is complete", 'console-msg');
+    }
+
+    /**
+     *  reindex tenders
+     */
+    public function actionTenders()
+    {
+        try {
+            $this->indexTenders();
+        } catch (HttpException $e) {
+            Yii::error($e->getMessage(), 'console-msg');
+            exit(0);
+        }
+
+        Yii::info("Elastic indexing Tenders is complete", 'console-msg');
+    }
+
+    /**
+     *
+     */
+    private function indexBudgets()
+    {
+        $elastic_url = Yii::$app->params['elastic_url'];
+        $elastic_index = Yii::$app->params['elastic_budgets_index'];
+        $elastic_type = Yii::$app->params['elastic_budgets_type'];
+
+        try {
+            $elastic = new Elastic($elastic_url, $elastic_index, $elastic_type);
+            $result = $elastic->dropIndex();
+
+            if ((int)$result['code'] != 200 && (int)$result['code'] != 404) {
+                Yii::error("Elastic index " . $elastic_index . " error. Code: " . $result['code'], 'console-msg');
+                exit(0);
+            }
+
             $budgets = new Budgets();
             $result = $budgets->elasticMapping();
             if ((int)$result['code'] != 200) {
-                Yii::error("Elastic mapping budgets error", 'console-msg');
+                Yii::error("Elastic mapping " . $elastic_index . " error", 'console-msg');
                 exit(0);
             }
             $budgets->indexItemsToElastic();
-
-            // tenders
-            $tenders = new Tenders();
-            $result = $tenders->elasticMapping();
-            if ((int)$result['code'] != 200) {
-                Yii::error("Elastic mapping tenders error", 'console-msg');
-                exit(0);
-            }
-            $tenders->indexItemsToElastic();
 
         } catch (HttpException $e) {
             Yii::error($e->getMessage(), 'console-msg');
             exit(0);
         }
 
-        Yii::info("Elastic indexing is complete", 'console-msg');
     }
-//
-//    public function actionTenders()
-//    {
-//        try {
-//            $elastic = new Elastic();
-//            $elastic->dropType("tenders");
-//
-////            // tenders
-////            $tenders = new Tenders();
-////            $result = $tenders->elasticMapping();
-////            if ((int)$result['code'] != 200) {
-////                Yii::error("Elastic mapping tenders error", 'console-msg');
-////                exit(0);
-////            }
-////            $tenders->indexItemsToElastic();
-//
-//        } catch (HttpException $e) {
-//            Yii::error($e->getMessage(), 'console-msg');
-//            exit(0);
-//        }
-//    }
-//
-//    public function actionBudgets()
-//    {
-//        try {
-//            $elastic = new Elastic();
-//            $result = $elastic->dropTypeData("budgets");
-//            if ((int)$result['code'] != 200) {
-//                Yii::error("Elastic delete type data error", 'console-msg');
-//                exit(0);
-//            }
-//            $result = $elastic->dropTypeMapping("budgets");
-//            if ((int)$result['code'] != 200) {
-//                Yii::error("Elastic delete type data error", 'console-msg');
-//                exit(0);
-//            }
-//
-//
-//            //echo "<pre>" . print_r($result,1) . "</pre>"; die;
-//
-//            // tenders
-//            $tenders = new Tenders();
-//            $result = $tenders->elasticMapping();
-//            if ((int)$result['code'] != 200) {
-//                Yii::error("Elastic mapping tenders error", 'console-msg');
-//                exit(0);
-//            }
-//            $tenders->indexItemsToElastic();
-//
-//        } catch (HttpException $e) {
-//            Yii::error($e->getMessage(), 'console-msg');
-//            exit(0);
-//        }
-//
-//    }
+
+    /**
+     *
+     */
+    private function indexTenders()
+    {
+        $elastic_url = Yii::$app->params['elastic_url'];
+        $elastic_index = Yii::$app->params['elastic_tenders_index'];
+        $elastic_type = Yii::$app->params['elastic_tenders_type'];
+
+        try {
+            $elastic = new Elastic($elastic_url, $elastic_index, $elastic_type);
+            $result = $elastic->dropIndex();
+
+            if ((int)$result['code'] != 200 && (int)$result['code'] != 404) {
+                Yii::error("Elastic index " . $elastic_index . " error. Code: " . $result['code'], 'console-msg');
+                exit(0);
+            }
+
+            $tenders = new Tenders();
+            $result = $tenders->elasticMapping();
+            if ((int)$result['code'] != 200) {
+                Yii::error("Elastic mapping " . $elastic_index . " error", 'console-msg');
+                exit(0);
+            }
+
+            $tenders->indexItemsToElastic();
+
+        } catch (HttpException $e) {
+            Yii::error($e->getMessage(), 'console-msg');
+            exit(0);
+        }
+    }
 
 }

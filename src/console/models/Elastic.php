@@ -12,51 +12,53 @@ use yii\web\HttpException;
  */
 Class Elastic
 {
+    private $url;
     private $index;
-    private $elastic_url;
+    private $type;
 
     /**
      * Elastic constructor.
+     * @param $elastic_url
+     * @param $elastic_index
+     * @param $elastic_type
      * @throws ForbiddenHttpException
      */
-    public function __construct()
+    public function __construct($elastic_url, $elastic_index, $elastic_type)
     {
-        $this->index = Yii::$app->params['elastic_index'] ?? "";
-        $this->elastic_url = Yii::$app->params['elastic_url'] ?? "";
-        if (!$this->index || !$this->elastic_url) {
+        if (!$elastic_url || !$elastic_index || !$elastic_type) {
             throw new ForbiddenHttpException("Elastic params not set.");
         }
+        $this->url = $elastic_url;
+        $this->index = $elastic_index;
+        $this->type = $elastic_type;
     }
 
     /**
      * @param $jsonMap
-     * @param $type
      * @return array
-     * @throws \yii\web\HttpException
+     * @throws HttpException
      */
-    public function mapping($jsonMap, $type)
+    public function mapping($jsonMap)
     {
-        $elastic_url = Yii::$app->params['elastic_url'] ?? "";
-        $elastic_request_url = $this->elastic_url . "/" . $this->index;
+        $elastic_request_url = $this->url . "/" . $this->index;
         $curl_options = ['HTTPHEADER' => ['Content-Type:application/json']];
         // try to create index
         $result = Curl::sendRequest($elastic_request_url, "PUT", "", $curl_options);
         // mapping
-        $elastic_request_url = $elastic_url . "/" . $this->index . "/_mapping/" . $type;
+        $elastic_request_url = $this->url . "/" . $this->index . "/_mapping/" . $this->type;
         $result = Curl::sendRequest($elastic_request_url, "PUT", $jsonMap, $curl_options);
         return $result;
     }
 
     /**
-     * @param $type
      * @param $docArr
      * @return array
      * @throws HttpException
      */
-    public function indexBudget($docArr, $type)
+    public function indexBudget($docArr)
     {
         $elastic_url = Yii::$app->params['elastic_url'] ?? "";
-        $elastic_request_url = $elastic_url . "/" . $this->index . "/" . $type . "/";
+        $elastic_request_url = $elastic_url . "/" . $this->index . "/" . $this->type . "/";
         $data_string = json_encode($docArr);
         $curl_options = ['HTTPHEADER' => ['Content-Type:application/json']];
         $result = Curl::sendRequest($elastic_request_url . $docArr['ocid'], "POST", $data_string, $curl_options);
@@ -65,14 +67,13 @@ Class Elastic
 
     /**
      * @param $docArr
-     * @param $type
      * @return array
      * @throws HttpException
      */
-    public function indexTender($docArr, $type)
+    public function indexTender($docArr)
     {
         $elastic_url = Yii::$app->params['elastic_url'] ?? "";
-        $elastic_request_url = $elastic_url . "/" . $this->index . "/" . $type . "/";
+        $elastic_request_url = $elastic_url . "/" . $this->index . "/" . $this->type . "/";
         $data_string = json_encode($docArr);
         $curl_options = ['HTTPHEADER' => ['Content-Type:application/json']];
         $result = Curl::sendRequest($elastic_request_url . $docArr['tender_id'], "POST", $data_string, $curl_options);
@@ -81,9 +82,10 @@ Class Elastic
 
     /**
      * @return array
-     * @throws \yii\web\HttpException
+     * @throws HttpException
      */
     public function dropIndex() {
+
         Yii::info("Deleting index: " . $this->index, 'console-msg');
         $elastic_url = Yii::$app->params['elastic_url'] ?? "";
         $elastic_request_url = $elastic_url . "/" . $this->index;
@@ -91,43 +93,5 @@ Class Elastic
         $result = Curl::sendRequest($elastic_request_url, "DELETE", "", $curl_options);
         return $result;
     }
-//
-//    /**
-//     * @param $type
-//     * @return array
-//     * @throws HttpException
-//     */
-//    public function dropTypeData($type) {
-//        if (!$type) {
-//            Yii::error("Type param is empty ", 'console-msg');
-//            exit(0);
-//        }
-//        Yii::info("Deleting type: " . $this->index . "/" . $type, 'console-msg');
-//        $elastic_url = Yii::$app->params['elastic_url'] ?? "";
-//        $elastic_request_url = $elastic_url . "/" . $this->index . "/" . $type . "/_delete_by_query";
-//        $json = '{"query": {"match_all": {}}}';
-//        $curl_options = ['HTTPHEADER' => ['Content-Type:application/json']];
-//        $result = Curl::sendRequest($elastic_request_url, "POST", $json, $curl_options);
-//        return $result;
-//    }
-//
-//    /**
-//     * @param $type
-//     * @return array
-//     * @throws HttpException
-//     */
-//    public function dropTypeMapping($type) {
-//        if (!$type) {
-//            Yii::error("Type param is empty ", 'console-msg');
-//            exit(0);
-//        }
-//        Yii::info("Deleting type: " . $this->index . "/" . $type, 'console-msg');
-//        $elastic_url = Yii::$app->params['elastic_url'] ?? "";
-//        $elastic_request_url = $elastic_url . "/" . $this->index . "/" . $type . "/_delete_by_query";
-//        $json = '{"query": {"match_all": {}}}';
-//        $curl_options = ['HTTPHEADER' => ['Content-Type:application/json']];
-//        $result = Curl::sendRequest($elastic_request_url, "POST", $json, $curl_options);
-//        return $result;
-//    }
 
 }
