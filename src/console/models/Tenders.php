@@ -13,8 +13,7 @@ use PDOException;
  */
 class Tenders extends ActiveRecord
 {
-    const CDU_V_1 = 'mtender1';
-    const CDU_V_2 = 'mtender2';
+    const TYPE_PROZORRO = 'mtender1';
 
     private $elastic_type;
 
@@ -132,7 +131,7 @@ class Tenders extends ActiveRecord
         $response = $tender['response'];
         $jsonArr = json_decode($response, 1);
 
-        if (isset($jsonArr['records'])) {
+        if ($tender['cdu-v'] != self::TYPE_PROZORRO) {
             // ocds tender
             $records = $jsonArr['records'];
             $docArr = [];
@@ -145,8 +144,9 @@ class Tenders extends ActiveRecord
                         'tender_id' => $tender_id,
                         'title' => $title,
                         'description' => $description,
-                        'cdu-v' => self::CDU_V_2,
+                        'cdu-v' => $tender['cdu-v'],
                     ];
+
                     break;
                 }
             }
@@ -159,7 +159,7 @@ class Tenders extends ActiveRecord
                 'tender_id' => $tender_id,
                 'title' => $title,
                 'description' => $description,
-                'cdu-v' => self::CDU_V_1,
+                'cdu-v' => $tender['cdu-v'],
             ];
         }
         return $docArr;
