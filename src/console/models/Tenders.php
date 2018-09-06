@@ -1,13 +1,20 @@
 <?php
 namespace console\models;
-use yii\db\ActiveRecord;
+
 use Yii;
+use yii\db\Exception;
+use yii\db\ActiveRecord;
 use yii\web\ForbiddenHttpException;
 use PDOException;
-use yii\db\Exception;
 
+/**
+ * Class Tenders
+ * @package console\models
+ */
 class Tenders extends ActiveRecord
 {
+    const TYPE_PROZORRO = 'mtender1';
+
     private $elastic_type;
 
     /**
@@ -33,7 +40,6 @@ class Tenders extends ActiveRecord
         return '{{%tenders}}';
     }
 
-
     /**
      * @return mixed|\yii\db\Connection
      */
@@ -54,6 +60,7 @@ class Tenders extends ActiveRecord
                 'tender_id' => ['type' => 'keyword'],
                 'title' => ['type' => 'text'],
                 'description' => ['type' => 'text'],
+                'cdu-v' => ['type' => 'keyword'],
             ]
         ];
         $jsonMap = json_encode($mapArr);
@@ -124,7 +131,7 @@ class Tenders extends ActiveRecord
         $response = $tender['response'];
         $jsonArr = json_decode($response, 1);
 
-        if (isset($jsonArr['records'])) {
+        if ($tender['cdu-v'] != self::TYPE_PROZORRO) {
             // ocds tender
             $records = $jsonArr['records'];
             $docArr = [];
@@ -133,7 +140,13 @@ class Tenders extends ActiveRecord
                     $tender_id = $record['ocid'];
                     $title = ($record['compiledRelease']['tender']['title']) ?? "";
                     $description = ($record['compiledRelease']['tender']['description']) ?? "";
-                    $docArr = ['tender_id' => $tender_id, 'title' => $title, 'description' => $description];
+                    $docArr = [
+                        'tender_id' => $tender_id,
+                        'title' => $title,
+                        'description' => $description,
+                        'cdu-v' => $tender['cdu-v'],
+                    ];
+
                     break;
                 }
             }
@@ -142,7 +155,12 @@ class Tenders extends ActiveRecord
             $tender_id = $jsonArr['data']['id'];
             $title = $jsonArr['data']['title'] ?? '';
             $description = $jsonArr['data']['description'] ?? '';
-            $docArr = ['tender_id' => $tender_id, 'title' => $title, 'description' => $description];
+            $docArr = [
+                'tender_id' => $tender_id,
+                'title' => $title,
+                'description' => $description,
+                'cdu-v' => $tender['cdu-v'],
+            ];
         }
         return $docArr;
     }
