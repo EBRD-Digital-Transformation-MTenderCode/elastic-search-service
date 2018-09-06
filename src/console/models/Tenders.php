@@ -61,6 +61,7 @@ class Tenders extends ActiveRecord
                 'title' => ['type' => 'text'],
                 'description' => ['type' => 'text'],
                 'cdu-v' => ['type' => 'keyword'],
+                'search' => ['type' => 'text'],
             ]
         ];
         $jsonMap = json_encode($mapArr);
@@ -117,9 +118,7 @@ class Tenders extends ActiveRecord
             // delay 0.3 sec
             usleep(300000);
         }
-
     }
-
 
     /**
      * getting from response-field of a document for elastic
@@ -129,11 +128,11 @@ class Tenders extends ActiveRecord
      */
     public function getDocForElastic($tender) {
         $response = $tender['response'];
-        $jsonArr = json_decode($response, 1);
+        $data = json_decode($response, 1);
 
         if ($tender['cdu-v'] != self::TYPE_PROZORRO) {
             // ocds tender
-            $records = $jsonArr['records'];
+            $records = $data['records'];
             $docArr = [];
             foreach ($records as $record) {
                 if ($record['ocid'] == $tender['tender_id']) {
@@ -152,17 +151,49 @@ class Tenders extends ActiveRecord
             }
         } else {
             // prozorro tender
-            $tender_id = $jsonArr['data']['id'];
-            $title = $jsonArr['data']['title'] ?? '';
-            $description = $jsonArr['data']['description'] ?? '';
+            $search = [];
+            $title = '';
+            $description = '';
+            $tender_id = $data['data']['id'];
+
+            if (isset($data['data']['title']) && $data['data']['title']) {
+                $title = $data['data']['title'];
+                $search[] = $title;
+            }
+
+            if (isset($data['data']['description']) && $data['data']['description']) {
+                $description = $data['data']['description'];
+                $search[] = $description;
+            }
+
+            if (isset($data['data']['lots']) && is_array($data['data']['lots'])) {
+                foreach ($data['data']['lots'] as $lot) {
+                    if (isset($lot['title']) && $lot['title']) {
+                        $search[] = $lot['title'];
+                    }
+
+                    if (isset($lot['description']) && $lot['description']) {
+                        $search[] = $lot['description'];
+                    }
+                }
+            }
+
+            if (isset($data['data']['items']) && is_array($data['data']['items'])) {
+                foreach ($data['data']['items'] as $item) {
+                    if (isset($item['description']) && $item['description']) {
+                        $search[] = $item['description'];
+                    }
+                }
+            }
+
             $docArr = [
                 'tender_id' => $tender_id,
                 'title' => $title,
                 'description' => $description,
                 'cdu-v' => $tender['cdu-v'],
+                'search' => $search,
             ];
         }
         return $docArr;
     }
-
 }
