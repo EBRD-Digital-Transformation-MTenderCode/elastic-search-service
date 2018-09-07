@@ -3,42 +3,15 @@ namespace console\models;
 
 use Yii;
 use yii\db\Exception;
-use yii\db\ActiveRecord;
-use yii\web\ForbiddenHttpException;
 use PDOException;
 
 /**
  * Class Tenders
  * @package console\models
  */
-class Tenders extends ActiveRecord
+class Tenders
 {
     const TYPE_PROZORRO = 'mtender1';
-
-    private $elastic_type;
-
-    /**
-     * Tenders constructor.
-     * @param array $config
-     * @throws ForbiddenHttpException
-     */
-    public function __construct(array $config = [])
-    {
-        $this->elastic_type = Yii::$app->params['elastic_tenders_type'] ?? "";
-        if (!$this->elastic_type) {
-            throw new ForbiddenHttpException("Elastic params not set.");
-        }
-
-        parent::__construct($config);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return '{{%tenders}}';
-    }
 
     /**
      * @return mixed|\yii\db\Connection
@@ -61,11 +34,15 @@ class Tenders extends ActiveRecord
                 'title' => ['type' => 'text'],
                 'description' => ['type' => 'text'],
                 'cdu-v' => ['type' => 'keyword'],
+                'search' => ['type' => 'text'],
             ]
         ];
         $jsonMap = json_encode($mapArr);
-        $elastic = new Elastic();
-        $result = $elastic->mapping($jsonMap, $this->elastic_type);
+        $url = Yii::$app->params['elastic_url'];
+        $index = Yii::$app->params['elastic_tenders_index'];
+        $type = Yii::$app->params['elastic_tenders_type'];
+        $elastic = new Elastic($url, $index, $type);
+        $result = $elastic->mapping($jsonMap);
         return $result;
     }
 
@@ -80,7 +57,10 @@ class Tenders extends ActiveRecord
         Yii::info("Indexing tenders", 'console-msg');
         $limit = 25;
         $offset = 0;
-        $elastic = new Elastic();
+        $url = Yii::$app->params['elastic_url'];
+        $index = Yii::$app->params['elastic_tenders_index'];
+        $type = Yii::$app->params['elastic_tenders_type'];
+        $elastic = new Elastic($url, $index, $type);
         while (true) {
             try {
                 // block the update of selected records in the database
@@ -94,7 +74,7 @@ class Tenders extends ActiveRecord
                 foreach ($tenders as $tender) {
                     $docArr = $this->getDocForElastic($tender);
                     if (!empty($docArr)) {
-                        $result = $elastic->indexTender($docArr, $this->elastic_type);
+                        $result = $elastic->indexTender($docArr);
 
                         if ($result['code'] != 200 && $result['code'] != 201 && $result['code'] != 100) {
                             Yii::error("Elastic indexing budgets error. Http-code: " . $result['code'], 'sync-info');
@@ -117,9 +97,7 @@ class Tenders extends ActiveRecord
             // delay 0.3 sec
             usleep(300000);
         }
-
     }
-
 
     /**
      * getting from response-field of a document for elastic
@@ -129,11 +107,11 @@ class Tenders extends ActiveRecord
      */
     public function getDocForElastic($tender) {
         $response = $tender['response'];
-        $jsonArr = json_decode($response, 1);
+        $data = json_decode($response, 1);
 
         if ($tender['cdu-v'] != self::TYPE_PROZORRO) {
             // ocds tender
-            $records = $jsonArr['records'];
+            $records = $data['records'];
             $docArr = [];
             foreach ($records as $record) {
                 if ($record['ocid'] == $tender['tender_id']) {
@@ -152,17 +130,49 @@ class Tenders extends ActiveRecord
             }
         } else {
             // prozorro tender
-            $tender_id = $jsonArr['data']['id'];
-            $title = $jsonArr['data']['title'] ?? '';
-            $description = $jsonArr['data']['description'] ?? '';
+            $search = [];
+            $title = '';
+            $description = '';
+            $tender_id = $data['data']['id'];
+
+            if (isset($data['data']['title']) && $data['data']['title']) {
+                $title = $data['data']['title'];
+                $search[] = $title;
+            }
+
+            if (isset($data['data']['description']) && $data['data']['description']) {
+                $description = $data['data']['description'];
+                $search[] = $description;
+            }
+
+            if (isset($data['data']['lots']) && is_array($data['data']['lots'])) {
+                foreach ($data['data']['lots'] as $lot) {
+                    if (isset($lot['title']) && $lot['title']) {
+                        $search[] = $lot['title'];
+                    }
+
+                    if (isset($lot['description']) && $lot['description']) {
+                        $search[] = $lot['description'];
+                    }
+                }
+            }
+
+            if (isset($data['data']['items']) && is_array($data['data']['items'])) {
+                foreach ($data['data']['items'] as $item) {
+                    if (isset($item['description']) && $item['description']) {
+                        $search[] = $item['description'];
+                    }
+                }
+            }
+
             $docArr = [
                 'tender_id' => $tender_id,
                 'title' => $title,
                 'description' => $description,
                 'cdu-v' => $tender['cdu-v'],
+                'search' => $search,
             ];
         }
         return $docArr;
     }
-
 }

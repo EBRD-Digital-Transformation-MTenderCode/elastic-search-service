@@ -156,10 +156,24 @@
                     },
                     {
                         "in":"query",
+                        "name":"search",
+                        "type":"string",
+                        "required":false,
+                        "description": "поле полнотекстового поиска"
+                    },
+                    {
+                        "in": "query",
+                        "name": "search_strict",
+                        "type": "integer",
+                        "enum": [0, 1],
+                        "description": "признак строгого соответствия"
+                    },
+                    {
+                        "in":"query",
                         "name":"pageSize",
                         "type":"string",
                         "required":false,
-                        "description": "Кол-во записей на странице (значение -1 выводит все записи)"
+                        "description": "Кол-во записей на странице"
                     },
                     {
                         "in":"query",
