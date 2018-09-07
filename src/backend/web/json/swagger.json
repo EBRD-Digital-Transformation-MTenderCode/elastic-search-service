@@ -173,7 +173,7 @@
                         "name":"pageSize",
                         "type":"string",
                         "required":false,
-                        "description": "Кол-во записей на странице (значение -1 выводит все записи)"
+                        "description": "Кол-во записей на странице"
                     },
                     {
                         "in":"query",

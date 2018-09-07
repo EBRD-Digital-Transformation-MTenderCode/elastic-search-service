@@ -31,7 +31,7 @@ class TenderSearch extends Tender
     {
         return [
             [['ocid', 'title', 'description', 'search'], 'string'],
-            [['pageSize', 'page'], 'integer'],
+            [['pageSize', 'page'], 'integer', 'min' => 1],
         ];
     }
 
