@@ -1,15 +1,12 @@
 <?php
+namespace rest\modules\v1\models;
 
-namespace rest\modules\v1\models\Tenders;
-
-
-use rest\modules\v1\ElasticSearchModel;
 use yii\base\Model;
 use Yii;
 
-class Tenders extends Model
+class Budgets extends Model
 {
-    public $tender_id;
+    public $ocid;
     public $title;
     public $description;
     public $search;
@@ -20,7 +17,7 @@ class Tenders extends Model
     public function rules()
     {
         return [
-            [['tender_id', 'title', 'description', 'search'], 'string'],
+            [['ocid', 'title', 'description', 'search'], 'string'],
         ];
     }
 
@@ -31,8 +28,8 @@ class Tenders extends Model
      */
     public function search($params)
     {
-        $index = Yii::$app->params['elastic_tenders_index'];
-        $type = Yii::$app->params['elastic_tenders_type'];
+        $index = Yii::$app->params['elastic_budgets_index'];
+        $type = Yii::$app->params['elastic_budgets_type'];
 
         $this->setAttributes($params);
         $searchAttributes = array_diff($this->getAttributes(), ['']);

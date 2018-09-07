@@ -1,7 +1,7 @@
 <?php
 
 
-namespace rest\modules\v1;
+namespace rest\modules\v1\models;
 
 use rest\components\dataProviders\ArrayWithoutSortDataProvider;
 use yii\base\Model;
