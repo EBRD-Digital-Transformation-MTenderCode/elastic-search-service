@@ -4,3 +4,4 @@
 ./yii reindex-elastic/all
 ./yii reindex-elastic/budgets
 ./yii reindex-elastic/tenders
+./yii mapping-elastic
