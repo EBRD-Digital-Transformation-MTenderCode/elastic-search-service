@@ -22,6 +22,7 @@ class Budgets
         Yii::info("Mapping budgets", 'console-msg');
         $mapArr = [
             'dynamic' => 'strict',
+            '_all' => ['enabled' => false],
             'properties' => [
                 'ocid' => ['type' => 'keyword'],
                 'title' => ['type' => 'text'],

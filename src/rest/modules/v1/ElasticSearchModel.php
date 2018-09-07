@@ -1,28 +1,23 @@
 <?php
-namespace rest\modules\v1\models\Tenders;
 
-use Yii;
-use ustudio\service_mandatory\ServiceException;
+
+namespace rest\modules\v1;
+
 use rest\components\dataProviders\ArrayWithoutSortDataProvider;
+use yii\base\Model;
 use yii\httpclient\Exception;
 use yii\httpclient\Client;
+use ustudio\service_mandatory\ServiceException;
+use Yii;
 
-/**
- * Class TenderSearch
- * @package common\models
- */
-class TenderSearch extends Tender
+class ElasticSearchModel extends Model
 {
-    const FULL_TEXT_ATTRIBUTES = ['search'];
     const STRICT_SUFFIX = '_strict';
     const CHAR_LIMIT = 2;
 
-    public $ocid;
-    public $title;
-    public $description;
-    public $search;
     public $pageSize;
     public $page;
+    public $search_strict;
 
     /**
      * @inheritdoc
@@ -30,19 +25,22 @@ class TenderSearch extends Tender
     public function rules()
     {
         return [
-            [['ocid', 'title', 'description', 'search'], 'string'],
             [['pageSize', 'page'], 'integer', 'min' => 1],
+            [['search_strict'], 'boolean'],
+            [['search_strict'], 'default', 'value' => 0],
         ];
     }
 
     /**
-     * @param $params
-     * @return \rest\components\dataProviders\ArrayWithoutSortDataProvider
+     * @param array $searchAttributes
+     * @param string $index
+     * @param string $type
+     * @return ArrayWithoutSortDataProvider
      * @throws ServiceException
      */
-    public function search($params)
+    public function search(array $searchAttributes, string $index, string $type)
     {
-        $this->setAttributes($params);
+        $this->setAttributes(Yii::$app->request->get());
 
         if (!$this->validate()) {
             throw new ServiceException('Data Validation Failed', 400, [
@@ -50,59 +48,27 @@ class TenderSearch extends Tender
             ]);
         }
 
-        $searchAttributes = [];
-
-        if ($this->ocid) {
-            $searchAttributes['ocid'] = $this->ocid;
-        }
-
-        if ($this->title) {
-            $searchAttributes['title'] = $this->title;
-        }
-
-        if ($this->description) {
-            $searchAttributes['description'] = $this->description;
-        }
-
-        if ($this->search) {
-            $searchAttributes['search'] = $this->search;
-        }
-
-        return $this->elasticSearch(
-            $searchAttributes,
-            $params,
-            Yii::$app->request->getQueryParam('page'),
-            Yii::$app->request->getQueryParam('pageSize')
-        );
-    }
-
-    /**
-     * @param $searchAttributes
-     * @param array $params
-     * @param int $page
-     * @param null $pageSize
-     * @return ArrayWithoutSortDataProvider
-     * @throws ServiceException
-     */
-    private function elasticSearch($searchAttributes, $params = [], $page = 1, $pageSize = null)
-    {
-        $client = new Client(['transport' => 'yii\httpclient\CurlTransport']);
         $url = Yii::$app->params['elastic_url'] . DIRECTORY_SEPARATOR
-            . Yii::$app->params['elastic_tenders_index'] . DIRECTORY_SEPARATOR
-            . Yii::$app->params['elastic_tenders_type'] . DIRECTORY_SEPARATOR . '_search';
+            . $index . DIRECTORY_SEPARATOR
+            . $type . DIRECTORY_SEPARATOR . '_search';
 
+        // формирование json для эластик
         if (!empty($searchAttributes)) {
             $matches = [];
 
             foreach ($searchAttributes as $key => $value) {
-                if (in_array($key, self::FULL_TEXT_ATTRIBUTES) && isset($params[$key . self::STRICT_SUFFIX]) && $params[$key . self::STRICT_SUFFIX]) {
+                //  если выбрано строгое соответствие
+                $strict_mode = isset($this->{$key . self::STRICT_SUFFIX}) && $this->{$key . self::STRICT_SUFFIX};
+                if ($strict_mode) {
                     if (mb_strlen($value) > self::CHAR_LIMIT) {
                         $matches[] = '{"match_phrase":{"' . $key . '":"' . $value . '"}}';
                     }
+                    //  не строгое
                 } else {
                     $words = explode(' ', $value);
                     $filteredWords = [];
 
+                    // "отсечение" коротких слов
                     foreach ($words as $word) {
                         if (mb_strlen($word) > self::CHAR_LIMIT) {
                             $filteredWords[] = $word;
@@ -118,14 +84,17 @@ class TenderSearch extends Tender
             $query = '{}';
         }
 
-        $pageSize = $pageSize ? $pageSize : Yii::$app->params['elastic_page_size'];
-        $page = $page ? $page : 1;
+        // пагинация
+        $pageSize = $this->pageSize ?? Yii::$app->params['elastic_page_size'];
+        $page = $this->page ??  1;
         $pagination = '"from":' . ($page * $pageSize - $pageSize) . ',"size":' . $pageSize . ',';
+        $data_string = '{' . $pagination . '"query":' . $query . '}';
 
+        $client = new Client(['transport' => 'yii\httpclient\CurlTransport']);
         $response = $client->createRequest()
             ->setMethod('GET')
             ->setUrl($url)
-            ->setContent('{' . $pagination . '"query":' . $query . '}')
+            ->setContent($data_string)
             ->setOptions(['HTTPHEADER' => ['Content-Type:application/json']]);
 
         try {
@@ -134,14 +103,19 @@ class TenderSearch extends Tender
             throw new ServiceException($exception->getMessage(), 500);
         }
 
+
+        // формирование результата поиска
         $data = json_decode($result->getContent(), true);
+
         $result = [];
         $totalCount = 0;
 
         if (isset($data['hits'])) {
             $totalCount = $data['hits']['total'];
             foreach ($data['hits']['hits'] as $hit) {
-                $result[] = $hit['_source'];
+                $item = $hit['_source'];
+                $item['_score'] = $hit['_score'] ?? 0;
+                $result[] = $item;
             }
         }
 

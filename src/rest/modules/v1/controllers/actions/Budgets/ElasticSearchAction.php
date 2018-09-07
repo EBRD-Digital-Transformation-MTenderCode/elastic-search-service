@@ -1,7 +1,7 @@
 <?php
 namespace rest\modules\v1\controllers\actions\Budgets;
 
-use rest\modules\v1\models\Budgets\BudgetSearch;
+use rest\modules\v1\models\Budgets\Budgets;
 use Yii;
 use rest\components\api\actions\Action;
 
@@ -18,6 +18,7 @@ class ElasticSearchAction extends Action
      */
     public function run()
     {
-        return (new BudgetSearch())->search(Yii::$app->request->get());
+        //return (new BudgetSearch())->search(Yii::$app->request->get());
+        return (new Budgets())->search(Yii::$app->request->get());
     }
 }
