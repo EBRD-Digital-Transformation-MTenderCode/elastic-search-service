@@ -65,7 +65,7 @@ class Tenders
             try {
                 // block the update of selected records in the database
                 $transaction = Yii::$app->db_tenders->beginTransaction();
-                $tenders = Yii::$app->db_tenders->createCommand('SELECT t.*, c.alias AS "cdu-v" FROM tenders t LEFT JOIN cdu c ON c.id = t.cdu_id FOR UPDATE LIMIT {$limit} OFFSET {$offset}')->queryAll();
+                $tenders = Yii::$app->db_tenders->createCommand("SELECT t.*, c.alias AS \"cdu-v\" FROM tenders t LEFT JOIN cdu c ON c.id = t.cdu_id FOR UPDATE LIMIT {$limit} OFFSET {$offset}")->queryAll();
                 $countTenders = count($tenders);
                 if (!$countTenders) {
                     break;
