@@ -29,6 +29,7 @@ class Tenders
         Yii::info("Mapping tenders", 'console-msg');
         $mapArr = [
             'dynamic' => 'strict',
+            '_all' => ['enabled' => false],
             'properties' => [
                 'tender_id' => ['type' => 'keyword'],
                 'title' => ['type' => 'text'],

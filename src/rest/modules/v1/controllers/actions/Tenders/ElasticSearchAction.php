@@ -1,7 +1,7 @@
 <?php
 namespace rest\modules\v1\controllers\actions\Tenders;
 
-use rest\modules\v1\models\Tenders\TenderSearch;
+use rest\modules\v1\models\Tenders;
 use Yii;
 use rest\components\api\actions\Action;
 
@@ -18,6 +18,6 @@ class ElasticSearchAction extends Action
      */
     public function run()
     {
-        return (new TenderSearch())->search(Yii::$app->request->get());
+        return (new Tenders())->search(Yii::$app->request->get());
     }
 }
