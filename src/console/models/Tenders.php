@@ -3,6 +3,7 @@ namespace console\models;
 
 use Yii;
 use yii\db\Exception;
+use yii\helpers\ArrayHelper;
 use PDOException;
 
 /**
@@ -65,14 +66,15 @@ class Tenders
             try {
                 // block the update of selected records in the database
                 $transaction = Yii::$app->db_tenders->beginTransaction();
-                $tenders = Yii::$app->db_tenders->createCommand("SELECT t.*, c.alias AS \"cdu-v\" FROM tenders t LEFT JOIN cdu c ON c.id = t.cdu_id FOR UPDATE LIMIT {$limit} OFFSET {$offset}")->queryAll();
+                $tenders = Yii::$app->db_tenders->createCommand("SELECT * FROM tenders FOR UPDATE LIMIT {$limit} OFFSET {$offset}")->queryAll();
+                $cdu = ArrayHelper::map(Yii::$app->db_tenders->createCommand("SELECT * FROM cdu")->queryAll(), 'id', 'alias');
                 $countTenders = count($tenders);
                 if (!$countTenders) {
                     break;
                 }
                 $offset += $limit;
                 foreach ($tenders as $tender) {
-                    $docArr = $this->getDocForElastic($tender);
+                    $docArr = $this->getDocForElastic($tender, $cdu);
                     if (!empty($docArr)) {
                         $result = $elastic->indexTender($docArr);
 
@@ -103,13 +105,14 @@ class Tenders
      * getting from response-field of a document for elastic
      *
      * @param $tender
+     * @param $cdu
      * @return array
      */
-    public function getDocForElastic($tender) {
+    public function getDocForElastic($tender, $cdu) {
         $response = $tender['response'];
         $data = json_decode($response, 1);
 
-        if ($tender['cdu-v'] != self::TYPE_PROZORRO) {
+        if (isset($cdu[$tender['cdu_id']]) && $cdu[$tender['cdu_id']] != self::TYPE_PROZORRO) {
             // ocds tender
             $records = $data['records'];
             $docArr = [];
@@ -122,7 +125,7 @@ class Tenders
                         'tender_id' => $tender_id,
                         'title' => $title,
                         'description' => $description,
-                        'cdu-v' => $tender['cdu-v'],
+                        'cdu-v' => $cdu[$tender['cdu_id']] ?? '',
                     ];
 
                     break;
@@ -169,7 +172,7 @@ class Tenders
                 'tender_id' => $tender_id,
                 'title' => $title,
                 'description' => $description,
-                'cdu-v' => $tender['cdu-v'],
+                'cdu-v' => $cdu[$tender['cdu_id']] ?? '',
                 'search' => $search,
             ];
         }
