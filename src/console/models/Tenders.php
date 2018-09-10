@@ -65,9 +65,9 @@ class Tenders
             try {
                 // block the update of selected records in the database
                 $transaction = Yii::$app->db_tenders->beginTransaction();
-                $tenders = Yii::$app->db_tenders->createCommand("SELECT * FROM tenders FOR UPDATE LIMIT {$limit} OFFSET {$offset}")->queryAll();
-                $countBudgets = count($tenders);
-                if (!$countBudgets) {
+                $tenders = Yii::$app->db_tenders->createCommand('SELECT t.*, c.alias AS "cdu-v" FROM tenders t LEFT JOIN cdu c ON c.id = t.cdu_id FOR UPDATE LIMIT {$limit} OFFSET {$offset}')->queryAll();
+                $countTenders = count($tenders);
+                if (!$countTenders) {
                     break;
                 }
                 $offset += $limit;
@@ -77,7 +77,7 @@ class Tenders
                         $result = $elastic->indexTender($docArr);
 
                         if ($result['code'] != 200 && $result['code'] != 201 && $result['code'] != 100) {
-                            Yii::error("Elastic indexing budgets error. Http-code: " . $result['code'], 'sync-info');
+                            Yii::error("Elastic indexing tenders error. Http-code: " . $result['code'], 'sync-info');
                             exit(0);
                         }
 
@@ -93,7 +93,7 @@ class Tenders
                 Yii::error("DB exception. " . $exception->getMessage(), 'console-msg');
                 exit(0);
             }
-            Yii::info("Updated {$countBudgets} tenders", 'console-msg');
+            Yii::info("Updated {$countTenders} tenders", 'console-msg');
             // delay 0.3 sec
             usleep(300000);
         }
