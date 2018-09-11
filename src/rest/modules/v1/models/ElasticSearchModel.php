@@ -41,7 +41,12 @@ class ElasticSearchModel extends Model
             [['pageSize', 'page'], 'integer', 'min' => 1],
             [['search_strict'], 'boolean'],
             [['search_strict'], 'default', 'value' => 0],
-            ['buyer_region', JsonListValidator::className(), 'skipOnEmpty' => true],
+            [[
+                'buyer_region',
+                'procedure_type',
+                'procedure_status',
+                'classification'
+            ], JsonListValidator::className(), 'skipOnEmpty' => true],
         ];
     }
 
