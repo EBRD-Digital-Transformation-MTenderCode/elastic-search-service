@@ -1,10 +1,9 @@
 <?php
 namespace rest\modules\v1\controllers\actions\Tenders;
 
-use rest\modules\v1\models\Tenders;
 use Yii;
 use rest\components\api\actions\Action;
-
+use rest\modules\v1\models\Tenders;
 
 /**
  * Class SearchAction

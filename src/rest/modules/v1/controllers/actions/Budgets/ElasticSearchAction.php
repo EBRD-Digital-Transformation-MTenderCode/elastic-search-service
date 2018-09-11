@@ -1,10 +1,9 @@
 <?php
 namespace rest\modules\v1\controllers\actions\Budgets;
 
-use rest\modules\v1\models\Budgets;
 use Yii;
 use rest\components\api\actions\Action;
-
+use rest\modules\v1\models\Budgets;
 
 /**
  * Class ViewAction

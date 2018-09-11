@@ -5,7 +5,6 @@ use Yii;
 use yii\base\Model;
 use yii\httpclient\Client;
 use yii\httpclient\Exception;
-use common\components\validators\JsonListValidator;
 use rest\components\dataProviders\ArrayWithoutSortDataProvider;
 use ustudio\service_mandatory\ServiceException;
 
@@ -15,23 +14,43 @@ use ustudio\service_mandatory\ServiceException;
  */
 class ElasticSearchModel extends Model
 {
-    const FIELDS_FULLTEXT = ['search', 'title', 'description'];
-    const FIELDS_RANGE = ['budget_from', 'budget_to'];
-    const FIELDS_SYSTEM = ['search_strict', 'page', 'pageSize'];
     const STRICT_SUFFIX = '_strict';
     const CHAR_LIMIT = 2;
 
-    public $tender_id;
+    public $title;
+    public $description;
     public $pageSize;
     public $page;
-    public $search_strict;
-    public $buyer_region;
-    public $procedure_number;
-    public $procedure_type;
-    public $procedure_status;
-    public $budget_from;
-    public $budget_to;
-    public $classification;
+
+    protected $index;
+    protected $type;
+
+    /**
+     * Get fulltext search attributes
+     * @return array
+     */
+    public static function fieldsFullText()
+    {
+        return ['title', 'description'];
+    }
+
+    /**
+     * Get range search attributes
+     * @return array
+     */
+    public static function fieldsRange()
+    {
+        return [];
+    }
+
+    /**
+     * Get disabled for search attributes
+     * @return array
+     */
+    public static function fieldsSystem()
+    {
+        return ['page', 'pageSize'];
+    }
 
     /**
      * @inheritdoc
@@ -39,27 +58,18 @@ class ElasticSearchModel extends Model
     public function rules()
     {
         return [
+            [['title', 'description'], 'string'],
             [['pageSize', 'page'], 'integer', 'min' => 1],
-            [['search_strict'], 'boolean'],
-            [['search_strict'], 'default', 'value' => 0],
-            [[
-                'buyer_region',
-                'procedure_type',
-                'procedure_status',
-                'classification'
-            ], JsonListValidator::className(), 'skipOnEmpty' => true],
-            [['budget_from', 'budget_to'], 'double'],
         ];
     }
 
     /**
-     * @param array $searchAttributes
-     * @param string $index
-     * @param string $type
+     * Search in elastic by attributes
+     * @param $searchAttributes
      * @return ArrayWithoutSortDataProvider
      * @throws ServiceException
      */
-    public function search(array $searchAttributes, string $index, string $type)
+    public function search($searchAttributes)
     {
         $this->setAttributes($searchAttributes);
 
@@ -70,8 +80,8 @@ class ElasticSearchModel extends Model
         }
 
         $url = Yii::$app->params['elastic_url'] . DIRECTORY_SEPARATOR
-            . $index . DIRECTORY_SEPARATOR
-            . $type . DIRECTORY_SEPARATOR . '_search';
+            . $this->index . DIRECTORY_SEPARATOR
+            . $this->type . DIRECTORY_SEPARATOR . '_search';
 
         // формирование json для эластик
         if (!empty($searchAttributes)) {
@@ -80,7 +90,7 @@ class ElasticSearchModel extends Model
             $filterRangeItems = [];
 
             foreach ($searchAttributes as $key => $value) {
-                if (in_array($key, self::FIELDS_FULLTEXT)) {
+                if (in_array($key, $this->fieldsFullText())) {
                     //  если выбрано строгое соответствие
                     $strict_mode = isset($this->{$key . self::STRICT_SUFFIX}) && $this->{$key . self::STRICT_SUFFIX};
                     if ($strict_mode) {
@@ -101,10 +111,10 @@ class ElasticSearchModel extends Model
 
                         $mustItems[] = '{"match":{"' . $key . '":"' . implode(' ', $filteredWords) . '"}}';
                     }
-                } elseif (in_array($key, self::FIELDS_RANGE)) {
+                } elseif (in_array($key, $this->fieldsRange())) {
                     $fieldData = explode('_', $key);
                     $filterRangeItems[$fieldData[0]][$fieldData[1]] = $value;
-                } elseif (!in_array($key, self::FIELDS_SYSTEM)) {
+                } elseif (!in_array($key, $this->fieldsSystem())) {
                     if (is_array($this->{$key})) {
                         $filterItems[] = '{"terms":{"' . $key . '":["' . implode('", "', $this->{$key}) . '"]}}';
                     } else {
