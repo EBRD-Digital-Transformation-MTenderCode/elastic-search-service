@@ -21,6 +21,8 @@ class Tenders extends Model
     public $budget_from;
     public $budget_to;
     public $classification;
+    public $pageSize;
+    public $page;
 
     /**
      * @inheritdoc
@@ -47,7 +49,15 @@ class Tenders extends Model
                     'budget_from',
                     'budget_to',
                 ],
-                'double'
+                'double',
+            ],
+            [
+                [
+                    'pageSize',
+                    'page',
+                ],
+                'integer',
+                'min' => 1,
             ],
         ];
     }

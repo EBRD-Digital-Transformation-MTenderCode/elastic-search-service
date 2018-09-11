@@ -17,6 +17,7 @@ class ElasticSearchModel extends Model
 {
     const FIELDS_FULLTEXT = ['search', 'title', 'description'];
     const FIELDS_RANGE = ['budget_from', 'budget_to'];
+    const FIELDS_SYSTEM = ['page', 'pageSize'];
     const STRICT_SUFFIX = '_strict';
     const CHAR_LIMIT = 2;
 
@@ -47,6 +48,7 @@ class ElasticSearchModel extends Model
                 'procedure_status',
                 'classification'
             ], JsonListValidator::className(), 'skipOnEmpty' => true],
+            [['budget_from', 'budget_to'], 'double'],
         ];
     }
 
@@ -102,7 +104,7 @@ class ElasticSearchModel extends Model
                 } elseif (in_array($key, self::FIELDS_RANGE)) {
                     $fieldData = explode('_', $key);
                     $filterRangeItems[$fieldData[0]][$fieldData[1]] = $value;
-                } else {
+                } elseif (!in_array($key, self::FIELDS_SYSTEM)) {
                     if (is_array($this->{$key})) {
                         $filterItems[] = '{"terms":{"' . $key . '":["' . implode('", "', $this->{$key}) . '"]}}';
                     } else {
