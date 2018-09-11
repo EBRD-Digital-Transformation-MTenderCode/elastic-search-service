@@ -1,23 +1,36 @@
 <?php
-
-
 namespace rest\modules\v1\models;
 
-use rest\components\dataProviders\ArrayWithoutSortDataProvider;
-use yii\base\Model;
-use yii\httpclient\Exception;
-use yii\httpclient\Client;
-use ustudio\service_mandatory\ServiceException;
 use Yii;
+use yii\base\Model;
+use yii\httpclient\Client;
+use yii\httpclient\Exception;
+use common\components\validators\JsonListValidator;
+use rest\components\dataProviders\ArrayWithoutSortDataProvider;
+use ustudio\service_mandatory\ServiceException;
 
+/**
+ * Class ElasticSearchModel
+ * @package rest\modules\v1\models
+ */
 class ElasticSearchModel extends Model
 {
+    const FIELDS_FULLTEXT = ['search', 'title', 'description'];
+    const FIELDS_RANGE = ['budget_from', 'budget_to'];
     const STRICT_SUFFIX = '_strict';
     const CHAR_LIMIT = 2;
 
+    public $tender_id;
     public $pageSize;
     public $page;
     public $search_strict;
+    public $buyer_region;
+    public $procedure_number;
+    public $procedure_type;
+    public $procedure_status;
+    public $budget_from;
+    public $budget_to;
+    public $classification;
 
     /**
      * @inheritdoc
@@ -28,6 +41,7 @@ class ElasticSearchModel extends Model
             [['pageSize', 'page'], 'integer', 'min' => 1],
             [['search_strict'], 'boolean'],
             [['search_strict'], 'default', 'value' => 0],
+            ['buyer_region', JsonListValidator::className(), 'skipOnEmpty' => true],
         ];
     }
 
@@ -40,7 +54,7 @@ class ElasticSearchModel extends Model
      */
     public function search(array $searchAttributes, string $index, string $type)
     {
-        $this->setAttributes(Yii::$app->request->get());
+        $this->setAttributes($searchAttributes);
 
         if (!$this->validate()) {
             throw new ServiceException('Data Validation Failed', 400, [
@@ -54,32 +68,61 @@ class ElasticSearchModel extends Model
 
         // формирование json для эластик
         if (!empty($searchAttributes)) {
-            $matches = [];
+            $mustItems = [];
+            $filterItems = [];
+            $filterRangeItems = [];
 
             foreach ($searchAttributes as $key => $value) {
-                //  если выбрано строгое соответствие
-                $strict_mode = isset($this->{$key . self::STRICT_SUFFIX}) && $this->{$key . self::STRICT_SUFFIX};
-                if ($strict_mode) {
-                    if (mb_strlen($value) > self::CHAR_LIMIT) {
-                        $matches[] = '{"match_phrase":{"' . $key . '":"' . $value . '"}}';
-                    }
-                    //  не строгое
-                } else {
-                    $words = explode(' ', $value);
-                    $filteredWords = [];
-
-                    // "отсечение" коротких слов
-                    foreach ($words as $word) {
-                        if (mb_strlen($word) > self::CHAR_LIMIT) {
-                            $filteredWords[] = $word;
+                if (in_array($key, self::FIELDS_FULLTEXT)) {
+                    //  если выбрано строгое соответствие
+                    $strict_mode = isset($this->{$key . self::STRICT_SUFFIX}) && $this->{$key . self::STRICT_SUFFIX};
+                    if ($strict_mode) {
+                        if (mb_strlen($value) > self::CHAR_LIMIT) {
+                            $mustItems[] = '{"match_phrase":{"' . $key . '":"' . $value . '"}}';
                         }
-                    }
+                        //  не строгое
+                    } else {
+                        $words = explode(' ', $value);
+                        $filteredWords = [];
 
-                    $matches[] = '{"match":{"' . $key . '":"' . implode(' ', $filteredWords) . '"}}';
+                        // "отсечение" коротких слов
+                        foreach ($words as $word) {
+                            if (mb_strlen($word) > self::CHAR_LIMIT) {
+                                $filteredWords[] = $word;
+                            }
+                        }
+
+                        $mustItems[] = '{"match":{"' . $key . '":"' . implode(' ', $filteredWords) . '"}}';
+                    }
+                } elseif (in_array($key, self::FIELDS_RANGE)) {
+                    $fieldData = explode('_', $key);
+                    $filterRangeItems[$fieldData[0]][$fieldData[1]] = $value;
+                } else {
+                    if (is_array($this->{$key})) {
+                        $filterItems[] = '{"terms":{"' . $key . '":["' . implode('", "', $this->{$key}) . '"]}}';
+                    } else {
+                        $filterItems[] = '{"term":{"' . $key . '":"' . $value . '"}}';
+                    }
                 }
             }
 
-            $query = '{"bool":{"must":[' . implode(',', $matches) . ']}}';
+            if (!empty($filterRangeItems)) {
+                foreach ($filterRangeItems as $field => $params) {
+                    $rangeConditions = [];
+
+                    if (isset($params['from']) && $params['from']) {
+                        $rangeConditions[] = '"gte":' . $params['from'];
+                    }
+
+                    if (isset($params['to']) && $params['to']) {
+                        $rangeConditions[] = '"lte":' . $params['to'];
+                    }
+
+                    $filterItems[] = '{"range":{"' . $field . '":{' . implode(',', $rangeConditions) . '}}}';
+                }
+            }
+
+            $query = '{"bool":{"must":[' . implode(',', $mustItems) . '], "filter":[' . implode(',', $filterItems) . ']}}';
         } else {
             $query = '{}';
         }
@@ -102,7 +145,6 @@ class ElasticSearchModel extends Model
         } catch (Exception $exception) {
             throw new ServiceException($exception->getMessage(), 500);
         }
-
 
         // формирование результата поиска
         $data = json_decode($result->getContent(), true);
@@ -127,5 +169,4 @@ class ElasticSearchModel extends Model
             ],
         ]);
     }
-
 }

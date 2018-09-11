@@ -37,7 +37,13 @@ class Tenders
                 'description' => ['type' => 'text'],
                 'cdu-v' => ['type' => 'keyword'],
                 'search' => ['type' => 'text'],
-            ]
+                'buyer_region' => ['type' => 'keyword'],
+                'procedure_number' => ['type' => 'keyword'],
+                'procedure_type' => ['type' => 'keyword'],
+                'procedure_status' => ['type' => 'keyword'],
+                'budget' => ['type' => 'long'],
+                'classification' => ['type' => 'keyword'],
+            ],
         ];
         $jsonMap = json_encode($mapArr);
         $url = Yii::$app->params['elastic_url'];
@@ -135,8 +141,14 @@ class Tenders
         } else {
             // prozorro tender
             $search = [];
+            $classification = [];
             $title = '';
             $description = '';
+            $buyer_region = '';
+            $procedure_number = '';
+            $procedure_type = '';
+            $procedure_status = '';
+            $budget = '';
             $tender_id = $data['data']['id'];
 
             if (isset($data['data']['title']) && $data['data']['title']) {
@@ -147,6 +159,30 @@ class Tenders
             if (isset($data['data']['description']) && $data['data']['description']) {
                 $description = $data['data']['description'];
                 $search[] = $description;
+            }
+
+            if (isset($data['data']['procuringEntity']['address']['region']) && $data['data']['procuringEntity']['address']['region']) {
+                $buyer_region = $data['data']['procuringEntity']['address']['region'];
+            }
+
+            if (isset($data['data']['tenderID']) && $data['data']['tenderID']) {
+                $procedure_number = $data['data']['tenderID'];
+            }
+
+            if (isset($data['data']['procurementMethodType']) && $data['data']['procurementMethodType']) {
+                $procedure_type = $data['data']['procurementMethodType'];
+            }
+
+            if (isset($data['data']['status']) && $data['data']['status']) {
+                $procedure_status = $data['data']['status'];
+            }
+
+            if (isset($data['data']['value']['amount']) && $data['data']['value']['amount']) {
+                $budget = $data['data']['value']['amount'];
+            }
+
+            if (isset($data['data']['status']) && $data['data']['status']) {
+                $procedure_status = $data['data']['status'];
             }
 
             if (isset($data['data']['lots']) && is_array($data['data']['lots'])) {
@@ -166,15 +202,25 @@ class Tenders
                     if (isset($item['description']) && $item['description']) {
                         $search[] = $item['description'];
                     }
+
+                    if (isset($item['classification']['id']) && $item['classification']['id']) {
+                        $classification[] = $item['classification']['id'];
+                    }
                 }
             }
 
             $docArr = [
-                'tender_id' => $tender_id,
-                'title' => $title,
-                'description' => $description,
-                'cdu-v' => $cdu[$tender['cdu_id']] ?? '',
-                'search' => $search,
+                'tender_id'        => $tender_id,
+                'title'            => $title,
+                'description'      => $description,
+                'cdu-v'            => $cdu[$tender['cdu_id']] ?? '',
+                'search'           => $search,
+                'buyer_region'     => $buyer_region,
+                'procedure_number' => $procedure_number,
+                'procedure_type'   => $procedure_type,
+                'procedure_status' => $procedure_status,
+                'budget'           => $budget,
+                'classification'   => $classification,
             ];
         }
         return $docArr;

@@ -1,16 +1,26 @@
 <?php
-
 namespace rest\modules\v1\models;
 
-use yii\base\Model;
 use Yii;
+use yii\base\Model;
 
+/**
+ * Class Tenders
+ * @package rest\modules\v1\models
+ */
 class Tenders extends Model
 {
     public $tender_id;
     public $title;
     public $description;
     public $search;
+    public $buyer_region;
+    public $procedure_number;
+    public $procedure_type;
+    public $procedure_status;
+    public $budget_from;
+    public $budget_to;
+    public $classification;
 
     /**
      * @inheritdoc
@@ -18,7 +28,27 @@ class Tenders extends Model
     public function rules()
     {
         return [
-            [['tender_id', 'title', 'description', 'search'], 'string'],
+            [
+                [
+                    'tender_id',
+                    'title',
+                    'description',
+                    'search',
+                    'buyer_region',
+                    'procedure_number',
+                    'procedure_type',
+                    'procedure_status',
+                    'classification',
+                ],
+                'string',
+            ],
+            [
+                [
+                    'budget_from',
+                    'budget_to',
+                ],
+                'double'
+            ],
         ];
     }
 
