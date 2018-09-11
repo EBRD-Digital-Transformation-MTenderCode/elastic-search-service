@@ -17,7 +17,7 @@ class ElasticSearchModel extends Model
 {
     const FIELDS_FULLTEXT = ['search', 'title', 'description'];
     const FIELDS_RANGE = ['budget_from', 'budget_to'];
-    const FIELDS_SYSTEM = ['page', 'pageSize'];
+    const FIELDS_SYSTEM = ['search_strict', 'page', 'pageSize'];
     const STRICT_SUFFIX = '_strict';
     const CHAR_LIMIT = 2;
 

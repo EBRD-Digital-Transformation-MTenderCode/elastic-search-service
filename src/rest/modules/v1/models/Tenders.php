@@ -14,6 +14,7 @@ class Tenders extends Model
     public $title;
     public $description;
     public $search;
+    public $search_strict;
     public $buyer_region;
     public $procedure_number;
     public $procedure_type;
@@ -58,6 +59,15 @@ class Tenders extends Model
                 ],
                 'integer',
                 'min' => 1,
+            ],
+            [
+                'search_strict',
+                'boolean',
+            ],
+            [
+                'search_strict',
+                'default',
+                'value' => 0,
             ],
         ];
     }
