@@ -1,23 +1,58 @@
 <?php
-
-
 namespace rest\modules\v1\models;
 
-use rest\components\dataProviders\ArrayWithoutSortDataProvider;
-use yii\base\Model;
-use yii\httpclient\Exception;
-use yii\httpclient\Client;
-use ustudio\service_mandatory\ServiceException;
 use Yii;
+use yii\base\Model;
+use yii\httpclient\Client;
+use yii\httpclient\Exception;
+use rest\components\dataProviders\ArrayWithoutSortDataProvider;
+use ustudio\service_mandatory\ServiceException;
 
+/**
+ * Class ElasticSearchModel
+ * @package rest\modules\v1\models
+ */
 class ElasticSearchModel extends Model
 {
-    const STRICT_SUFFIX = '_strict';
+    const STRICT_SUFFIX = 'Strict';
+    const FROM_SUFFIX = 'From';
+    const TO_SUFFIX = 'To';
     const CHAR_LIMIT = 2;
 
+    public $title;
+    public $description;
     public $pageSize;
     public $page;
-    public $search_strict;
+
+    protected $index;
+    protected $type;
+
+    /**
+     * Get fulltext search attributes
+     * @return array
+     */
+    public static function fieldsFullText()
+    {
+        return ['title', 'description'];
+    }
+
+    /**
+     * Get range search attributes
+     * @return array
+     */
+    public static function fieldsRange()
+    {
+        return [];
+    }
+
+    /**
+     * Get disabled for search attributes
+     * @return array
+     */
+    public static function fieldsSystem()
+    {
+        return ['page', 'pageSize'];
+    }
 
     /**
      * @inheritdoc
@@ -25,22 +60,20 @@ class ElasticSearchModel extends Model
     public function rules()
     {
         return [
+            [['title', 'description'], 'string'],
             [['pageSize', 'page'], 'integer', 'min' => 1],
-            [['search_strict'], 'boolean'],
-            [['search_strict'], 'default', 'value' => 0],
         ];
     }
 
     /**
-     * @param array $searchAttributes
-     * @param string $index
-     * @param string $type
+     * Search in elastic by attributes
+     * @param $searchAttributes
      * @return ArrayWithoutSortDataProvider
      * @throws ServiceException
      */
-    public function search(array $searchAttributes, string $index, string $type)
+    public function search($searchAttributes)
     {
-        $this->setAttributes(Yii::$app->request->get());
+        $this->setAttributes($searchAttributes);
 
         if (!$this->validate()) {
             throw new ServiceException('Data Validation Failed', 400, [
@@ -49,37 +82,75 @@ class ElasticSearchModel extends Model
         }
 
         $url = Yii::$app->params['elastic_url'] . DIRECTORY_SEPARATOR
-            . $index . DIRECTORY_SEPARATOR
-            . $type . DIRECTORY_SEPARATOR . '_search';
+            . $this->index . DIRECTORY_SEPARATOR
+            . $this->type . DIRECTORY_SEPARATOR . '_search';
 
         // формирование json для эластик
         if (!empty($searchAttributes)) {
-            $matches = [];
+            $mustItems = [];
+            $filterItems = [];
+            $filterRangeItems = [];
 
             foreach ($searchAttributes as $key => $value) {
-                //  если выбрано строгое соответствие
-                $strict_mode = isset($this->{$key . self::STRICT_SUFFIX}) && $this->{$key . self::STRICT_SUFFIX};
-                if ($strict_mode) {
-                    if (mb_strlen($value) > self::CHAR_LIMIT) {
-                        $matches[] = '{"match_phrase":{"' . $key . '":"' . $value . '"}}';
-                    }
-                    //  не строгое
-                } else {
-                    $words = explode(' ', $value);
-                    $filteredWords = [];
-
-                    // "отсечение" коротких слов
-                    foreach ($words as $word) {
-                        if (mb_strlen($word) > self::CHAR_LIMIT) {
-                            $filteredWords[] = $word;
+                if (in_array($key, $this->fieldsFullText())) {
+                    //  если выбрано строгое соответствие
+                    $strict_mode = isset($this->{$key . self::STRICT_SUFFIX}) && $this->{$key . self::STRICT_SUFFIX};
+                    if ($strict_mode) {
+                        if (mb_strlen($value) > self::CHAR_LIMIT) {
+                            $mustItems[] = '{"match_phrase":{"' . $key . '":"' . $value . '"}}';
                         }
+                        //  не строгое
+                    } else {
+                        $words = explode(' ', $value);
+                        $filteredWords = [];
+
+                        // "отсечение" коротких слов
+                        foreach ($words as $word) {
+                            if (mb_strlen($word) > self::CHAR_LIMIT) {
+                                $filteredWords[] = $word;
+                            }
+                        }
+
+                        $mustItems[] = '{"match":{"' . $key . '":"' . implode(' ', $filteredWords) . '"}}';
+                    }
+                } elseif (in_array($key, $this->fieldsRange())) {
+                    $from = strpos($key, self::FROM_SUFFIX);
+
+                    if ($from) {
+                        $filterRangeItems[substr($key, 0, $from)]['from'] = $value;
                     }
 
-                    $matches[] = '{"match":{"' . $key . '":"' . implode(' ', $filteredWords) . '"}}';
+                    $to = strpos($key, self::TO_SUFFIX);
+
+                    if ($to) {
+                        $filterRangeItems[substr($key, 0, $to)]['to'] = $value;
+                    }
+                } elseif (!in_array($key, $this->fieldsSystem())) {
+                    if (is_array($this->{$key})) {
+                        $filterItems[] = '{"terms":{"' . $key . '":["' . implode('", "', $this->{$key}) . '"]}}';
+                    } else {
+                        $filterItems[] = '{"term":{"' . $key . '":"' . $value . '"}}';
+                    }
                 }
             }
 
-            $query = '{"bool":{"must":[' . implode(',', $matches) . ']}}';
+            if (!empty($filterRangeItems)) {
+                foreach ($filterRangeItems as $field => $params) {
+                    $rangeConditions = [];
+
+                    if (isset($params['from']) && $params['from']) {
+                        $rangeConditions[] = '"gte":' . $params['from'];
+                    }
+
+                    if (isset($params['to']) && $params['to']) {
+                        $rangeConditions[] = '"lte":' . $params['to'];
+                    }
+
+                    $filterItems[] = '{"range":{"' . $field . '":{' . implode(',', $rangeConditions) . '}}}';
+                }
+            }
+
+            $query = '{"bool":{"must":[' . implode(',', $mustItems) . '], "filter":[' . implode(',', $filterItems) . ']}}';
         } else {
             $query = '{}';
         }
@@ -102,7 +173,6 @@ class ElasticSearchModel extends Model
         } catch (Exception $exception) {
             throw new ServiceException($exception->getMessage(), 500);
         }
-
 
         // формирование результата поиска
         $data = json_decode($result->getContent(), true);
@@ -127,5 +197,4 @@ class ElasticSearchModel extends Model
             ],
         ]);
     }
-
 }

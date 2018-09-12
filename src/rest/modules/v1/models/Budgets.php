@@ -1,39 +1,58 @@
 <?php
 namespace rest\modules\v1\models;
 
-use yii\base\Model;
 use Yii;
 
-class Budgets extends Model
+/**
+ * Class Budgets
+ * @package rest\modules\v1\models
+ */
+class Budgets extends ElasticSearchModel
 {
     public $ocid;
-    public $title;
-    public $description;
-    public $search;
 
     /**
      * @inheritdoc
      */
     public function rules()
     {
-        return [
-            [['ocid', 'title', 'description', 'search'], 'string'],
-        ];
+        return array_merge(parent::rules(), [
+            ['ocid', 'string'],
+        ]);
     }
 
     /**
-     * @param $params
-     * @return \rest\components\dataProviders\ArrayWithoutSortDataProvider
-     * @throws \ustudio\service_mandatory\ServiceException
+     * @inheritdoc
      */
-    public function search($params)
+    public static function fieldsFullText()
     {
-        $index = Yii::$app->params['elastic_budgets_index'];
-        $type = Yii::$app->params['elastic_budgets_type'];
+        return array_merge(parent::fieldsFullText(), []);
+    }
 
-        $this->setAttributes($params);
-        $searchAttributes = array_diff($this->getAttributes(), ['']);
-        $elasticSearch = new ElasticSearchModel();
-        return $elasticSearch->search($searchAttributes, $index, $type);
+    /**
+     * @inheritdoc
+     */
+    public static function fieldsRange()
+    {
+        return array_merge(parent::fieldsRange(), []);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function fieldsSystem()
+    {
+        return array_merge(parent::fieldsSystem(), []);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function search($searchAttributes)
+    {
+        $this->index = Yii::$app->params['elastic_budgets_index'];
+        $this->type = Yii::$app->params['elastic_budgets_type'];
+
+        return parent::search($searchAttributes);
     }
 }

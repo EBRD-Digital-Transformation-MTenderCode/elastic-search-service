@@ -76,7 +76,7 @@ Class Elastic
         $elastic_request_url = $elastic_url . "/" . $this->index . "/" . $this->type . "/";
         $data_string = json_encode($docArr);
         $curl_options = ['HTTPHEADER' => ['Content-Type:application/json']];
-        $result = Curl::sendRequest($elastic_request_url . $docArr['tender_id'], "POST", $data_string, $curl_options);
+        $result = Curl::sendRequest($elastic_request_url . $docArr['tenderId'], "POST", $data_string, $curl_options);
         return $result;
     }
 
