@@ -129,7 +129,7 @@ class Tenders
                     $title = ($record['compiledRelease']['tender']['title']) ?? "";
                     $description = ($record['compiledRelease']['tender']['description']) ?? "";
                     $docArr = [
-                        'tender_id' => $tender_id,
+                        'tenderId' => $tender_id,
                         'title' => $title,
                         'description' => $description,
                         'cdu-v' => $cdu[$tender['cdu_id']] ?? '',
