@@ -41,7 +41,7 @@ class Tenders
                 'buyerRegion' => ['type' => 'keyword'],
                 'procedureType' => ['type' => 'keyword'],
                 'procedureStatus' => ['type' => 'keyword'],
-                'budget' => ['type' => 'long'],
+                'budget' => ['type' => 'scaled_float', 'scaling_factor' => 100],
                 'classification' => ['type' => 'keyword'],
             ],
         ];
