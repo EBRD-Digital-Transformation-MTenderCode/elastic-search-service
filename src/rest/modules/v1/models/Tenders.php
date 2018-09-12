@@ -10,15 +10,16 @@ use common\components\validators\JsonListValidator;
  */
 class Tenders extends ElasticSearchModel
 {
-    public $tender_id;
+    public $id;
+    public $tenderId;
     public $search;
-    public $search_strict;
-    public $buyer_region;
-    public $procedure_number;
-    public $procedure_type;
-    public $procedure_status;
-    public $budget_from;
-    public $budget_to;
+    public $searchStrict;
+    public $buyerRegion;
+    public $procedureNumber;
+    public $procedureType;
+    public $procedureStatus;
+    public $budgetFrom;
+    public $budgetTo;
     public $classification;
 
     /**
@@ -29,21 +30,21 @@ class Tenders extends ElasticSearchModel
         return array_merge(parent::rules(), [
             [
                 [
-                    'tender_id',
+                    'id',
+                    'tenderId',
                     'search',
-                    'buyer_region',
-                    'procedure_number',
-                    'procedure_type',
-                    'procedure_status',
+                    'buyerRegion',
+                    'procedureType',
+                    'procedureStatus',
                     'classification',
                 ],
                 'string',
             ],
             [
                 [
-                    'buyer_region',
-                    'procedure_type',
-                    'procedure_status',
+                    'buyerRegion',
+                    'procedureType',
+                    'procedureStatus',
                     'classification'
                 ],
                 JsonListValidator::className(),
@@ -51,17 +52,17 @@ class Tenders extends ElasticSearchModel
             ],
             [
                 [
-                    'budget_from',
-                    'budget_to',
+                    'budgetFrom',
+                    'budgetTo',
                 ],
                 'double',
             ],
             [
-                'search_strict',
+                'searchStrict',
                 'boolean',
             ],
             [
-                'search_strict',
+                'searchStrict',
                 'default',
                 'value' => 0,
             ],
@@ -81,7 +82,7 @@ class Tenders extends ElasticSearchModel
      */
     public static function fieldsRange()
     {
-        return array_merge(parent::fieldsRange(), []);
+        return array_merge(parent::fieldsRange(), ['budgetFrom', 'budgetTo']);
     }
 
     /**
@@ -89,7 +90,7 @@ class Tenders extends ElasticSearchModel
      */
     public static function fieldsSystem()
     {
-        return array_merge(parent::fieldsSystem(), ['search_strict']);
+        return array_merge(parent::fieldsSystem(), ['searchStrict']);
     }
 
     /**

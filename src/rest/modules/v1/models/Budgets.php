@@ -10,8 +10,6 @@ use Yii;
 class Budgets extends ElasticSearchModel
 {
     public $ocid;
-    public $title;
-    public $description;
 
     /**
      * @inheritdoc
@@ -19,7 +17,7 @@ class Budgets extends ElasticSearchModel
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['ocid', 'title', 'description'], 'string'],
+            ['ocid', 'string'],
         ]);
     }
 

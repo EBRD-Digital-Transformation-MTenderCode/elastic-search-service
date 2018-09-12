@@ -32,15 +32,15 @@ class Tenders
             'dynamic' => 'strict',
             '_all' => ['enabled' => false],
             'properties' => [
-                'tender_id' => ['type' => 'keyword'],
+                'id' => ['type' => 'keyword'],
+                'tenderId' => ['type' => 'keyword'],
                 'title' => ['type' => 'text'],
                 'description' => ['type' => 'text'],
                 'cdu-v' => ['type' => 'keyword'],
                 'search' => ['type' => 'text'],
-                'buyer_region' => ['type' => 'keyword'],
-                'procedure_number' => ['type' => 'keyword'],
-                'procedure_type' => ['type' => 'keyword'],
-                'procedure_status' => ['type' => 'keyword'],
+                'buyerRegion' => ['type' => 'keyword'],
+                'procedureType' => ['type' => 'keyword'],
+                'procedureStatus' => ['type' => 'keyword'],
                 'budget' => ['type' => 'long'],
                 'classification' => ['type' => 'keyword'],
             ],
@@ -142,14 +142,14 @@ class Tenders
             // prozorro tender
             $search = [];
             $classification = [];
+            $id = '';
             $title = '';
             $description = '';
-            $buyer_region = '';
-            $procedure_number = '';
-            $procedure_type = '';
-            $procedure_status = '';
+            $buyerRegion = '';
+            $procedureType = '';
+            $procedureStatus = '';
             $budget = '';
-            $tender_id = $data['data']['id'];
+            $tenderId = $data['data']['id'];
 
             if (isset($data['data']['title']) && $data['data']['title']) {
                 $title = $data['data']['title'];
@@ -162,19 +162,19 @@ class Tenders
             }
 
             if (isset($data['data']['procuringEntity']['address']['region']) && $data['data']['procuringEntity']['address']['region']) {
-                $buyer_region = $data['data']['procuringEntity']['address']['region'];
+                $buyerRegion = $data['data']['procuringEntity']['address']['region'];
             }
 
             if (isset($data['data']['tenderID']) && $data['data']['tenderID']) {
-                $procedure_number = $data['data']['tenderID'];
+                $id = $data['data']['tenderID'];
             }
 
             if (isset($data['data']['procurementMethodType']) && $data['data']['procurementMethodType']) {
-                $procedure_type = $data['data']['procurementMethodType'];
+                $procedureType = $data['data']['procurementMethodType'];
             }
 
             if (isset($data['data']['status']) && $data['data']['status']) {
-                $procedure_status = $data['data']['status'];
+                $procedureStatus = $data['data']['status'];
             }
 
             if (isset($data['data']['value']['amount']) && $data['data']['value']['amount']) {
@@ -182,7 +182,7 @@ class Tenders
             }
 
             if (isset($data['data']['status']) && $data['data']['status']) {
-                $procedure_status = $data['data']['status'];
+                $procedureStatus = $data['data']['status'];
             }
 
             if (isset($data['data']['lots']) && is_array($data['data']['lots'])) {
@@ -210,17 +210,17 @@ class Tenders
             }
 
             $docArr = [
-                'tender_id'        => $tender_id,
-                'title'            => $title,
-                'description'      => $description,
-                'cdu-v'            => $cdu[$tender['cdu_id']] ?? '',
-                'search'           => $search,
-                'buyer_region'     => $buyer_region,
-                'procedure_number' => $procedure_number,
-                'procedure_type'   => $procedure_type,
-                'procedure_status' => $procedure_status,
-                'budget'           => $budget,
-                'classification'   => $classification,
+                'id'              => $id,
+                'tenderId'        => $tenderId,
+                'title'           => $title,
+                'description'     => $description,
+                'cdu-v'           => $cdu[$tender['cdu_id']] ?? '',
+                'search'          => $search,
+                'buyerRegion'     => $buyerRegion,
+                'procedureType'   => $procedureType,
+                'procedureStatus' => $procedureStatus,
+                'budget'          => $budget,
+                'classification'  => $classification,
             ];
         }
         return $docArr;

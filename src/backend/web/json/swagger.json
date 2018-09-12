@@ -134,8 +134,15 @@
                 ],
                 "parameters":[
                     {
+                        "in": "query",
+                        "name": "id",
+                        "type": "string",
+                        "required":false,
+                        "description": "id"
+                    },
+                    {
                         "in":"query",
-                        "name":"tender_id",
+                        "name":"tenderId",
                         "type":"string",
                         "required":false,
                         "description": "id тендера"
@@ -163,44 +170,38 @@
                     },
                     {
                         "in": "query",
-                        "name": "search_strict",
+                        "name": "searchStrict",
                         "type": "integer",
                         "enum": [0, 1],
                         "description": "признак строгого соответствия"
                     },
                     {
                         "in": "query",
-                        "name": "buyer_region",
+                        "name": "buyerRegion",
                         "type": "string",
                         "description": "регион заказчика<br /> json array"
                     },
                     {
                         "in": "query",
-                        "name": "procedure_number",
-                        "type": "string",
-                        "description": "номер процедуры"
-                    },
-                    {
-                        "in": "query",
-                        "name": "procedure_type",
+                        "name": "procedureType",
                         "type": "string",
                         "description": "тип процедуры<br /> json array"
                     },
                     {
                         "in": "query",
-                        "name": "procedure_status",
+                        "name": "procedureStatus",
                         "type": "string",
                         "description": "статус процедуры<br /> json array"
                     },
                     {
                         "in": "query",
-                        "name": "budget_from",
+                        "name": "budgetFrom",
                         "type": "string",
                         "description": "бюджет, от"
                     },
                     {
                         "in": "query",
-                        "name": "budget_to",
+                        "name": "budgetTo",
                         "type": "string",
                         "description": "бюджет, до"
                     },

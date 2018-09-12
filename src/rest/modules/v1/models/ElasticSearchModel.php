@@ -14,7 +14,9 @@ use ustudio\service_mandatory\ServiceException;
  */
 class ElasticSearchModel extends Model
 {
-    const STRICT_SUFFIX = '_strict';
+    const STRICT_SUFFIX = 'Strict';
+    const FROM_SUFFIX = 'From';
+    const TO_SUFFIX = 'To';
     const CHAR_LIMIT = 2;
 
     public $title;
@@ -112,8 +114,17 @@ class ElasticSearchModel extends Model
                         $mustItems[] = '{"match":{"' . $key . '":"' . implode(' ', $filteredWords) . '"}}';
                     }
                 } elseif (in_array($key, $this->fieldsRange())) {
-                    $fieldData = explode('_', $key);
-                    $filterRangeItems[$fieldData[0]][$fieldData[1]] = $value;
+                    $from = strpos($key, self::FROM_SUFFIX);
+
+                    if ($from) {
+                        $filterRangeItems[substr($key, 0, $from)]['from'] = $value;
+                    }
+
+                    $to = strpos($key, self::TO_SUFFIX);
+
+                    if ($to) {
+                        $filterRangeItems[substr($key, 0, $to)]['to'] = $value;
+                    }
                 } elseif (!in_array($key, $this->fieldsSystem())) {
                     if (is_array($this->{$key})) {
                         $filterItems[] = '{"terms":{"' . $key . '":["' . implode('", "', $this->{$key}) . '"]}}';
