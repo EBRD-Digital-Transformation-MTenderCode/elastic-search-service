@@ -5,6 +5,7 @@ use Yii;
 use yii\db\Exception;
 use yii\helpers\ArrayHelper;
 use PDOException;
+use ustudio\service_mandatory\components\elastic\ElasticComponent;
 
 /**
  * Class Tenders
@@ -23,6 +24,8 @@ class Tenders
     }
 
     /**
+     * @return array
+     * @throws \ustudio\service_mandatory\components\elastic\ForbiddenHttpException
      * @throws \yii\web\HttpException
      */
     public function elasticMapping()
@@ -49,18 +52,17 @@ class Tenders
         $url = Yii::$app->params['elastic_url'];
         $index = Yii::$app->params['elastic_tenders_index'];
         $type = Yii::$app->params['elastic_tenders_type'];
-        $elastic = new Elastic($url, $index, $type);
-        $result = $elastic->mapping($jsonMap);
+        $elastic = new ElasticComponent($url, $index, $type);
+        $result = $elastic->createMapping($jsonMap);
         return $result;
     }
 
     /**
      * indexing of tenders to elastic
-     *
-     * @throws \yii\web\ForbiddenHttpException
+     * @throws \ustudio\service_mandatory\components\elastic\ForbiddenHttpException
      * @throws \yii\web\HttpException
      */
-    public function indexItemsToElastic()
+    public function reindexItemsToElastic()
     {
         Yii::info("Indexing tenders", 'console-msg');
         $limit = 25;
@@ -68,7 +70,7 @@ class Tenders
         $url = Yii::$app->params['elastic_url'];
         $index = Yii::$app->params['elastic_tenders_index'];
         $type = Yii::$app->params['elastic_tenders_type'];
-        $elastic = new Elastic($url, $index, $type);
+        $elastic = new ElasticComponent($url, $index, $type);
         while (true) {
             try {
                 // block the update of selected records in the database
@@ -83,7 +85,7 @@ class Tenders
                 foreach ($tenders as $tender) {
                     $docArr = $this->getDocForElastic($tender, $cdu);
                     if (!empty($docArr)) {
-                        $result = $elastic->indexTender($docArr);
+                        $result = $elastic->reindexTender($docArr);
 
                         if ($result['code'] != 200 && $result['code'] != 201 && $result['code'] != 100) {
                             Yii::error("Elastic indexing tenders error. Http-code: " . $result['code'], 'sync-info');

@@ -1,13 +1,17 @@
 <?php
-
 namespace console\controllers;
-use console\models\Budgets;
-use console\models\Elastic;
-use console\models\Tenders;
-use yii\console\Controller;
+
 use Yii;
 use yii\web\HttpException;
+use yii\console\Controller;
+use console\models\Budgets;
+use console\models\Tenders;
+use ustudio\service_mandatory\components\elastic\ElasticComponent;
 
+/**
+ * Class ReindexElasticController
+ * @package console\controllers
+ */
 class ReindexElasticController extends Controller
 {
     /**
@@ -15,9 +19,9 @@ class ReindexElasticController extends Controller
      */
     public function actionAll()
     {
-        $this->indexBudgets();
+        $this->reindexBudgets();
 
-        $this->indexTenders();
+        $this->reindexTenders();
 
         Yii::info("Elastic indexing is complete", 'console-msg');
     }
@@ -28,7 +32,7 @@ class ReindexElasticController extends Controller
     public function actionBudgets()
     {
         try {
-            $this->indexBudgets();
+            $this->reindexBudgets();
         } catch (HttpException $e) {
             Yii::error($e->getMessage(), 'console-msg');
             exit(0);
@@ -43,7 +47,7 @@ class ReindexElasticController extends Controller
     public function actionTenders()
     {
         try {
-            $this->indexTenders();
+            $this->reindexTenders();
         } catch (HttpException $e) {
             Yii::error($e->getMessage(), 'console-msg');
             exit(0);
@@ -55,14 +59,14 @@ class ReindexElasticController extends Controller
     /**
      *
      */
-    private function indexBudgets()
+    private function reindexBudgets()
     {
         $elastic_url = Yii::$app->params['elastic_url'];
         $elastic_index = Yii::$app->params['elastic_budgets_index'];
         $elastic_type = Yii::$app->params['elastic_budgets_type'];
 
         try {
-            $elastic = new Elastic($elastic_url, $elastic_index, $elastic_type);
+            $elastic = new ElasticComponent($elastic_url, $elastic_index, $elastic_type);
             $result = $elastic->dropIndex();
 
             if ((int)$result['code'] != 200 && (int)$result['code'] != 404) {
@@ -76,26 +80,22 @@ class ReindexElasticController extends Controller
                 Yii::error("Elastic mapping " . $elastic_index . " error", 'console-msg');
                 exit(0);
             }
-            $budgets->indexItemsToElastic();
+            $budgets->reindexItemsToElastic();
 
         } catch (HttpException $e) {
             Yii::error($e->getMessage(), 'console-msg');
             exit(0);
         }
-
     }
 
-    /**
-     *
-     */
-    private function indexTenders()
+    private function reindexTenders()
     {
         $elastic_url = Yii::$app->params['elastic_url'];
         $elastic_index = Yii::$app->params['elastic_tenders_index'];
         $elastic_type = Yii::$app->params['elastic_tenders_type'];
 
         try {
-            $elastic = new Elastic($elastic_url, $elastic_index, $elastic_type);
+            $elastic = new ElasticComponent($elastic_url, $elastic_index, $elastic_type);
             $result = $elastic->dropIndex();
 
             if ((int)$result['code'] != 200 && (int)$result['code'] != 404) {
@@ -110,12 +110,11 @@ class ReindexElasticController extends Controller
                 exit(0);
             }
 
-            $tenders->indexItemsToElastic();
+            $tenders->reindexItemsToElastic();
 
         } catch (HttpException $e) {
             Yii::error($e->getMessage(), 'console-msg');
             exit(0);
         }
     }
-
 }
