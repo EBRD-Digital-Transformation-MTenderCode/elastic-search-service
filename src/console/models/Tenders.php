@@ -40,7 +40,7 @@ class Tenders
                 'title' => ['type' => 'text'],
                 'description' => ['type' => 'text'],
                 'cdu-v' => ['type' => 'keyword'],
-                'search' => ['type' => 'text'],
+                'titelsOrDescriptions' => ['type' => 'text'],
                 'buyerRegion' => ['type' => 'keyword'],
                 'procedureType' => ['type' => 'keyword'],
                 'procedureStatus' => ['type' => 'keyword'],
