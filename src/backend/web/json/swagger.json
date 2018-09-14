@@ -17,6 +17,10 @@
     {
       "name":"Tenders",
       "description":"Тендера."
+    },
+    {
+      "name":"Plans",
+      "description":"Планы."
     }
   ],    
     "basePath": "/rest-api",
@@ -238,7 +242,63 @@
                 }
              }
            }
+        },
+      "/v1/plans/search": {
+        "get": {
+          "tags": [
+            "Plans"
+          ],
+          "summary": "Get all tenders with ElasticSearch (Получение всех планов через Elasticsearch)",
+          "description": "получение всех записей о планах через Elasticsearch",
+          "consumes": [
+            "application/x-www-form-urlencoded"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters":[
+            {
+              "in": "query",
+              "name": "id",
+              "type": "string",
+              "required":false,
+              "description": "id"
+            },
+            {
+              "in":"query",
+              "name":"titlesOrDescriptions",
+              "type":"string",
+              "required":false,
+              "description": "поле полнотекстового поиска"
+            },
+            {
+              "in":"query",
+              "name":"pageSize",
+              "type":"string",
+              "required":false,
+              "description": "Кол-во записей на странице"
+            },
+            {
+              "in":"query",
+              "name":"page",
+              "type":"string",
+              "required":false,
+              "description": "Номер страницы для отображения"
+            }
+          ],
+          "responses":{
+            "200":{
+              "description":"OK",
+              "schema":{
+                "$ref":"#/definitions/200Tender"
+              }
+            },
+            "400":{
+              "description":"Data Validation Failed."
+            }
+          }
         }
+      }
     },
   "definitions":{
     "200Budget":{
