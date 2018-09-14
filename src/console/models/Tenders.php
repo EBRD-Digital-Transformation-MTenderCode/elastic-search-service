@@ -83,17 +83,10 @@ class Tenders
                 }
                 $offset += $limit;
                 foreach ($tenders as $tender) {
-                    $docArr = $this->getDocForElastic($tender, $cdu);
-                    if (!empty($docArr)) {
-                        $result = $elastic->reindexTender($docArr);
-
-                        if ($result['code'] != 200 && $result['code'] != 201 && $result['code'] != 100) {
-                            Yii::error("Elastic indexing tenders error. Http-code: " . $result['code'], 'sync-info');
-                            exit(0);
-                        }
-
+                    if (isset($cdu[$tender['cdu_id']]) && $cdu[$tender['cdu_id']] != self::TYPE_PROZORRO) {
+                        $elastic->indexTender($tender, $cdu);
                     } else {
-                        //@todo error
+                        $elastic->indexTenderPrz($tender, $cdu);
                     }
                 }
                 $transaction->commit();
@@ -108,123 +101,5 @@ class Tenders
             // delay 0.3 sec
             usleep(300000);
         }
-    }
-
-    /**
-     * getting from response-field of a document for elastic
-     *
-     * @param $tender
-     * @param $cdu
-     * @return array
-     */
-    public function getDocForElastic($tender, $cdu) {
-        $response = $tender['response'];
-        $data = json_decode($response, 1);
-
-        if (isset($cdu[$tender['cdu_id']]) && $cdu[$tender['cdu_id']] != self::TYPE_PROZORRO) {
-            // ocds tender
-            $records = $data['records'];
-            $docArr = [];
-            foreach ($records as $record) {
-                if ($record['ocid'] == $tender['tender_id']) {
-                    $tender_id = $record['ocid'];
-                    $title = ($record['compiledRelease']['tender']['title']) ?? "";
-                    $description = ($record['compiledRelease']['tender']['description']) ?? "";
-                    $docArr = [
-                        'tenderId' => $tender_id,
-                        'title' => $title,
-                        'description' => $description,
-                        'cdu-v' => $cdu[$tender['cdu_id']] ?? '',
-                    ];
-
-                    break;
-                }
-            }
-        } else {
-            // prozorro tender
-            $search = [];
-            $classification = [];
-            $id = '';
-            $title = '';
-            $description = '';
-            $buyerRegion = '';
-            $procedureType = '';
-            $procedureStatus = '';
-            $budget = '';
-            $tenderId = $data['data']['id'];
-
-            if (isset($data['data']['title']) && $data['data']['title']) {
-                $title = $data['data']['title'];
-                $search[] = $title;
-            }
-
-            if (isset($data['data']['description']) && $data['data']['description']) {
-                $description = $data['data']['description'];
-                $search[] = $description;
-            }
-
-            if (isset($data['data']['procuringEntity']['address']['region']) && $data['data']['procuringEntity']['address']['region']) {
-                $buyerRegion = $data['data']['procuringEntity']['address']['region'];
-            }
-
-            if (isset($data['data']['tenderID']) && $data['data']['tenderID']) {
-                $id = $data['data']['tenderID'];
-            }
-
-            if (isset($data['data']['procurementMethodType']) && $data['data']['procurementMethodType']) {
-                $procedureType = $data['data']['procurementMethodType'];
-            }
-
-            if (isset($data['data']['status']) && $data['data']['status']) {
-                $procedureStatus = $data['data']['status'];
-            }
-
-            if (isset($data['data']['value']['amount']) && $data['data']['value']['amount']) {
-                $budget = $data['data']['value']['amount'];
-            }
-
-            if (isset($data['data']['status']) && $data['data']['status']) {
-                $procedureStatus = $data['data']['status'];
-            }
-
-            if (isset($data['data']['lots']) && is_array($data['data']['lots'])) {
-                foreach ($data['data']['lots'] as $lot) {
-                    if (isset($lot['title']) && $lot['title']) {
-                        $search[] = $lot['title'];
-                    }
-
-                    if (isset($lot['description']) && $lot['description']) {
-                        $search[] = $lot['description'];
-                    }
-                }
-            }
-
-            if (isset($data['data']['items']) && is_array($data['data']['items'])) {
-                foreach ($data['data']['items'] as $item) {
-                    if (isset($item['description']) && $item['description']) {
-                        $search[] = $item['description'];
-                    }
-
-                    if (isset($item['classification']['id']) && $item['classification']['id']) {
-                        $classification[] = $item['classification']['id'];
-                    }
-                }
-            }
-
-            $docArr = [
-                'id'              => $id,
-                'tenderId'        => $tenderId,
-                'title'           => $title,
-                'description'     => $description,
-                'cdu-v'           => $cdu[$tender['cdu_id']] ?? '',
-                'search'          => $search,
-                'buyerRegion'     => $buyerRegion,
-                'procedureType'   => $procedureType,
-                'procedureStatus' => $procedureStatus,
-                'budget'          => $budget,
-                'classification'  => $classification,
-            ];
-        }
-        return $docArr;
     }
 }

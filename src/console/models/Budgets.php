@@ -73,18 +73,7 @@ class Budgets
                 }
                 $offset += $limit;
                 foreach ($budgets as $budget) {
-                    $docArr = $this->getDocForElastic($budget);
-                    if (!empty($docArr)) {
-                        $result = $elastic->reindexBudget($docArr);
-
-                        if ($result['code'] != 200 && $result['code'] != 201 && $result['code'] != 100) {
-                            Yii::error("Elastic indexing budgets error. Http-code: " . $result['code'], 'sync-info');
-                            exit(0);
-                        }
-
-                    } else {
-                        //@todo error
-                    }
+                    $elastic->indexBudget($budget);
                 }
                 $transaction->commit();
             } catch(PDOException $exception) {
@@ -99,29 +88,5 @@ class Budgets
             usleep(300000);
         }
         return true;
-    }
-
-
-    /**
-     * getting from response-field of a document for elastic
-     *
-     * @param $budget
-     * @return array
-     */
-    public function getDocForElastic($budget) {
-        $response = $budget['response'];
-        $jsonArr = json_decode($response, 1);
-        $records = $jsonArr['records'];
-        $docArr = [];
-        foreach ($records as $record) {
-            if ($record['ocid'] == $budget['ocid']) {
-                $ocid = $record['ocid'];
-                $title = ($record['compiledRelease']['tender']['title']) ?? "";
-                $description = ($record['compiledRelease']['tender']['description']) ?? "";
-                $docArr = ['ocid' => $ocid, 'title' => $title, 'description' => $description];
-                break;
-            }
-        }
-        return $docArr;
     }
 }

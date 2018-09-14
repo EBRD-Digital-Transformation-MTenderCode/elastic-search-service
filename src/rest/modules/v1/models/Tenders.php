@@ -11,6 +11,8 @@ use common\components\validators\JsonListValidator;
 class Tenders extends ElasticSearchModel
 {
     public $id;
+    public $title;
+    public $description;
     public $tenderId;
     public $search;
     public $searchStrict;
@@ -31,6 +33,8 @@ class Tenders extends ElasticSearchModel
             [
                 [
                     'id',
+                    'title',
+                    'description',
                     'tenderId',
                     'search',
                     'buyerRegion',
@@ -74,7 +78,7 @@ class Tenders extends ElasticSearchModel
      */
     public static function fieldsFullText()
     {
-        return array_merge(parent::fieldsFullText(), ['search']);
+        return array_merge(parent::fieldsFullText(), ['search', 'title', 'description']);
     }
 
     /**
