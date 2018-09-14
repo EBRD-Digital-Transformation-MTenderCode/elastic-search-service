@@ -24,40 +24,6 @@ class Tenders
     }
 
     /**
-     * @return array
-     * @throws \ustudio\service_mandatory\components\elastic\ForbiddenHttpException
-     * @throws \yii\web\HttpException
-     */
-    public function elasticMapping()
-    {
-        Yii::info("Mapping tenders", 'console-msg');
-        $mapArr = [
-            'dynamic' => 'strict',
-            '_all' => ['enabled' => false],
-            'properties' => [
-                'id' => ['type' => 'keyword'],
-                'tenderId' => ['type' => 'keyword'],
-                'title' => ['type' => 'text'],
-                'description' => ['type' => 'text'],
-                'cdu-v' => ['type' => 'keyword'],
-                'titelsOrDescriptions' => ['type' => 'text'],
-                'buyerRegion' => ['type' => 'keyword'],
-                'procedureType' => ['type' => 'keyword'],
-                'procedureStatus' => ['type' => 'keyword'],
-                'budget' => ['type' => 'scaled_float', 'scaling_factor' => 100],
-                'classification' => ['type' => 'keyword'],
-            ],
-        ];
-        $jsonMap = json_encode($mapArr);
-        $url = Yii::$app->params['elastic_url'];
-        $index = Yii::$app->params['elastic_tenders_index'];
-        $type = Yii::$app->params['elastic_tenders_type'];
-        $elastic = new ElasticComponent($url, $index, $type);
-        $result = $elastic->createMapping($jsonMap);
-        return $result;
-    }
-
-    /**
      * indexing of tenders to elastic
      * @throws \ustudio\service_mandatory\components\elastic\ForbiddenHttpException
      * @throws \yii\web\HttpException

@@ -21,33 +21,6 @@ class Budgets
     }
 
     /**
-     * @return array
-     * @throws \ustudio\service_mandatory\components\elastic\ForbiddenHttpException
-     * @throws \yii\web\HttpException
-     */
-    public function elasticMapping()
-    {
-        Yii::info("Mapping budgets", 'console-msg');
-        $mapArr = [
-            'dynamic' => 'strict',
-            '_all' => ['enabled' => false],
-            'properties' => [
-                'ocid' => ['type' => 'keyword'],
-                'title' => ['type' => 'text'],
-                'description' => ['type' => 'text'],
-            ]
-        ];
-
-        $jsonMap = json_encode($mapArr);
-        $url = Yii::$app->params['elastic_url'];
-        $index = Yii::$app->params['elastic_budgets_index'];
-        $type = Yii::$app->params['elastic_budgets_type'];
-        $elastic = new ElasticComponent($url, $index, $type);
-        $result = $elastic->createMapping($jsonMap);
-        return $result;
-    }
-
-    /**
      * indexing of budgets to elastic
      * @return bool
      * @throws \ustudio\service_mandatory\components\elastic\ForbiddenHttpException

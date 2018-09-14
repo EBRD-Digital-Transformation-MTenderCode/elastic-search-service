@@ -74,14 +74,15 @@ class ReindexElasticController extends Controller
                 exit(0);
             }
 
-            $budgets = new Budgets();
-            $result = $budgets->elasticMapping();
+            $result = $elastic->budgetsMapping();
+
             if ((int)$result['code'] != 200) {
                 Yii::error("Elastic mapping " . $elastic_index . " error", 'console-msg');
                 exit(0);
             }
-            $budgets->reindexItemsToElastic();
 
+            $budgets = new Budgets();
+            $budgets->reindexItemsToElastic();
         } catch (HttpException $e) {
             Yii::error($e->getMessage(), 'console-msg');
             exit(0);
@@ -103,13 +104,14 @@ class ReindexElasticController extends Controller
                 exit(0);
             }
 
-            $tenders = new Tenders();
-            $result = $tenders->elasticMapping();
+            $result = $elastic->tendersMapping();
+
             if ((int)$result['code'] != 200) {
                 Yii::error("Elastic mapping " . $elastic_index . " error", 'console-msg');
                 exit(0);
             }
 
+            $tenders = new Tenders();
             $tenders->reindexItemsToElastic();
 
         } catch (HttpException $e) {
