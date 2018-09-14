@@ -167,16 +167,16 @@
                     },
                     {
                         "in":"query",
-                        "name":"titelsOrDescriptions",
+                        "name":"titlesOrDescriptions",
                         "type":"string",
                         "required":false,
                         "description": "поле полнотекстового поиска"
                     },
                     {
                         "in": "query",
-                        "name": "titelsOrDescriptionsStrict",
-                        "type": "integer",
-                        "enum": [0, 1],
+                        "name": "titlesOrDescriptionsStrict",
+                        "type": "boolean",
+                        "enum": [true, false],
                         "description": "признак строгого соответствия"
                     },
                     {

@@ -3210,7 +3210,7 @@
             "source": {
                 "type": "git",
                 "url": "https://pbox-reader@bitbucket.org/ustudio-llc/service_mandatory_parts-composer_package.git",
-                "reference": "e87d2ed8fa66fad26b294aa3363ed448eafc5e31"
+                "reference": "28c1ec014d9cf9ed5f96d60a4e1ffa0120f4b60a"
             },
             "require": {
                 "swagger-api/swagger-ui": "~3.1",
