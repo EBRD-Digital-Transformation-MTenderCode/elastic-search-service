@@ -266,10 +266,10 @@
             },
             {
               "in":"query",
-              "name":"description",
+              "name":"titlesOrDescriptions",
               "type":"string",
               "required":false,
-              "description": "описание тендера"
+              "description": "поле полнотекстового поиска"
             },
             {
               "in":"query",

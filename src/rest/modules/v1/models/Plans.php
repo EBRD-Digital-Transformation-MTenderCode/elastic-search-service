@@ -10,6 +10,7 @@ use Yii;
 class Plans extends ElasticSearchModel
 {
     public $id;
+    public $titlesOrDescriptions;
 
     /**
      * @inheritdoc
@@ -17,7 +18,7 @@ class Plans extends ElasticSearchModel
     public function rules()
     {
         return array_merge(parent::rules(), [
-            ['id', 'string'],
+            [['id', 'titlesOrDescriptions'] ,'string'],
         ]);
     }
 
@@ -26,7 +27,7 @@ class Plans extends ElasticSearchModel
      */
     public static function fieldsFullText()
     {
-        return array_merge(parent::fieldsFullText(), []);
+        return array_merge(parent::fieldsFullText(), ['titlesOrDescriptions']);
     }
 
     /**
