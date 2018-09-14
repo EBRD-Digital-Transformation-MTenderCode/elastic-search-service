@@ -7,6 +7,7 @@ use yii\console\Controller;
 use console\models\Budgets;
 use console\models\Tenders;
 use ustudio\service_mandatory\components\elastic\ElasticComponent;
+use console\models\Plans;
 
 /**
  * Class ReindexElasticController
@@ -22,6 +23,8 @@ class ReindexElasticController extends Controller
         $this->reindexBudgets();
 
         $this->reindexTenders();
+
+        $this->indexPlans();
 
         Yii::info("Elastic indexing is complete", 'console-msg');
     }
@@ -54,6 +57,21 @@ class ReindexElasticController extends Controller
         }
 
         Yii::info("Elastic indexing Tenders is complete", 'console-msg');
+    }
+
+    /**
+     *  reindex plans
+     */
+    public function actionPlans()
+    {
+        try {
+            $this->indexPlans();
+        } catch (HttpException $e) {
+            Yii::error($e->getMessage(), 'console-msg');
+            exit(0);
+        }
+
+        Yii::info("Elastic indexing Plans is complete", 'console-msg');
     }
 
     /**
@@ -119,4 +137,38 @@ class ReindexElasticController extends Controller
             exit(0);
         }
     }
+
+    /**
+     * PLANS
+     */
+    private function indexPlans()
+    {
+        $elastic_url = Yii::$app->params['elastic_url'];
+        $elastic_index = Yii::$app->params['elastic_plans_index'];
+        $elastic_type = Yii::$app->params['elastic_plans_type'];
+
+        try {
+            $elastic = new ElasticComponent($elastic_url, $elastic_index, $elastic_type);
+            $result = $elastic->dropIndex();
+
+            if ((int)$result['code'] != 200 && (int)$result['code'] != 404) {
+                Yii::error("Elastic index " . $elastic_index . " error. Code: " . $result['code'], 'console-msg');
+                exit(0);
+            }
+
+            $plans = new Plans();
+            $result = $elastic->plansMapping();
+            if ((int)$result['code'] != 200) {
+                Yii::error("Elastic mapping " . $elastic_index . " error", 'console-msg');
+                exit(0);
+            }
+
+            $plans->indexItemsToElastic();
+
+        } catch (HttpException $e) {
+            Yii::error($e->getMessage(), 'console-msg');
+            exit(0);
+        }
+    }
+
 }
