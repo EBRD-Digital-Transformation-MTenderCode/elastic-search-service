@@ -14,8 +14,8 @@ class Tenders extends ElasticSearchModel
     public $title;
     public $description;
     public $tenderId;
-    public $titelsOrDescriptions;
-    public $titelsOrDescriptionsStrict;
+    public $titlesOrDescriptions;
+    public $titlesOrDescriptionsStrict;
     public $buyerRegion;
     public $procedureNumber;
     public $procedureType;
@@ -36,7 +36,7 @@ class Tenders extends ElasticSearchModel
                     'title',
                     'description',
                     'tenderId',
-                    'titelsOrDescriptions',
+                    'titlesOrDescriptions',
                     'buyerRegion',
                     'procedureType',
                     'procedureStatus',
@@ -62,13 +62,16 @@ class Tenders extends ElasticSearchModel
                 'double',
             ],
             [
-                'titelsOrDescriptionsStrict',
+                'titlesOrDescriptionsStrict',
                 'boolean',
+                'trueValue' => 'true',
+                'falseValue' => 'false',
+                'strict' => true,
             ],
             [
-                'titelsOrDescriptionsStrict',
+                'titlesOrDescriptionsStrict',
                 'default',
-                'value' => 0,
+                'value' => 'false',
             ],
         ]);
     }
@@ -78,7 +81,7 @@ class Tenders extends ElasticSearchModel
      */
     public static function fieldsFullText()
     {
-        return array_merge(parent::fieldsFullText(), ['titelsOrDescriptions', 'title', 'description']);
+        return array_merge(parent::fieldsFullText(), ['titlesOrDescriptions', 'title', 'description']);
     }
 
     /**
@@ -94,7 +97,7 @@ class Tenders extends ElasticSearchModel
      */
     public static function fieldsSystem()
     {
-        return array_merge(parent::fieldsSystem(), ['titelsOrDescriptionsStrict']);
+        return array_merge(parent::fieldsSystem(), ['titlesOrDescriptionsStrict']);
     }
 
     /**

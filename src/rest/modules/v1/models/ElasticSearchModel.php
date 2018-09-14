@@ -91,7 +91,7 @@ class ElasticSearchModel extends Model
             foreach ($searchAttributes as $key => $value) {
                 if (in_array($key, $this->fieldsFullText())) {
                     //  если выбрано строгое соответствие
-                    $strict_mode = isset($this->{$key . self::STRICT_SUFFIX}) && $this->{$key . self::STRICT_SUFFIX};
+                    $strict_mode = isset($this->{$key . self::STRICT_SUFFIX}) && ($this->{$key . self::STRICT_SUFFIX} == 'true');
                     if ($strict_mode) {
                         if (mb_strlen($value) > self::CHAR_LIMIT) {
                             $mustItems[] = '{"match_phrase":{"' . $key . '":"' . $value . '"}}';
