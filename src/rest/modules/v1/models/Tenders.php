@@ -11,9 +11,11 @@ use common\components\validators\JsonListValidator;
 class Tenders extends ElasticSearchModel
 {
     public $id;
+    public $title;
+    public $description;
     public $tenderId;
-    public $search;
-    public $searchStrict;
+    public $titelsOrDescriptions;
+    public $titelsOrDescriptionsStrict;
     public $buyerRegion;
     public $procedureNumber;
     public $procedureType;
@@ -31,8 +33,10 @@ class Tenders extends ElasticSearchModel
             [
                 [
                     'id',
+                    'title',
+                    'description',
                     'tenderId',
-                    'search',
+                    'titelsOrDescriptions',
                     'buyerRegion',
                     'procedureType',
                     'procedureStatus',
@@ -58,11 +62,11 @@ class Tenders extends ElasticSearchModel
                 'double',
             ],
             [
-                'searchStrict',
+                'titelsOrDescriptionsStrict',
                 'boolean',
             ],
             [
-                'searchStrict',
+                'titelsOrDescriptionsStrict',
                 'default',
                 'value' => 0,
             ],
@@ -74,7 +78,7 @@ class Tenders extends ElasticSearchModel
      */
     public static function fieldsFullText()
     {
-        return array_merge(parent::fieldsFullText(), ['search']);
+        return array_merge(parent::fieldsFullText(), ['titelsOrDescriptions', 'title', 'description']);
     }
 
     /**
@@ -90,7 +94,7 @@ class Tenders extends ElasticSearchModel
      */
     public static function fieldsSystem()
     {
-        return array_merge(parent::fieldsSystem(), ['searchStrict']);
+        return array_merge(parent::fieldsSystem(), ['titelsOrDescriptionsStrict']);
     }
 
     /**

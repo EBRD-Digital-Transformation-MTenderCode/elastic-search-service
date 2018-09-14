@@ -19,8 +19,6 @@ class ElasticSearchModel extends Model
     const TO_SUFFIX = 'To';
     const CHAR_LIMIT = 2;
 
-    public $title;
-    public $description;
     public $pageSize;
     public $page;
 
@@ -33,7 +31,7 @@ class ElasticSearchModel extends Model
      */
     public static function fieldsFullText()
     {
-        return ['title', 'description'];
+        return [];
     }
 
     /**
@@ -60,7 +58,6 @@ class ElasticSearchModel extends Model
     public function rules()
     {
         return [
-            [['title', 'description'], 'string'],
             [['pageSize', 'page'], 'integer', 'min' => 1],
         ];
     }

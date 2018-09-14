@@ -1,9 +1,15 @@
 <?php
 namespace console\models;
+
 use Yii;
 use yii\db\Exception;
 use PDOException;
+use ustudio\service_mandatory\components\elastic\ElasticComponent;
 
+/**
+ * Class Budgets
+ * @package console\models
+ */
 class Budgets
 {
     /**
@@ -15,38 +21,12 @@ class Budgets
     }
 
     /**
-     * @throws \yii\web\HttpException
-     */
-    public function elasticMapping()
-    {
-        Yii::info("Mapping budgets", 'console-msg');
-        $mapArr = [
-            'dynamic' => 'strict',
-            '_all' => ['enabled' => false],
-            'properties' => [
-                'ocid' => ['type' => 'keyword'],
-                'title' => ['type' => 'text'],
-                'description' => ['type' => 'text'],
-            ]
-        ];
-
-        $jsonMap = json_encode($mapArr);
-        $url = Yii::$app->params['elastic_url'];
-        $index = Yii::$app->params['elastic_budgets_index'];
-        $type = Yii::$app->params['elastic_budgets_type'];
-        $elastic = new Elastic($url, $index, $type);
-        $result = $elastic->mapping($jsonMap);
-        return $result;
-    }
-
-    /**
      * indexing of budgets to elastic
-     *
      * @return bool
-     * @throws \yii\web\ForbiddenHttpException
+     * @throws \ustudio\service_mandatory\components\elastic\ForbiddenHttpException
      * @throws \yii\web\HttpException
      */
-    public function indexItemsToElastic()
+    public function reindexItemsToElastic()
     {
         Yii::info("Indexing budgets", 'console-msg');
         $limit = 25;
@@ -54,7 +34,7 @@ class Budgets
         $url = Yii::$app->params['elastic_url'];
         $index = Yii::$app->params['elastic_budgets_index'];
         $type = Yii::$app->params['elastic_budgets_type'];
-        $elastic = new Elastic($url, $index, $type);
+        $elastic = new ElasticComponent($url, $index, $type);
         while (true) {
             try {
                 // block the update of selected records in the database
@@ -66,18 +46,7 @@ class Budgets
                 }
                 $offset += $limit;
                 foreach ($budgets as $budget) {
-                    $docArr = $this->getDocForElastic($budget);
-                    if (!empty($docArr)) {
-                        $result = $elastic->indexBudget($docArr);
-
-                        if ($result['code'] != 200 && $result['code'] != 201 && $result['code'] != 100) {
-                            Yii::error("Elastic indexing budgets error. Http-code: " . $result['code'], 'sync-info');
-                            exit(0);
-                        }
-
-                    } else {
-                        //@todo error
-                    }
+                    $elastic->indexBudget($budget);
                 }
                 $transaction->commit();
             } catch(PDOException $exception) {
@@ -93,29 +62,4 @@ class Budgets
         }
         return true;
     }
-
-
-    /**
-     * getting from response-field of a document for elastic
-     *
-     * @param $budget
-     * @return array
-     */
-    public function getDocForElastic($budget) {
-        $response = $budget['response'];
-        $jsonArr = json_decode($response, 1);
-        $records = $jsonArr['records'];
-        $docArr = [];
-        foreach ($records as $record) {
-            if ($record['ocid'] == $budget['ocid']) {
-                $ocid = $record['ocid'];
-                $title = ($record['compiledRelease']['tender']['title']) ?? "";
-                $description = ($record['compiledRelease']['tender']['description']) ?? "";
-                $docArr = ['ocid' => $ocid, 'title' => $title, 'description' => $description];
-                break;
-            }
-        }
-        return $docArr;
-    }
-
 }

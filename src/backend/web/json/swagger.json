@@ -163,14 +163,14 @@
                     },
                     {
                         "in":"query",
-                        "name":"search",
+                        "name":"titelsOrDescriptions",
                         "type":"string",
                         "required":false,
                         "description": "поле полнотекстового поиска"
                     },
                     {
                         "in": "query",
-                        "name": "searchStrict",
+                        "name": "titelsOrDescriptionsStrict",
                         "type": "integer",
                         "enum": [0, 1],
                         "description": "признак строгого соответствия"
