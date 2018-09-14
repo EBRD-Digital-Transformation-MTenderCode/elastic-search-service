@@ -20,6 +20,8 @@ class ReindexElasticController extends Controller
 
         $this->indexTenders();
 
+        $this->indexPlans();
+
         Yii::info("Elastic indexing is complete", 'console-msg');
     }
 
