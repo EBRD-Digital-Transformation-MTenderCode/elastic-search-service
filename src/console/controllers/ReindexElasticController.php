@@ -139,7 +139,7 @@ class ReindexElasticController extends Controller
     }
 
     /**
-     *
+     * PLANS
      */
     private function indexPlans()
     {
@@ -148,7 +148,7 @@ class ReindexElasticController extends Controller
         $elastic_type = Yii::$app->params['elastic_plans_type'];
 
         try {
-            $elastic = new Elastic($elastic_url, $elastic_index, $elastic_type);
+            $elastic = new ElasticComponent($elastic_url, $elastic_index, $elastic_type);
             $result = $elastic->dropIndex();
 
             if ((int)$result['code'] != 200 && (int)$result['code'] != 404) {
@@ -157,7 +157,7 @@ class ReindexElasticController extends Controller
             }
 
             $plans = new Plans();
-            $result = $plans->elasticMapping();
+            $result = $elastic->plansMapping();
             if ((int)$result['code'] != 200) {
                 Yii::error("Elastic mapping " . $elastic_index . " error", 'console-msg');
                 exit(0);
