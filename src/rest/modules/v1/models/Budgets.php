@@ -9,6 +9,8 @@ use Yii;
  */
 class Budgets extends ElasticSearchModel
 {
+    public $title;
+    public $description;
     public $ocid;
 
     /**
@@ -17,7 +19,7 @@ class Budgets extends ElasticSearchModel
     public function rules()
     {
         return array_merge(parent::rules(), [
-            ['ocid', 'string'],
+            [['ocid', 'title', 'description'], 'string'],
         ]);
     }
 
@@ -26,7 +28,7 @@ class Budgets extends ElasticSearchModel
      */
     public static function fieldsFullText()
     {
-        return array_merge(parent::fieldsFullText(), []);
+        return array_merge(parent::fieldsFullText(), ['title', 'description']);
     }
 
     /**

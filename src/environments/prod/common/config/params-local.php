@@ -9,4 +9,5 @@ return [
     'elastic_tenders_type' => '{{environments_ELASTIC_TENDERS_TYPE}}',
     'elastic_plans_type' => '{{environments_ELASTIC_PLANS_TYPE}}',
     'elastic_page_size' => '{{environments_ELASTIC_PAGE_SIZE}}',
+    'sleep_error_interval' => '{{environments_SLEEP_ERROR_INTERVAL}}',
 ];
