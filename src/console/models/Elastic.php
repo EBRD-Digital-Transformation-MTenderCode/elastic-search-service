@@ -81,6 +81,21 @@ Class Elastic
     }
 
     /**
+     * @param $docArr
+     * @return array
+     * @throws HttpException
+     */
+    public function indexPlan($docArr)
+    {
+        $elastic_url = Yii::$app->params['elastic_url'] ?? "";
+        $elastic_request_url = $elastic_url . "/" . $this->index . "/" . $this->type . "/";
+        $data_string = json_encode($docArr);
+        $curl_options = ['HTTPHEADER' => ['Content-Type:application/json']];
+        $result = Curl::sendRequest($elastic_request_url . $docArr['id'], "POST", $data_string, $curl_options);
+        return $result;
+    }
+
+    /**
      * @return array
      * @throws HttpException
      */

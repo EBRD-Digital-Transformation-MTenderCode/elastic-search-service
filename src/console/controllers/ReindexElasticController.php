@@ -3,6 +3,7 @@
 namespace console\controllers;
 use console\models\Budgets;
 use console\models\Elastic;
+use console\models\Plans;
 use console\models\Tenders;
 use yii\console\Controller;
 use Yii;
@@ -50,6 +51,21 @@ class ReindexElasticController extends Controller
         }
 
         Yii::info("Elastic indexing Tenders is complete", 'console-msg');
+    }
+
+    /**
+     *  reindex plans
+     */
+    public function actionPlans()
+    {
+        try {
+            $this->indexPlans();
+        } catch (HttpException $e) {
+            Yii::error($e->getMessage(), 'console-msg');
+            exit(0);
+        }
+
+        Yii::info("Elastic indexing Plans is complete", 'console-msg');
     }
 
     /**
@@ -111,6 +127,39 @@ class ReindexElasticController extends Controller
             }
 
             $tenders->indexItemsToElastic();
+
+        } catch (HttpException $e) {
+            Yii::error($e->getMessage(), 'console-msg');
+            exit(0);
+        }
+    }
+
+    /**
+     *
+     */
+    private function indexPlans()
+    {
+        $elastic_url = Yii::$app->params['elastic_url'];
+        $elastic_index = Yii::$app->params['elastic_plans_index'];
+        $elastic_type = Yii::$app->params['elastic_plans_type'];
+
+        try {
+            $elastic = new Elastic($elastic_url, $elastic_index, $elastic_type);
+            $result = $elastic->dropIndex();
+
+            if ((int)$result['code'] != 200 && (int)$result['code'] != 404) {
+                Yii::error("Elastic index " . $elastic_index . " error. Code: " . $result['code'], 'console-msg');
+                exit(0);
+            }
+
+            $plans = new Plans();
+            $result = $plans->elasticMapping();
+            if ((int)$result['code'] != 200) {
+                Yii::error("Elastic mapping " . $elastic_index . " error", 'console-msg');
+                exit(0);
+            }
+
+            $plans->indexItemsToElastic();
 
         } catch (HttpException $e) {
             Yii::error($e->getMessage(), 'console-msg');
