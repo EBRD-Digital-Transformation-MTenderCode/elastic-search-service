@@ -49,10 +49,11 @@ class Tenders
                 }
                 $offset += $limit;
                 foreach ($tenders as $tender) {
-                    if (isset($cdu[$tender['cdu_id']]) && $cdu[$tender['cdu_id']] != self::TYPE_PROZORRO) {
-                        $elastic->indexTender($tender, $cdu);
+                    $cduV = $cdu[$tender['cdu_id']] ?? '';
+                    if ($cduV != self::TYPE_PROZORRO) {
+                        $elastic->indexTender($tender, $cduV);
                     } else {
-                        $elastic->indexTenderPrz($tender, $cdu);
+                        $elastic->indexTenderPrz($tender, $cduV);
                     }
                 }
                 $transaction->commit();
