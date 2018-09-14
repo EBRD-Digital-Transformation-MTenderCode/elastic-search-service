@@ -14,8 +14,8 @@ class Tenders extends ElasticSearchModel
     public $title;
     public $description;
     public $tenderId;
-    public $search;
-    public $searchStrict;
+    public $titelsOrDescriptions;
+    public $titelsOrDescriptionsStrict;
     public $buyerRegion;
     public $procedureNumber;
     public $procedureType;
