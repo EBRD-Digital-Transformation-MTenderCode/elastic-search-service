@@ -52,10 +52,11 @@ class Plans
                 }
                 $offset += $limit;
                 foreach ($items as $item) {
-                    if (isset($cdu[$item['cdu_id']]) && $cdu[$item['cdu_id']] != self::TYPE_PROZORRO) {
-                        //$elastic->indexPlan($item, $cdu);
+                    $cduV = $cdu[$item['cdu_id']] ?? '';
+                    if ($cduV != self::TYPE_PROZORRO) {
+
                     } else {
-                        $elastic->indexPlanPrz($item, $cdu);
+                        $elastic->indexPlanPrz($item, $cduV);
                     }
                 }
                 $transaction->commit();
