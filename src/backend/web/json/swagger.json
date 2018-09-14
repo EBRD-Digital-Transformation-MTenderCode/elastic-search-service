@@ -272,6 +272,13 @@
               "description": "поле полнотекстового поиска"
             },
             {
+              "in": "query",
+              "name": "titlesOrDescriptionsStrict",
+              "type": "integer",
+              "enum": [0, 1],
+              "description": "признак строгого соответствия"
+            },
+            {
               "in":"query",
               "name":"pageSize",
               "type":"string",
