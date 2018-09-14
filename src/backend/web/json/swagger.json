@@ -274,8 +274,8 @@
             {
               "in": "query",
               "name": "titlesOrDescriptionsStrict",
-              "type": "integer",
-              "enum": [0, 1],
+              "type": "boolean",
+              "enum": [true, false],
               "description": "признак строгого соответствия"
             },
             {

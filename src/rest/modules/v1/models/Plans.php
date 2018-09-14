@@ -22,9 +22,12 @@ class Plans extends ElasticSearchModel
             [['id', 'titlesOrDescriptions'], 'string'],
             [
                 'titlesOrDescriptionsStrict', 'boolean',
+                'trueValue' => 'true',
+                'falseValue' => 'false',
+                'strict' => true,
             ],
             [
-                'titlesOrDescriptionsStrict', 'default', 'value' => 0,
+                'titlesOrDescriptionsStrict', 'default', 'value' => 'false',
             ]
         ]);
     }
