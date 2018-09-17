@@ -11,6 +11,7 @@ class Plans extends ElasticSearchModel
 {
     public $id;
     public $titlesOrDescriptions;
+    public $titlesOrDescriptionsStrict;
 
     /**
      * @inheritdoc
@@ -18,7 +19,16 @@ class Plans extends ElasticSearchModel
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['id', 'titlesOrDescriptions'] ,'string'],
+            [['id', 'titlesOrDescriptions'], 'string'],
+            [
+                'titlesOrDescriptionsStrict', 'boolean',
+                'trueValue' => 'true',
+                'falseValue' => 'false',
+                'strict' => true,
+            ],
+            [
+                'titlesOrDescriptionsStrict', 'default', 'value' => 'false',
+            ]
         ]);
     }
 
@@ -43,7 +53,7 @@ class Plans extends ElasticSearchModel
      */
     public static function fieldsSystem()
     {
-        return array_merge(parent::fieldsSystem(), []);
+        return array_merge(parent::fieldsSystem(), ['titlesOrDescriptionsStrict']);
     }
 
     /**
