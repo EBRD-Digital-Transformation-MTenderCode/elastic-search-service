@@ -101,7 +101,7 @@ class ElasticSearchModel extends Model
                     $strict_mode = isset($this->{$key . self::STRICT_SUFFIX}) && ($this->{$key . self::STRICT_SUFFIX} == 'true');
                     if ($strict_mode) {
                         if (mb_strlen($value) > self::CHAR_LIMIT) {
-                            $mustItems[] = '{"match_phrase":{"' . $key . '":"' . $value . '"}}';
+                            $mustItems[] = '{"match_phrase":{"' . $key . self::STRICT_SUFFIX . '":"' . $value . '"}}';
                         }
                         //  не строгое
                     } else {
