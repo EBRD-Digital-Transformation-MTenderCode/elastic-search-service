@@ -17,12 +17,23 @@ class Tenders extends ElasticSearchModel
     public $titlesOrDescriptions;
     public $titlesOrDescriptionsStrict;
     public $buyerRegion;
-    public $procedureNumber;
     public $procedureType;
     public $procedureStatus;
     public $budgetFrom;
     public $budgetTo;
     public $classification;
+    public $buyerName;
+    public $buyerCode;
+    public $publicationDateFrom;
+    public $publicationDateTo;
+    public $enquiryPeriodFrom;
+    public $enquiryPeriodTo;
+    public $tenderPeriodFrom;
+    public $tenderPeriodTo;
+    public $auctionPeriodFrom;
+    public $auctionPeriodTo;
+    public $awardPeriodFrom;
+    public $awardPeriodTo;
 
     /**
      * @inheritdoc
@@ -41,15 +52,45 @@ class Tenders extends ElasticSearchModel
                     'procedureType',
                     'procedureStatus',
                     'classification',
+                    'buyerName',
+                    'buyerCode',
+                    'publicationDateFrom',
+                    'publicationDateTo',
+                    'enquiryPeriodFrom',
+                    'enquiryPeriodTo',
+                    'tenderPeriodFrom',
+                    'tenderPeriodTo',
+                    'auctionPeriodFrom',
+                    'auctionPeriodTo',
+                    'awardPeriodFrom',
+                    'awardPeriodTo',
                 ],
                 'string',
+            ],
+            [
+                [
+                    'publicationDateFrom',
+                    'publicationDateTo',
+                    'enquiryPeriodFrom',
+                    'enquiryPeriodTo',
+                    'tenderPeriodFrom',
+                    'tenderPeriodTo',
+                    'auctionPeriodFrom',
+                    'auctionPeriodTo',
+                    'awardPeriodFrom',
+                    'awardPeriodTo',
+                ],
+                'datetime',
+                'format' => 'php:' . \DateTime::RFC3339,
             ],
             [
                 [
                     'buyerRegion',
                     'procedureType',
                     'procedureStatus',
-                    'classification'
+                    'classification',
+                    'buyerName',
+                    'buyerCode',
                 ],
                 JsonListValidator::className(),
                 'skipOnEmpty' => true,
@@ -81,7 +122,12 @@ class Tenders extends ElasticSearchModel
      */
     public static function fieldsFullText()
     {
-        return array_merge(parent::fieldsFullText(), ['titlesOrDescriptions', 'title', 'description']);
+        return array_merge(parent::fieldsFullText(), [
+            'titlesOrDescriptions',
+            'title',
+            'description',
+            'buyerName',
+        ]);
     }
 
     /**
@@ -89,7 +135,20 @@ class Tenders extends ElasticSearchModel
      */
     public static function fieldsRange()
     {
-        return array_merge(parent::fieldsRange(), ['budgetFrom', 'budgetTo']);
+        return array_merge(parent::fieldsRange(), [
+            'budgetFrom',
+            'budgetTo',
+            'publicationDateFrom',
+            'publicationDateTo',
+            'enquiryPeriodFrom',
+            'enquiryPeriodTo',
+            'tenderPeriodFrom',
+            'tenderPeriodTo',
+            'auctionPeriodFrom',
+            'auctionPeriodTo',
+            'awardPeriodFrom',
+            'awardPeriodTo',
+        ]);
     }
 
     /**

@@ -17,6 +17,8 @@ class ElasticSearchModel extends Model
     const STRICT_SUFFIX = 'Strict';
     const FROM_SUFFIX = 'From';
     const TO_SUFFIX = 'To';
+    const PERIOD_FROM_SUFFIX = 'PeriodFrom';
+    const PERIOD_TO_SUFFIX = 'PeriodTo';
     const CHAR_LIMIT = 2;
 
     public $pageSize;
@@ -90,6 +92,11 @@ class ElasticSearchModel extends Model
 
             foreach ($searchAttributes as $key => $value) {
                 if (in_array($key, $this->fieldsFullText())) {
+                    //json list to string convert
+                    if (is_array($this->{$key})) {
+                        $value = implode(' ', $this->{$key});
+                    }
+
                     //  если выбрано строгое соответствие
                     $strict_mode = isset($this->{$key . self::STRICT_SUFFIX}) && ($this->{$key . self::STRICT_SUFFIX} == 'true');
                     if ($strict_mode) {
@@ -112,14 +119,23 @@ class ElasticSearchModel extends Model
                     }
                 } elseif (in_array($key, $this->fieldsRange())) {
                     $from = strpos($key, self::FROM_SUFFIX);
+                    $to = strpos($key, self::TO_SUFFIX);
+                    $periodFrom = strpos($key, self::PERIOD_FROM_SUFFIX);
+                    $periodTo = strpos($key, self::PERIOD_TO_SUFFIX);
 
-                    if ($from) {
+                    if ($periodFrom) {
+                        $filterRangeItems[$key]['from'] = $value;
+                    }
+
+                    if ($periodTo) {
+                        $filterRangeItems[$key]['to'] = $value;
+                    }
+
+                    if ($from && !$periodFrom) {
                         $filterRangeItems[substr($key, 0, $from)]['from'] = $value;
                     }
 
-                    $to = strpos($key, self::TO_SUFFIX);
-
-                    if ($to) {
+                    if ($to && !$periodTo) {
                         $filterRangeItems[substr($key, 0, $to)]['to'] = $value;
                     }
                 } elseif (!in_array($key, $this->fieldsSystem())) {
@@ -136,11 +152,11 @@ class ElasticSearchModel extends Model
                     $rangeConditions = [];
 
                     if (isset($params['from']) && $params['from']) {
-                        $rangeConditions[] = '"gte":' . $params['from'];
+                        $rangeConditions[] = '"gte":"' . $params['from'] . '"';
                     }
 
                     if (isset($params['to']) && $params['to']) {
-                        $rangeConditions[] = '"lte":' . $params['to'];
+                        $rangeConditions[] = '"lte":"' . $params['to'] . '"';
                     }
 
                     $filterItems[] = '{"range":{"' . $field . '":{' . implode(',', $rangeConditions) . '}}}';
