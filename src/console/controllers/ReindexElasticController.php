@@ -122,6 +122,13 @@ class ReindexElasticController extends Controller
                 exit(0);
             }
 
+            $result = $elastic->setIndexSettings();
+
+            if ((int)$result['code'] != 200) {
+                Yii::error("Elastic set setting " . $elastic_index . " error", 'console-msg');
+                exit(0);
+            }
+
             $result = $elastic->tendersMapping();
 
             if ((int)$result['code'] != 200) {
@@ -156,13 +163,18 @@ class ReindexElasticController extends Controller
                 exit(0);
             }
 
-            $plans = new Plans();
+            $result = $elastic->setIndexSettings();
+            if ((int)$result['code'] != 200) {
+                Yii::error("Elastic set setting " . $elastic_index . " error", 'console-msg');
+                exit(0);
+            }
+
             $result = $elastic->plansMapping();
             if ((int)$result['code'] != 200) {
                 Yii::error("Elastic mapping " . $elastic_index . " error", 'console-msg');
                 exit(0);
             }
-
+            $plans = new Plans();
             $plans->indexItemsToElastic();
 
         } catch (HttpException $e) {
