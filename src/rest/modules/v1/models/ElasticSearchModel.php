@@ -17,9 +17,18 @@ class ElasticSearchModel extends Model
     const STRICT_SUFFIX = 'Strict';
     const FROM_SUFFIX = 'From';
     const TO_SUFFIX = 'To';
-    const PERIOD_FROM_SUFFIX = 'PeriodFrom';
-    const PERIOD_TO_SUFFIX = 'PeriodTo';
+    const PERIOD_PREFIX = 'period';
     const CHAR_LIMIT = 2;
+    const MATCHED_FIELDS = [
+        'buyersRegions'                => 'buyerRegion',
+        'proceduresTypes'              => 'procedureType',
+        'proceduresStatuses'           => 'procedureStatus',
+        'periodPublished'              => 'publishedDate',
+        'buyersIdentifiers'            => 'buyerIdentifier',
+        'buyersTypes'                  => 'buyerType',
+        'buyersMainGeneralActivities'  => 'buyerMainGeneralActivity',
+        'buyersMainSectoralActivities' => 'buyerMainSectoralActivity',
+    ];
 
     public $pageSize;
     public $page;
@@ -101,7 +110,7 @@ class ElasticSearchModel extends Model
                     $strict_mode = isset($this->{$key . self::STRICT_SUFFIX}) && ($this->{$key . self::STRICT_SUFFIX} == 'true');
                     if ($strict_mode) {
                         if (mb_strlen($value) > self::CHAR_LIMIT) {
-                            $mustItems[] = '{"match_phrase":{"' . $key . self::STRICT_SUFFIX . '":"' . $value . '"}}';
+                            $mustItems[] = '{"match_phrase":{"' . self::getMatchedKey($key) . self::STRICT_SUFFIX . '":"' . $value . '"}}';
                         }
                         //  не строгое
                     } else {
@@ -115,13 +124,13 @@ class ElasticSearchModel extends Model
                             }
                         }
 
-                        $mustItems[] = '{"match":{"' . $key . '":"' . implode(' ', $filteredWords) . '"}}';
+                        $mustItems[] = '{"match":{"' . self::getMatchedKey($key) . '":"' . implode(' ', $filteredWords) . '"}}';
                     }
                 } elseif (in_array($key, $this->fieldsRange())) {
                     $from = strpos($key, self::FROM_SUFFIX);
                     $to = strpos($key, self::TO_SUFFIX);
-                    $periodFrom = strpos($key, self::PERIOD_FROM_SUFFIX);
-                    $periodTo = strpos($key, self::PERIOD_TO_SUFFIX);
+                    $periodFrom = (strpos(self::getMatchedKey($key), self::PERIOD_PREFIX) !== false) && $from;
+                    $periodTo = (strpos(self::getMatchedKey($key), self::PERIOD_PREFIX) !== false) && $to;
 
                     if ($periodFrom) {
                         $filterRangeItems[$key]['from'] = $value;
@@ -140,15 +149,15 @@ class ElasticSearchModel extends Model
                     }
                 } elseif (!in_array($key, $this->fieldsSystem())) {
                     if (is_array($this->{$key})) {
-                        $filterItems[] = '{"terms":{"' . $key . '":["' . implode('", "', $this->{$key}) . '"]}}';
+                        $filterItems[] = '{"terms":{"' . self::getMatchedKey($key) . '":["' . implode('", "', $this->{$key}) . '"]}}';
                     } else {
-                        $filterItems[] = '{"term":{"' . $key . '":"' . $value . '"}}';
+                        $filterItems[] = '{"term":{"' . self::getMatchedKey($key) . '":"' . $value . '"}}';
                     }
                 }
             }
 
             if (!empty($filterRangeItems)) {
-                foreach ($filterRangeItems as $field => $params) {
+                foreach ($filterRangeItems as $key => $params) {
                     $rangeConditions = [];
 
                     if (isset($params['from']) && $params['from']) {
@@ -159,7 +168,7 @@ class ElasticSearchModel extends Model
                         $rangeConditions[] = '"lte":"' . $params['to'] . '"';
                     }
 
-                    $filterItems[] = '{"range":{"' . $field . '":{' . implode(',', $rangeConditions) . '}}}';
+                    $filterItems[] = '{"range":{"' . self::getMatchedKey($key) . '":{' . implode(',', $rangeConditions) . '}}}';
                 }
             }
 
@@ -209,5 +218,19 @@ class ElasticSearchModel extends Model
                 'totalCount' => $totalCount,
             ],
         ]);
+    }
+
+    /**
+     * Get matched field name
+     * @param $key
+     * @return mixed
+     */
+    protected static function getMatchedKey($key)
+    {
+        if (isset(self::MATCHED_FIELDS[$key])) {
+            return self::MATCHED_FIELDS[$key];
+        } else {
+            return $key;
+        }
     }
 }

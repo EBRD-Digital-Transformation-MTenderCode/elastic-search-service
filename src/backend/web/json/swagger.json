@@ -146,13 +146,6 @@
                     },
                     {
                         "in":"query",
-                        "name":"tenderId",
-                        "type":"string",
-                        "required":false,
-                        "description": "id тендера"
-                    },
-                    {
-                        "in":"query",
                         "name":"title",
                         "type":"string",
                         "required":false,
@@ -181,111 +174,147 @@
                     },
                     {
                         "in": "query",
-                        "name": "buyerRegion",
+                        "name": "buyersRegions",
                         "type": "string",
-                        "description": "регион заказчика<br /> json array"
+                        "description": "регионы заказчиков<br /> json array"
                     },
                     {
                         "in": "query",
-                        "name": "procedureType",
+                        "name": "deliveriesRegions",
                         "type": "string",
-                        "description": "тип процедуры<br /> json array"
+                        "description": "регионы доставки<br /> json array"
                     },
                     {
                         "in": "query",
-                        "name": "procedureStatus",
+                        "name": "proceduresTypes",
                         "type": "string",
-                        "description": "статус процедуры<br /> json array"
+                        "description": "типы процедур<br /> json array"
                     },
                     {
                         "in": "query",
-                        "name": "budgetFrom",
+                        "name": "proceduresStatuses",
+                        "type": "string",
+                        "description": "статусы процедур<br /> json array"
+                    },
+                    {
+                        "in": "query",
+                        "name": "amountFrom",
                         "type": "string",
                         "description": "бюджет, от"
                     },
                     {
                         "in": "query",
-                        "name": "budgetTo",
+                        "name": "amountTo",
                         "type": "string",
                         "description": "бюджет, до"
                     },
                     {
                         "in": "query",
-                        "name": "classification",
+                        "name": "classifications",
                         "type": "string",
-                        "description": "классификация<br /> json array"
+                        "description": "классификации<br /> json array"
                     },
                     {
                         "in": "query",
-                        "name": "publicationDateFrom",
+                        "name": "periodPublishedFrom",
                         "type": "string",
-                        "description": "дата публикации, от"
+                        "description": "период публикации, от"
                     },
                     {
                         "in": "query",
-                        "name": "publicationDateTo",
+                        "name": "periodPublishedTo",
                         "type": "string",
-                        "description": "дата публикации, до"
+                        "description": "период публикации, до"
                     },
                     {
                         "in": "query",
-                        "name": "enquiryPeriodFrom",
+                        "name": "periodDeliveryFrom",
+                        "type": "string",
+                        "description": "период доставки, от"
+                    },
+                    {
+                        "in": "query",
+                        "name": "periodDeliveryTo",
+                        "type": "string",
+                        "description": "период доставки, до"
+                    },
+                    {
+                        "in": "query",
+                        "name": "periodEnquiryFrom",
                         "type": "string",
                         "description": "период обсуждения, от"
                     },
                     {
                         "in": "query",
-                        "name": "enquiryPeriodTo",
+                        "name": "periodEnquiryTo",
                         "type": "string",
                         "description": "период обсуждения, до"
                     },
                     {
                         "in": "query",
-                        "name": "tenderPeriodFrom",
+                        "name": "periodOfferFrom",
                         "type": "string",
                         "description": "период приема предложений, от"
                     },
                     {
                         "in": "query",
-                        "name": "tenderPeriodTo",
+                        "name": "periodOfferTo",
                         "type": "string",
                         "description": "период приема предложений, до"
                     },
                     {
                         "in": "query",
-                        "name": "auctionPeriodFrom",
+                        "name": "periodAuctionFrom",
                         "type": "string",
                         "description": "период аукцииона, от"
                     },
                     {
                         "in": "query",
-                        "name": "auctionPeriodTo",
+                        "name": "periodAuctionTo",
                         "type": "string",
                         "description": "период аукцииона, до"
                     },
                     {
                         "in": "query",
-                        "name": "awardPeriodFrom",
+                        "name": "periodAwardFrom",
                         "type": "string",
                         "description": "период квалификации, от"
                     },
                     {
                         "in": "query",
-                        "name": "awardPeriodTo",
+                        "name": "periodAwardTo",
                         "type": "string",
                         "description": "период квалификации, до"
                     },
                     {
                         "in": "query",
-                        "name": "buyerName",
+                        "name": "buyersNames",
                         "type": "string",
-                        "description": "название заказчика<br /> json array"
+                        "description": "названия заказчиков<br /> json array"
                     },
                     {
                         "in": "query",
-                        "name": "buyerCode",
+                        "name": "buyersIdentifiers",
                         "type": "string",
-                        "description": "код заказчика<br /> json array"
+                        "description": "коды заказчиков<br /> json array"
+                    },
+                    {
+                        "in": "query",
+                        "name": "buyersTypes",
+                        "type": "string",
+                        "description": "типы заказчиков<br /> json array"
+                    },
+                    {
+                        "in": "query",
+                        "name": "buyersMainGeneralActivities",
+                        "type": "string",
+                        "description": "основные типы деятельности заказчиков<br /> json array"
+                    },
+                    {
+                        "in": "query",
+                        "name": "buyersMainSectoralActivities",
+                        "type": "string",
+                        "description": "отраслевые типы деятельности заказчиков<br /> json array"
                     },
                     {
                         "in":"query",
