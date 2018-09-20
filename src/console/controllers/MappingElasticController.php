@@ -57,6 +57,14 @@ class MappingElasticController extends Controller
         $elastic_type = Yii::$app->params['elastic_tenders_type'];
         $elastic = new ElasticComponent($elastic_url, $elastic_index, $elastic_type);
         $elastic->dropIndex();
+
+        $result = $elastic->setIndexSettings();
+
+        if ((int)$result['code'] != 200) {
+            Yii::error("Elastic set setting " . $elastic_index . " error", 'console-msg');
+            exit(0);
+        }
+
         $result = $elastic->tendersMapping();
 
         if ((int)$result['code'] != 200) {
@@ -78,6 +86,14 @@ class MappingElasticController extends Controller
         $elastic_type = Yii::$app->params['elastic_plans_type'];
         $elastic = new ElasticComponent($elastic_url, $elastic_index, $elastic_type);
         $elastic->dropIndex();
+
+        $result = $elastic->setIndexSettings();
+
+        if ((int)$result['code'] != 200) {
+            Yii::error("Elastic set setting " . $elastic_index . " error", 'console-msg');
+            exit(0);
+        }
+
         $result = $elastic->plansMapping();
 
         if ((int)$result['code'] != 200) {
