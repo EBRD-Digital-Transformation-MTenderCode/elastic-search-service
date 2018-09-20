@@ -16,24 +16,30 @@ class Tenders extends ElasticSearchModel
     public $tenderId;
     public $titlesOrDescriptions;
     public $titlesOrDescriptionsStrict;
-    public $buyerRegion;
-    public $procedureType;
-    public $procedureStatus;
-    public $budgetFrom;
-    public $budgetTo;
-    public $classification;
-    public $buyerName;
-    public $buyerCode;
-    public $publicationDateFrom;
-    public $publicationDateTo;
-    public $enquiryPeriodFrom;
-    public $enquiryPeriodTo;
-    public $tenderPeriodFrom;
-    public $tenderPeriodTo;
-    public $auctionPeriodFrom;
-    public $auctionPeriodTo;
-    public $awardPeriodFrom;
-    public $awardPeriodTo;
+    public $buyersRegions;
+    public $deliveriesRegions;
+    public $proceduresTypes;
+    public $proceduresStatuses;
+    public $amountFrom;
+    public $amountTo;
+    public $classifications;
+    public $buyersNames;
+    public $buyersIdentifiers;
+    public $buyersTypes;
+    public $buyersMainGeneralActivities;
+    public $buyersMainSectoralActivities;
+    public $periodPublishedFrom;
+    public $periodPublishedTo;
+    public $periodDeliveryFrom;
+    public $periodDeliveryTo;
+    public $periodEnquiryFrom;
+    public $periodEnquiryTo;
+    public $periodOfferFrom;
+    public $periodOfferTo;
+    public $periodAuctionFrom;
+    public $periodAuctionTo;
+    public $periodAwardFrom;
+    public $periodAwardTo;
 
     /**
      * @inheritdoc
@@ -48,57 +54,69 @@ class Tenders extends ElasticSearchModel
                     'description',
                     'tenderId',
                     'titlesOrDescriptions',
-                    'buyerRegion',
-                    'procedureType',
-                    'procedureStatus',
-                    'classification',
-                    'buyerName',
-                    'buyerCode',
-                    'publicationDateFrom',
-                    'publicationDateTo',
-                    'enquiryPeriodFrom',
-                    'enquiryPeriodTo',
-                    'tenderPeriodFrom',
-                    'tenderPeriodTo',
-                    'auctionPeriodFrom',
-                    'auctionPeriodTo',
-                    'awardPeriodFrom',
-                    'awardPeriodTo',
+                    'buyersRegions',
+                    'deliveriesRegions',
+                    'proceduresTypes',
+                    'proceduresStatuses',
+                    'classifications',
+                    'buyersNames',
+                    'buyersIdentifiers',
+                    'buyersTypes',
+                    'buyersMainGeneralActivities',
+                    'buyersMainSectoralActivities',
+                    'periodPublishedFrom',
+                    'periodPublishedTo',
+                    'periodDeliveryFrom',
+                    'periodDeliveryTo',
+                    'periodEnquiryFrom',
+                    'periodEnquiryTo',
+                    'periodOfferFrom',
+                    'periodOfferTo',
+                    'periodAuctionFrom',
+                    'periodAuctionTo',
+                    'periodAwardFrom',
+                    'periodAwardTo',
                 ],
                 'string',
             ],
             [
                 [
-                    'publicationDateFrom',
-                    'publicationDateTo',
-                    'enquiryPeriodFrom',
-                    'enquiryPeriodTo',
-                    'tenderPeriodFrom',
-                    'tenderPeriodTo',
-                    'auctionPeriodFrom',
-                    'auctionPeriodTo',
-                    'awardPeriodFrom',
-                    'awardPeriodTo',
+                    'periodPublishedFrom',
+                    'periodPublishedTo',
+                    'periodDeliveryFrom',
+                    'periodDeliveryTo',
+                    'periodEnquiryFrom',
+                    'periodEnquiryTo',
+                    'periodOfferFrom',
+                    'periodOfferTo',
+                    'periodAuctionFrom',
+                    'periodAuctionTo',
+                    'periodAwardFrom',
+                    'periodAwardTo',
                 ],
                 'datetime',
                 'format' => 'php:' . \DateTime::RFC3339,
             ],
             [
                 [
-                    'buyerRegion',
-                    'procedureType',
-                    'procedureStatus',
-                    'classification',
-                    'buyerName',
-                    'buyerCode',
+                    'buyersRegions',
+                    'deliveriesRegions',
+                    'proceduresTypes',
+                    'proceduresStatuses',
+                    'classifications',
+                    'buyersNames',
+                    'buyersIdentifiers',
+                    'buyersTypes',
+                    'buyersMainGeneralActivities',
+                    'buyersMainSectoralActivities',
                 ],
                 JsonListValidator::className(),
                 'skipOnEmpty' => true,
             ],
             [
                 [
-                    'budgetFrom',
-                    'budgetTo',
+                    'amountFrom',
+                    'amountTo',
                 ],
                 'double',
             ],
@@ -126,7 +144,7 @@ class Tenders extends ElasticSearchModel
             'titlesOrDescriptions',
             'title',
             'description',
-            'buyerName',
+            'buyersNames',
         ]);
     }
 
@@ -136,18 +154,20 @@ class Tenders extends ElasticSearchModel
     public static function fieldsRange()
     {
         return array_merge(parent::fieldsRange(), [
-            'budgetFrom',
-            'budgetTo',
-            'publicationDateFrom',
-            'publicationDateTo',
-            'enquiryPeriodFrom',
-            'enquiryPeriodTo',
-            'tenderPeriodFrom',
-            'tenderPeriodTo',
-            'auctionPeriodFrom',
-            'auctionPeriodTo',
-            'awardPeriodFrom',
-            'awardPeriodTo',
+            'amountFrom',
+            'amountTo',
+            'periodPublishedFrom',
+            'periodPublishedTo',
+            'periodDeliveryFrom',
+            'periodDeliveryTo',
+            'periodEnquiryFrom',
+            'periodEnquiryTo',
+            'periodOfferFrom',
+            'periodOfferTo',
+            'periodAuctionFrom',
+            'periodAuctionTo',
+            'periodAwardFrom',
+            'periodAwardTo',
         ]);
     }
 
