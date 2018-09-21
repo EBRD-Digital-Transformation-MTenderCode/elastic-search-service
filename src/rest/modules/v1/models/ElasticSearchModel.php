@@ -17,9 +17,19 @@ class ElasticSearchModel extends Model
     const STRICT_SUFFIX = 'Strict';
     const FROM_SUFFIX = 'From';
     const TO_SUFFIX = 'To';
-    const PERIOD_FROM_SUFFIX = 'PeriodFrom';
-    const PERIOD_TO_SUFFIX = 'PeriodTo';
+    const PERIOD_PREFIX = 'period';
     const CHAR_LIMIT = 2;
+    const MATCHED_FIELDS = [
+        'buyersRegions'                => 'buyerRegion',
+        'proceduresTypes'              => 'procedureType',
+        'proceduresStatuses'           => 'procedureStatus',
+        'periodPublishedFrom'          => 'publishedDateFrom',
+        'periodPublishedTo'            => 'publishedDateTo',
+        'buyersIdentifiers'            => 'buyerIdentifier',
+        'buyersTypes'                  => 'buyerType',
+        'buyersMainGeneralActivities'  => 'buyerMainGeneralActivity',
+        'buyersMainSectoralActivities' => 'buyerMainSectoralActivity',
+    ];
 
     public $pageSize;
     public $page;
@@ -91,6 +101,8 @@ class ElasticSearchModel extends Model
             $filterRangeItems = [];
 
             foreach ($searchAttributes as $key => $value) {
+                $matchedKey = self::getMatchedKey($key);
+
                 if (in_array($key, $this->fieldsFullText())) {
                     //json list to string convert
                     if (is_array($this->{$key})) {
@@ -101,7 +113,7 @@ class ElasticSearchModel extends Model
                     $strict_mode = isset($this->{$key . self::STRICT_SUFFIX}) && ($this->{$key . self::STRICT_SUFFIX} == 'true');
                     if ($strict_mode) {
                         if (mb_strlen($value) > self::CHAR_LIMIT) {
-                            $mustItems[] = '{"match_phrase":{"' . $key . self::STRICT_SUFFIX . '":"' . $value . '"}}';
+                            $mustItems[] = '{"match_phrase":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $value . '"}}';
                         }
                         //  не строгое
                     } else {
@@ -115,40 +127,40 @@ class ElasticSearchModel extends Model
                             }
                         }
 
-                        $mustItems[] = '{"match":{"' . $key . '":"' . implode(' ', $filteredWords) . '"}}';
+                        $mustItems[] = '{"match":{"' . $matchedKey . '":"' . implode(' ', $filteredWords) . '"}}';
                     }
                 } elseif (in_array($key, $this->fieldsRange())) {
-                    $from = strpos($key, self::FROM_SUFFIX);
-                    $to = strpos($key, self::TO_SUFFIX);
-                    $periodFrom = strpos($key, self::PERIOD_FROM_SUFFIX);
-                    $periodTo = strpos($key, self::PERIOD_TO_SUFFIX);
+                    $from = strpos($matchedKey, self::FROM_SUFFIX);
+                    $to = strpos($matchedKey, self::TO_SUFFIX);
+                    $periodFrom = (strpos($matchedKey, self::PERIOD_PREFIX) !== false) && $from;
+                    $periodTo = (strpos($matchedKey, self::PERIOD_PREFIX) !== false) && $to;
 
                     if ($periodFrom) {
-                        $filterRangeItems[$key]['from'] = $value;
+                        $filterRangeItems[$matchedKey]['from'] = $value;
                     }
 
                     if ($periodTo) {
-                        $filterRangeItems[$key]['to'] = $value;
+                        $filterRangeItems[$matchedKey]['to'] = $value;
                     }
 
                     if ($from && !$periodFrom) {
-                        $filterRangeItems[substr($key, 0, $from)]['from'] = $value;
+                        $filterRangeItems[substr($matchedKey, 0, $from)]['from'] = $value;
                     }
 
                     if ($to && !$periodTo) {
-                        $filterRangeItems[substr($key, 0, $to)]['to'] = $value;
+                        $filterRangeItems[substr($matchedKey, 0, $to)]['to'] = $value;
                     }
                 } elseif (!in_array($key, $this->fieldsSystem())) {
                     if (is_array($this->{$key})) {
-                        $filterItems[] = '{"terms":{"' . $key . '":["' . implode('", "', $this->{$key}) . '"]}}';
+                        $filterItems[] = '{"terms":{"' . $matchedKey . '":["' . implode('", "', $this->{$key}) . '"]}}';
                     } else {
-                        $filterItems[] = '{"term":{"' . $key . '":"' . $value . '"}}';
+                        $filterItems[] = '{"term":{"' . $matchedKey . '":"' . $value . '"}}';
                     }
                 }
             }
 
             if (!empty($filterRangeItems)) {
-                foreach ($filterRangeItems as $field => $params) {
+                foreach ($filterRangeItems as $key => $params) {
                     $rangeConditions = [];
 
                     if (isset($params['from']) && $params['from']) {
@@ -159,7 +171,7 @@ class ElasticSearchModel extends Model
                         $rangeConditions[] = '"lte":"' . $params['to'] . '"';
                     }
 
-                    $filterItems[] = '{"range":{"' . $field . '":{' . implode(',', $rangeConditions) . '}}}';
+                    $filterItems[] = '{"range":{"' . $key . '":{' . implode(',', $rangeConditions) . '}}}';
                 }
             }
 
@@ -209,5 +221,19 @@ class ElasticSearchModel extends Model
                 'totalCount' => $totalCount,
             ],
         ]);
+    }
+
+    /**
+     * Get matched field name
+     * @param $key
+     * @return mixed
+     */
+    protected static function getMatchedKey($key)
+    {
+        if (isset(self::MATCHED_FIELDS[$key])) {
+            return self::MATCHED_FIELDS[$key];
+        } else {
+            return $key;
+        }
     }
 }
