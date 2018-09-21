@@ -2,6 +2,7 @@
 namespace rest\modules\v1\models;
 
 use Yii;
+use common\components\validators\JsonListValidator;
 
 /**
  * Class Plans
@@ -10,8 +11,13 @@ use Yii;
 class Plans extends ElasticSearchModel
 {
     public $id;
+    public $entityId;
+    public $proceduresTypes;
+    public $amountFrom;
+    public $amountTo;
     public $titlesOrDescriptions;
     public $titlesOrDescriptionsStrict;
+    public $classifications;
 
     /**
      * @inheritdoc
@@ -19,12 +25,27 @@ class Plans extends ElasticSearchModel
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['id', 'titlesOrDescriptions'], 'string'],
+            [['id', 'entityId', 'titlesOrDescriptions', 'proceduresTypes'], 'string'],
             [
                 'titlesOrDescriptionsStrict', 'boolean',
                 'trueValue' => 'true',
                 'falseValue' => 'false',
                 'strict' => true,
+            ],
+            [
+                [
+                    'proceduresTypes',
+                    'classifications'
+                ],
+                JsonListValidator::className(),
+                'skipOnEmpty' => true,
+            ],
+            [
+                [
+                    'amountFrom',
+                    'amountTo',
+                ],
+                'double',
             ],
             [
                 'titlesOrDescriptionsStrict', 'default', 'value' => 'false',
@@ -45,7 +66,10 @@ class Plans extends ElasticSearchModel
      */
     public static function fieldsRange()
     {
-        return array_merge(parent::fieldsRange(), []);
+        return array_merge(parent::fieldsRange(), [
+            'amountFrom',
+            'amountTo',
+        ]);
     }
 
     /**

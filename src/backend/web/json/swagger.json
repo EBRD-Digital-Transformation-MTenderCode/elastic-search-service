@@ -366,6 +366,13 @@
               "description": "id"
             },
             {
+              "in": "query",
+              "name": "entityId",
+              "type": "string",
+              "required":false,
+              "description": "planID"
+            },
+            {
               "in":"query",
               "name":"titlesOrDescriptions",
               "type":"string",
@@ -378,6 +385,30 @@
               "type": "boolean",
               "enum": [true, false],
               "description": "признак строгого соответствия"
+            },
+            {
+              "in": "query",
+              "name": "proceduresTypes",
+              "type": "string",
+              "description": "типы процедур<br /> json array"
+            },
+            {
+              "in": "query",
+              "name": "amountFrom",
+              "type": "string",
+              "description": "бюджет, от"
+            },
+            {
+              "in": "query",
+              "name": "amountTo",
+              "type": "string",
+              "description": "бюджет, до"
+            },
+            {
+              "in": "query",
+              "name": "classifications",
+              "type": "string",
+              "description": "классификации<br /> json array"
             },
             {
               "in":"query",
