@@ -11,6 +11,7 @@ use common\components\validators\JsonListValidator;
 class Tenders extends ElasticSearchModel
 {
     public $id;
+    public $entityId;
     public $title;
     public $description;
     public $tenderId;
@@ -50,6 +51,7 @@ class Tenders extends ElasticSearchModel
             [
                 [
                     'id',
+                    'entityId',
                     'title',
                     'description',
                     'tenderId',
