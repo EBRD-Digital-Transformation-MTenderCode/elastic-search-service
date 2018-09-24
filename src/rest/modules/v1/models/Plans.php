@@ -2,6 +2,7 @@
 namespace rest\modules\v1\models;
 
 use Yii;
+use common\components\validators\JsonListValidator;
 
 /**
  * Class Plans
@@ -10,8 +11,18 @@ use Yii;
 class Plans extends ElasticSearchModel
 {
     public $id;
+    public $entityId;
+    public $proceduresTypes;
+    public $amountFrom;
+    public $amountTo;
     public $titlesOrDescriptions;
     public $titlesOrDescriptionsStrict;
+    public $classifications;
+    public $periodTenderFrom;
+    public $periodDeliveryFrom;
+    public $periodDeliveryTo;
+    public $buyersNames;
+    public $buyersIdentifiers;
 
     /**
      * @inheritdoc
@@ -19,7 +30,7 @@ class Plans extends ElasticSearchModel
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['id', 'titlesOrDescriptions'], 'string'],
+            [['id', 'entityId', 'titlesOrDescriptions', 'proceduresTypes', 'buyersNames', 'buyersIdentifiers'], 'string'],
             [
                 'titlesOrDescriptionsStrict', 'boolean',
                 'trueValue' => 'true',
@@ -27,8 +38,19 @@ class Plans extends ElasticSearchModel
                 'strict' => true,
             ],
             [
-                'titlesOrDescriptionsStrict', 'default', 'value' => 'false',
-            ]
+                ['proceduresTypes', 'classifications', 'buyersNames', 'buyersIdentifiers'],
+                JsonListValidator::className(),
+                'skipOnEmpty' => true,
+            ],
+            [['amountFrom', 'amountTo'], 'double'],
+            ['titlesOrDescriptionsStrict', 'default', 'value' => 'false'],
+            [
+                [
+                    'periodTenderFrom', 'periodDeliveryFrom', 'periodDeliveryTo'
+                ],
+                'datetime',
+                'format' => 'php:' . \DateTime::RFC3339,
+            ],
         ]);
     }
 
@@ -37,7 +59,7 @@ class Plans extends ElasticSearchModel
      */
     public static function fieldsFullText()
     {
-        return array_merge(parent::fieldsFullText(), ['titlesOrDescriptions']);
+        return array_merge(parent::fieldsFullText(), ['titlesOrDescriptions', 'buyersNames',]);
     }
 
     /**
@@ -45,7 +67,13 @@ class Plans extends ElasticSearchModel
      */
     public static function fieldsRange()
     {
-        return array_merge(parent::fieldsRange(), []);
+        return array_merge(parent::fieldsRange(), [
+            'amountFrom',
+            'amountTo',
+            'periodTenderFrom',
+            'periodDeliveryFrom',
+            'periodDeliveryTo',
+        ]);
     }
 
     /**
