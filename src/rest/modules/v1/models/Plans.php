@@ -18,6 +18,11 @@ class Plans extends ElasticSearchModel
     public $titlesOrDescriptions;
     public $titlesOrDescriptionsStrict;
     public $classifications;
+    public $periodTenderFrom;
+    public $periodDeliveryFrom;
+    public $periodDeliveryTo;
+    public $buyersNames;
+    public $buyersIdentifiers;
 
     /**
      * @inheritdoc
@@ -25,7 +30,7 @@ class Plans extends ElasticSearchModel
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['id', 'entityId', 'titlesOrDescriptions', 'proceduresTypes'], 'string'],
+            [['id', 'entityId', 'titlesOrDescriptions', 'proceduresTypes', 'buyersNames', 'buyersIdentifiers'], 'string'],
             [
                 'titlesOrDescriptionsStrict', 'boolean',
                 'trueValue' => 'true',
@@ -33,23 +38,19 @@ class Plans extends ElasticSearchModel
                 'strict' => true,
             ],
             [
-                [
-                    'proceduresTypes',
-                    'classifications'
-                ],
+                ['proceduresTypes', 'classifications', 'buyersNames', 'buyersIdentifiers'],
                 JsonListValidator::className(),
                 'skipOnEmpty' => true,
             ],
+            [['amountFrom', 'amountTo'], 'double'],
+            ['titlesOrDescriptionsStrict', 'default', 'value' => 'false'],
             [
                 [
-                    'amountFrom',
-                    'amountTo',
+                    'periodTenderFrom', 'periodDeliveryFrom', 'periodDeliveryTo'
                 ],
-                'double',
+                'datetime',
+                'format' => 'php:' . \DateTime::RFC3339,
             ],
-            [
-                'titlesOrDescriptionsStrict', 'default', 'value' => 'false',
-            ]
         ]);
     }
 
@@ -58,7 +59,7 @@ class Plans extends ElasticSearchModel
      */
     public static function fieldsFullText()
     {
-        return array_merge(parent::fieldsFullText(), ['titlesOrDescriptions']);
+        return array_merge(parent::fieldsFullText(), ['titlesOrDescriptions', 'buyersNames',]);
     }
 
     /**
@@ -69,6 +70,9 @@ class Plans extends ElasticSearchModel
         return array_merge(parent::fieldsRange(), [
             'amountFrom',
             'amountTo',
+            'periodTenderFrom',
+            'periodDeliveryFrom',
+            'periodDeliveryTo',
         ]);
     }
 
