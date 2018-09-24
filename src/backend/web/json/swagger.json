@@ -366,6 +366,13 @@
               "description": "id"
             },
             {
+              "in": "query",
+              "name": "entityId",
+              "type": "string",
+              "required":false,
+              "description": "planID"
+            },
+            {
               "in":"query",
               "name":"titlesOrDescriptions",
               "type":"string",
@@ -378,6 +385,60 @@
               "type": "boolean",
               "enum": [true, false],
               "description": "признак строгого соответствия"
+            },
+            {
+              "in": "query",
+              "name": "proceduresTypes",
+              "type": "string",
+              "description": "типы процедур<br /> json array"
+            },
+            {
+              "in": "query",
+              "name": "amountFrom",
+              "type": "string",
+              "description": "бюджет, от"
+            },
+            {
+              "in": "query",
+              "name": "amountTo",
+              "type": "string",
+              "description": "бюджет, до"
+            },
+            {
+              "in": "query",
+              "name": "classifications",
+              "type": "string",
+              "description": "классификации<br /> json array"
+            },
+            {
+              "in": "query",
+              "name": "periodTenderFrom",
+              "type": "string",
+              "description": "период тендера, от"
+            },
+            {
+              "in": "query",
+              "name": "periodDeliveryFrom",
+              "type": "string",
+              "description": "период доставки, от"
+            },
+            {
+              "in": "query",
+              "name": "periodDeliveryTo",
+              "type": "string",
+              "description": "период доставки, до"
+            },
+            {
+              "in": "query",
+              "name": "buyersNames",
+              "type": "string",
+              "description": "названия заказчиков<br /> json array"
+            },
+            {
+              "in": "query",
+              "name": "buyersIdentifiers",
+              "type": "string",
+              "description": "коды заказчиков<br /> json array"
             },
             {
               "in":"query",
