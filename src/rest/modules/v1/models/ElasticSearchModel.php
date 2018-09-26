@@ -17,18 +17,24 @@ class ElasticSearchModel extends Model
     const STRICT_SUFFIX = 'Strict';
     const FROM_SUFFIX = 'From';
     const TO_SUFFIX = 'To';
-    const PERIOD_PREFIX = 'period';
     const CHAR_LIMIT = 2;
     const MATCHED_FIELDS = [
         'buyersRegions'                => 'buyerRegion',
         'proceduresTypes'              => 'procedureType',
         'proceduresStatuses'           => 'procedureStatus',
-        'periodPublishedFrom'          => 'publishedDateFrom',
-        'periodPublishedTo'            => 'publishedDateTo',
+        'periodPublished'              => 'publishedDate',
+        'periodTender'                 => 'periodTenderFrom',
         'buyersIdentifiers'            => 'buyerIdentifier',
         'buyersTypes'                  => 'buyerType',
         'buyersMainGeneralActivities'  => 'buyerMainGeneralActivity',
         'buyersMainSectoralActivities' => 'buyerMainSectoralActivity',
+    ];
+    const PERIOD_FILEDS = [
+        'periodDelivery',
+        'periodEnquiry',
+        'periodOffer',
+        'periodAuction',
+        'periodAward',
     ];
 
     public $pageSize;
@@ -130,25 +136,26 @@ class ElasticSearchModel extends Model
                         $mustItems[] = '{"match":{"' . $matchedKey . '":"' . implode(' ', $filteredWords) . '"}}';
                     }
                 } elseif (in_array($key, $this->fieldsRange())) {
-                    $from = strpos($matchedKey, self::FROM_SUFFIX);
-                    $to = strpos($matchedKey, self::TO_SUFFIX);
-                    $periodFrom = (strpos($matchedKey, self::PERIOD_PREFIX) !== false) && $from;
-                    $periodTo = (strpos($matchedKey, self::PERIOD_PREFIX) !== false) && $to;
+                    $from = strpos($key, self::FROM_SUFFIX);
+                    $to = strpos($key, self::TO_SUFFIX);
+                    $period = in_array($key, self::PERIOD_FILEDS);
 
-                    if ($periodFrom) {
-                        $filterRangeItems[$matchedKey]['from'] = $value;
-                    }
-
-                    if ($periodTo) {
-                        $filterRangeItems[$matchedKey]['to'] = $value;
-                    }
-
-                    if ($from && !$periodFrom) {
+                    if ($from) {
                         $filterRangeItems[substr($matchedKey, 0, $from)]['from'] = $value;
                     }
 
-                    if ($to && !$periodTo) {
+                    if ($to) {
                         $filterRangeItems[substr($matchedKey, 0, $to)]['to'] = $value;
+                    }
+
+                    if (is_array($this->{$key}) && count($this->{$key}) == 2) {
+                        if (!empty($this->{$key}[0])) {
+                            $filterRangeItems[($period ? $matchedKey . self::FROM_SUFFIX : $matchedKey)]['from'] = $this->{$key}[0];
+                        }
+
+                        if (!empty($this->{$key}[1])) {
+                            $filterRangeItems[($period ? $matchedKey . self::TO_SUFFIX : $matchedKey)]['to'] = $this->{$key}[1];
+                        }
                     }
                 } elseif (!in_array($key, $this->fieldsSystem())) {
                     if (is_array($this->{$key})) {

@@ -3,6 +3,7 @@ namespace rest\modules\v1\models;
 
 use Yii;
 use common\components\validators\JsonListValidator;
+use common\components\validators\JsonListDatePeriodValidator;
 
 /**
  * Class Plans
@@ -18,9 +19,8 @@ class Plans extends ElasticSearchModel
     public $titlesOrDescriptions;
     public $titlesOrDescriptionsStrict;
     public $classifications;
-    public $periodTenderFrom;
-    public $periodDeliveryFrom;
-    public $periodDeliveryTo;
+    public $periodTender;
+    public $periodDelivery;
     public $buyersNames;
     public $buyersIdentifiers;
 
@@ -46,10 +46,10 @@ class Plans extends ElasticSearchModel
             ['titlesOrDescriptionsStrict', 'default', 'value' => 'false'],
             [
                 [
-                    'periodTenderFrom', 'periodDeliveryFrom', 'periodDeliveryTo'
+                    'periodTender', 'periodDelivery',
                 ],
-                'datetime',
-                'format' => 'php:' . \DateTime::RFC3339,
+                JsonListDatePeriodValidator::className(),
+                'skipOnEmpty' => true,
             ],
         ]);
     }
@@ -70,9 +70,8 @@ class Plans extends ElasticSearchModel
         return array_merge(parent::fieldsRange(), [
             'amountFrom',
             'amountTo',
-            'periodTenderFrom',
-            'periodDeliveryFrom',
-            'periodDeliveryTo',
+            'periodTender',
+            'periodDelivery',
         ]);
     }
 
