@@ -3,6 +3,7 @@ namespace rest\modules\v1\models;
 
 use Yii;
 use common\components\validators\JsonListValidator;
+use common\components\validators\JsonListDatePeriodValidator;
 
 /**
  * Class Tenders
@@ -10,6 +11,7 @@ use common\components\validators\JsonListValidator;
  */
 class Tenders extends ElasticSearchModel
 {
+    public $cdb;
     public $id;
     public $entityId;
     public $title;
@@ -29,18 +31,12 @@ class Tenders extends ElasticSearchModel
     public $buyersTypes;
     public $buyersMainGeneralActivities;
     public $buyersMainSectoralActivities;
-    public $periodPublishedFrom;
-    public $periodPublishedTo;
-    public $periodDeliveryFrom;
-    public $periodDeliveryTo;
-    public $periodEnquiryFrom;
-    public $periodEnquiryTo;
-    public $periodOfferFrom;
-    public $periodOfferTo;
-    public $periodAuctionFrom;
-    public $periodAuctionTo;
-    public $periodAwardFrom;
-    public $periodAwardTo;
+    public $periodPublished;
+    public $periodDelivery;
+    public $periodEnquiry;
+    public $periodOffer;
+    public $periodAuction;
+    public $periodAward;
 
     /**
      * @inheritdoc
@@ -50,6 +46,7 @@ class Tenders extends ElasticSearchModel
         return array_merge(parent::rules(), [
             [
                 [
+                    'cdb',
                     'id',
                     'entityId',
                     'title',
@@ -66,38 +63,26 @@ class Tenders extends ElasticSearchModel
                     'buyersTypes',
                     'buyersMainGeneralActivities',
                     'buyersMainSectoralActivities',
-                    'periodPublishedFrom',
-                    'periodPublishedTo',
-                    'periodDeliveryFrom',
-                    'periodDeliveryTo',
-                    'periodEnquiryFrom',
-                    'periodEnquiryTo',
-                    'periodOfferFrom',
-                    'periodOfferTo',
-                    'periodAuctionFrom',
-                    'periodAuctionTo',
-                    'periodAwardFrom',
-                    'periodAwardTo',
+                    'periodPublished',
+                    'periodDelivery',
+                    'periodEnquiry',
+                    'periodOffer',
+                    'periodAuction',
+                    'periodAward',
                 ],
                 'string',
             ],
             [
                 [
-                    'periodPublishedFrom',
-                    'periodPublishedTo',
-                    'periodDeliveryFrom',
-                    'periodDeliveryTo',
-                    'periodEnquiryFrom',
-                    'periodEnquiryTo',
-                    'periodOfferFrom',
-                    'periodOfferTo',
-                    'periodAuctionFrom',
-                    'periodAuctionTo',
-                    'periodAwardFrom',
-                    'periodAwardTo',
+                    'periodPublished',
+                    'periodDelivery',
+                    'periodEnquiry',
+                    'periodOffer',
+                    'periodAuction',
+                    'periodAward',
                 ],
-                'datetime',
-                'format' => 'php:' . \DateTime::RFC3339,
+                JsonListDatePeriodValidator::className(),
+                'skipOnEmpty' => true,
             ],
             [
                 [
@@ -158,18 +143,12 @@ class Tenders extends ElasticSearchModel
         return array_merge(parent::fieldsRange(), [
             'amountFrom',
             'amountTo',
-            'periodPublishedFrom',
-            'periodPublishedTo',
-            'periodDeliveryFrom',
-            'periodDeliveryTo',
-            'periodEnquiryFrom',
-            'periodEnquiryTo',
-            'periodOfferFrom',
-            'periodOfferTo',
-            'periodAuctionFrom',
-            'periodAuctionTo',
-            'periodAwardFrom',
-            'periodAwardTo',
+            'periodPublished',
+            'periodDelivery',
+            'periodEnquiry',
+            'periodOffer',
+            'periodAuction',
+            'periodAward',
         ]);
     }
 
