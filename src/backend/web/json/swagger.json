@@ -139,6 +139,13 @@
                 "parameters":[
                     {
                         "in": "query",
+                        "name": "cdb",
+                        "type": "string",
+                        "required":false,
+                        "description": "id"
+                    },
+                    {
+                        "in": "query",
                         "name": "id",
                         "type": "string",
                         "required":false,
@@ -223,75 +230,39 @@
                     },
                     {
                         "in": "query",
-                        "name": "periodPublishedFrom",
+                        "name": "periodPublished",
                         "type": "string",
-                        "description": "период публикации, от"
+                        "description": "период публикации<br /> json array"
                     },
                     {
                         "in": "query",
-                        "name": "periodPublishedTo",
+                        "name": "periodDelivery",
                         "type": "string",
-                        "description": "период публикации, до"
+                        "description": "период доставки<br /> json array"
                     },
                     {
                         "in": "query",
-                        "name": "periodDeliveryFrom",
+                        "name": "periodEnquiry",
                         "type": "string",
-                        "description": "период доставки, от"
+                        "description": "период обсуждения<br /> json array"
                     },
                     {
                         "in": "query",
-                        "name": "periodDeliveryTo",
+                        "name": "periodOffer",
                         "type": "string",
-                        "description": "период доставки, до"
+                        "description": "период приема предложений<br /> json array"
                     },
                     {
                         "in": "query",
-                        "name": "periodEnquiryFrom",
+                        "name": "periodAuction",
                         "type": "string",
-                        "description": "период обсуждения, от"
+                        "description": "период аукцииона<br /> json array"
                     },
                     {
                         "in": "query",
-                        "name": "periodEnquiryTo",
+                        "name": "periodAward",
                         "type": "string",
-                        "description": "период обсуждения, до"
-                    },
-                    {
-                        "in": "query",
-                        "name": "periodOfferFrom",
-                        "type": "string",
-                        "description": "период приема предложений, от"
-                    },
-                    {
-                        "in": "query",
-                        "name": "periodOfferTo",
-                        "type": "string",
-                        "description": "период приема предложений, до"
-                    },
-                    {
-                        "in": "query",
-                        "name": "periodAuctionFrom",
-                        "type": "string",
-                        "description": "период аукцииона, от"
-                    },
-                    {
-                        "in": "query",
-                        "name": "periodAuctionTo",
-                        "type": "string",
-                        "description": "период аукцииона, до"
-                    },
-                    {
-                        "in": "query",
-                        "name": "periodAwardFrom",
-                        "type": "string",
-                        "description": "период квалификации, от"
-                    },
-                    {
-                        "in": "query",
-                        "name": "periodAwardTo",
-                        "type": "string",
-                        "description": "период квалификации, до"
+                        "description": "период квалификации<br /> json array"
                     },
                     {
                         "in": "query",
@@ -419,21 +390,15 @@
             },
             {
               "in": "query",
-              "name": "periodTenderFrom",
+              "name": "periodTender",
               "type": "string",
-              "description": "период тендера, от"
+              "description": "период тендера<br /> json array"
             },
             {
               "in": "query",
-              "name": "periodDeliveryFrom",
+              "name": "periodDelivery",
               "type": "string",
-              "description": "период доставки, от"
-            },
-            {
-              "in": "query",
-              "name": "periodDeliveryTo",
-              "type": "string",
-              "description": "период доставки, до"
+              "description": "период доставки<br /> json array"
             },
             {
               "in": "query",
