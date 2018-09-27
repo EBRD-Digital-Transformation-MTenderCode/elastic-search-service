@@ -6,10 +6,10 @@ use common\components\validators\JsonListValidator;
 use common\components\validators\JsonListDatePeriodValidator;
 
 /**
- * Class Plans
+ * Class Contracts
  * @package rest\modules\v1\models
  */
-class Plans extends ElasticSearchModel
+class Contracts extends ElasticSearchModel
 {
     public $cdb;
     public $id;
@@ -168,8 +168,8 @@ class Plans extends ElasticSearchModel
      */
     public function search($searchAttributes)
     {
-        $this->index = Yii::$app->params['elastic_plans_index'];
-        $this->type = Yii::$app->params['elastic_plans_type'];
+        $this->index = Yii::$app->params['elastic_contracts_index'];
+        $this->type = Yii::$app->params['elastic_contracts_type'];
 
         return parent::search($searchAttributes);
     }
