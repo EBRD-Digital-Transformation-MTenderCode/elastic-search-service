@@ -35,6 +35,7 @@ class ElasticSearchModel extends Model
         'periodOffer',
         'periodAuction',
         'periodAward',
+        'periodPlanning',
     ];
 
     public $pageSize;
