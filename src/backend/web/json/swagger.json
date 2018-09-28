@@ -76,10 +76,10 @@
                 "parameters":[
                     {
                         "in":"query",
-                        "name":"ocid",
+                        "name":"id",
                         "type":"string",
                         "required":false,
-                        "description": "ocid бюджета"
+                        "description": "номер статьи расходов"
                     },
                     {
                         "in":"query",
@@ -94,6 +94,86 @@
                         "type":"string",
                         "required":false,
                         "description": "описание бюджета"
+                    },
+                    {
+                        "in":"query",
+                        "name":"titlesOrDescriptions",
+                        "type":"string",
+                        "required":false,
+                        "description": "поле полнотекстового поиска"
+                    },
+                    {
+                        "in": "query",
+                        "name": "titlesOrDescriptionsStrict",
+                        "type": "boolean",
+                        "enum": [true, false],
+                        "description": "признак строгого соответствия"
+                    },
+                    {
+                        "in": "query",
+                        "name": "buyersRegions",
+                        "type": "string",
+                        "description": "регионы заказчиков<br /> json array"
+                    },
+                    {
+                        "in": "query",
+                        "name": "budgetStatuses",
+                        "type": "string",
+                        "description": "статусы статьи расходов<br /> json array"
+                    },
+                    {
+                        "in": "query",
+                        "name": "amountFrom",
+                        "type": "string",
+                        "description": "бюджет, от"
+                    },
+                    {
+                        "in": "query",
+                        "name": "amountTo",
+                        "type": "string",
+                        "description": "бюджет, до"
+                    },
+                    {
+                        "in": "query",
+                        "name": "classifications",
+                        "type": "string",
+                        "description": "классификации<br /> json array"
+                    },
+                    {
+                        "in": "query",
+                        "name": "periodPlanning",
+                        "type": "string",
+                        "description": "период действия<br /> json array"
+                    },
+                    {
+                        "in": "query",
+                        "name": "buyersNames",
+                        "type": "string",
+                        "description": "названия заказчиков<br /> json array"
+                    },
+                    {
+                        "in": "query",
+                        "name": "buyersIdentifiers",
+                        "type": "string",
+                        "description": "коды заказчиков<br /> json array"
+                    },
+                    {
+                        "in": "query",
+                        "name": "buyersTypes",
+                        "type": "string",
+                        "description": "типы заказчиков<br /> json array"
+                    },
+                    {
+                        "in": "query",
+                        "name": "buyersMainGeneralActivities",
+                        "type": "string",
+                        "description": "основные типы деятельности заказчиков<br /> json array"
+                    },
+                    {
+                        "in": "query",
+                        "name": "buyersMainSectoralActivities",
+                        "type": "string",
+                        "description": "отраслевые типы деятельности заказчиков<br /> json array"
                     },
                     {
                         "in":"query",

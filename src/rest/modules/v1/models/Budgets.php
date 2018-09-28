@@ -2,6 +2,8 @@
 namespace rest\modules\v1\models;
 
 use Yii;
+use common\components\validators\JsonListValidator;
+use common\components\validators\JsonListDatePeriodValidator;
 
 /**
  * Class Budgets
@@ -9,9 +11,22 @@ use Yii;
  */
 class Budgets extends ElasticSearchModel
 {
+    public $id;
     public $title;
     public $description;
-    public $ocid;
+    public $titlesOrDescriptions;
+    public $titlesOrDescriptionsStrict;
+    public $buyersRegions;
+    public $budgetStatuses;
+    public $amountFrom;
+    public $amountTo;
+    public $classifications;
+    public $periodPlanning;
+    public $buyersNames;
+    public $buyersIdentifiers;
+    public $buyersTypes;
+    public $buyersMainGeneralActivities;
+    public $buyersMainSectoralActivities;
 
     /**
      * @inheritdoc
@@ -19,7 +34,64 @@ class Budgets extends ElasticSearchModel
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['ocid', 'title', 'description'], 'string'],
+            [
+                [
+                    'id',
+                    'title',
+                    'description',
+                    'titlesOrDescriptions',
+                    'buyersRegions',
+                    'budgetStatuses',
+                    'classifications',
+                    'periodPlanning',
+                    'buyersNames',
+                    'buyersIdentifiers',
+                    'buyersTypes',
+                    'buyersMainGeneralActivities',
+                    'buyersMainSectoralActivities',
+                ],
+                'string',
+            ],
+            [
+                [
+                    'periodPlanning',
+                ],
+                JsonListDatePeriodValidator::className(),
+                'skipOnEmpty' => true,
+            ],
+            [
+                [
+                    'buyersRegions',
+                    'budgetStatuses',
+                    'classifications',
+                    'buyersNames',
+                    'buyersIdentifiers',
+                    'buyersTypes',
+                    'buyersMainGeneralActivities',
+                    'buyersMainSectoralActivities',
+                ],
+                JsonListValidator::className(),
+                'skipOnEmpty' => true,
+            ],
+            [
+                [
+                    'amountFrom',
+                    'amountTo',
+                ],
+                'double',
+            ],
+            [
+                'titlesOrDescriptionsStrict',
+                'boolean',
+                'trueValue' => 'true',
+                'falseValue' => 'false',
+                'strict' => true,
+            ],
+            [
+                'titlesOrDescriptionsStrict',
+                'default',
+                'value' => 'false',
+            ],
         ]);
     }
 
@@ -28,7 +100,12 @@ class Budgets extends ElasticSearchModel
      */
     public static function fieldsFullText()
     {
-        return array_merge(parent::fieldsFullText(), ['title', 'description']);
+        return array_merge(parent::fieldsFullText(), [
+            'titlesOrDescriptions',
+            'title',
+            'description',
+            'buyersNames',
+        ]);
     }
 
     /**
@@ -36,7 +113,11 @@ class Budgets extends ElasticSearchModel
      */
     public static function fieldsRange()
     {
-        return array_merge(parent::fieldsRange(), []);
+        return array_merge(parent::fieldsRange(), [
+            'amountFrom',
+            'amountTo',
+            'periodPlanning',
+        ]);
     }
 
     /**
@@ -44,7 +125,7 @@ class Budgets extends ElasticSearchModel
      */
     public static function fieldsSystem()
     {
-        return array_merge(parent::fieldsSystem(), []);
+        return array_merge(parent::fieldsSystem(), ['titlesOrDescriptionsStrict']);
     }
 
     /**
