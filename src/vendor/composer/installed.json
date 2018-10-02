@@ -3546,18 +3546,18 @@
     },
     {
         "name": "ustudio/service_mandatory",
-        "version": "v4.3.2.7",
-        "version_normalized": "4.3.2.7",
+        "version": "v4.3.2.9",
+        "version_normalized": "4.3.2.9",
         "source": {
             "type": "git",
             "url": "https://pbox-reader@bitbucket.org/ustudio-llc/service_mandatory_parts-composer_package.git",
-            "reference": "cac5a73ee3a54b5a947ba7aa941085e8f2e667b0"
+            "reference": "9211481e869c997afe9c5ad7aaea2fe232e61c1e"
         },
         "require": {
             "swagger-api/swagger-ui": "~3.1",
             "yiisoft/yii2-httpclient": "~2.0.0"
         },
-        "time": "2018-10-01T09:22:42+00:00",
+        "time": "2018-10-02T07:08:23+00:00",
         "type": "package",
         "installation-source": "source",
         "autoload": {
