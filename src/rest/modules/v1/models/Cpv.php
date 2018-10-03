@@ -105,7 +105,7 @@ class Cpv extends Model
             foreach ($data['hits']['hits'] as $hit) {
                 $item = $hit['_source'];
                 $item['_score'] = $hit['_score'] ?? 0;
-                $item['name'] = $item['name'][$this->language];
+                $item['name'] = (!empty($item['name'][$this->language])) ? $item['name'][$this->language] : '';
                 $result[] = $item;
             }
         }
