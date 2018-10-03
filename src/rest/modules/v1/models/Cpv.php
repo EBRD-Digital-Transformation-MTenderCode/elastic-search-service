@@ -19,8 +19,7 @@ class Cpv extends Model
     public $page;
 
     public $language;
-    public $id;
-    public $name;
+    public $idOrName;
 
     protected $index;
     protected $type;
@@ -32,8 +31,7 @@ class Cpv extends Model
     {
         return [
             ['language', 'required'],
-            ['name', 'string', 'min' => 3],
-            ['id', 'string', 'min' => 3],
+            ['idOrName', 'string', 'min' => 3],
             [['pageSize', 'page'], 'integer', 'min' => 1],
         ];
     }
@@ -66,13 +64,11 @@ class Cpv extends Model
         if (!empty($searchAttributes)) {
             $mustItems = [];
 
-            if (!empty($this->name)) {
-                $mustItems[] = '{"match": {"name.' . $this->language . '" : "' . $this->name .'"}}';
+            if (!empty($this->idOrName)) {
+                $mustItems[] = '{"match": {"name.' . $this->language . '" : "' . $this->idOrName .'"}}';
+                $mustItems[] = '{"match": {"id" : "' . $this->idOrName .'"}}';
             }
-            if (!empty($this->id)) {
-                $mustItems[] = '{"match": {"id" : "' . $this->id .'"}}';
-            }
-            $query = '{"bool":{"must":[' . implode(',', $mustItems) . ']}}';
+            $query = '{"bool":{"should":[' . implode(',', $mustItems) . ']}}';
         }
 
         // пагинация

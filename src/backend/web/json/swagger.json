@@ -87,17 +87,10 @@
           },
           {
             "in": "query",
-            "name": "id",
+            "name": "idOrName",
             "type": "string",
             "required": false,
-            "description": "номер"
-          },
-          {
-            "in": "query",
-            "name": "name",
-            "type": "string",
-            "required": false,
-            "description": "название"
+            "description": "номер или название"
           }
         ],
         "responses": {
