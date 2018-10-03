@@ -24,7 +24,7 @@ return [
             'enableCsrfValidation' => false,
             'csrfParam' => '_csrf-api',
             'baseUrl' => '/rest-api',
-            'class' => 'common\components\urlManager\LangRequest',
+            //'class' => 'common\components\urlManager\LangRequest',
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
             ]
@@ -65,10 +65,10 @@ return [
                     'pluralize' => false
                 ],
             ],
-            'class' => 'common\components\urlManager\LangUrlManager',
-            'languages' => ['en', 'uk', 'ru'],
-            'default_language' => 'en',
-            'langParam' => 'language',
+//            'class' => 'common\components\urlManager\LangUrlManager',
+//            'languages' => ['en', 'uk', 'ru'],
+//            'default_language' => 'en',
+//            'langParam' => 'language',
         ],
         'i18n' => [
             'translations' => [
