@@ -196,8 +196,8 @@ class ElasticSearchModel extends Model
         }
 
         // пагинация
-        $pageSize = (int) $this->pageSize ?? Yii::$app->params['elastic_page_size'];
-        $page = (int) $this->page ??  1;
+        $pageSize = (int) ($this->pageSize ?? Yii::$app->params['elastic_page_size']);
+        $page = (int) ($this->page ??  1);
         $pagination = '"from":' . ($page * $pageSize - $pageSize) . ',"size":' . $pageSize . ',';
         $data_string = '{' . $sort . $pagination . '"query":' . $query . '}';
 
