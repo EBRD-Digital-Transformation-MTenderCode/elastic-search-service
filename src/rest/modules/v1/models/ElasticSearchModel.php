@@ -77,7 +77,8 @@ class ElasticSearchModel extends Model
     public function rules()
     {
         return [
-            [['pageSize', 'page'], 'integer', 'min' => 1],
+            ['pageSize', 'integer', 'min' => 1, 'max' => 100],
+            ['page', 'integer', 'min' => 1],
         ];
     }
 
@@ -101,6 +102,8 @@ class ElasticSearchModel extends Model
             . $this->index . DIRECTORY_SEPARATOR
             . $this->type . DIRECTORY_SEPARATOR . '_search';
 
+        $sort = '"sort":[{"modifiedDate":{"order": "desc"}}],';
+
         // формирование json для эластик
         if (!empty($searchAttributes)) {
             $mustItems = [];
@@ -111,6 +114,8 @@ class ElasticSearchModel extends Model
                 $matchedKey = self::getMatchedKey($key);
 
                 if (in_array($key, $this->fieldsFullText())) {
+                    $sort = '';
+
                     //json list to string convert
                     if (is_array($this->{$key})) {
                         $value = implode(' ', $this->{$key});
@@ -159,10 +164,12 @@ class ElasticSearchModel extends Model
                         }
                     }
                 } elseif (!in_array($key, $this->fieldsSystem())) {
-                    if (is_array($this->{$key})) {
-                        $filterItems[] = '{"terms":{"' . $matchedKey . '":["' . implode('", "', $this->{$key}) . '"]}}';
-                    } else {
-                        $filterItems[] = '{"term":{"' . $matchedKey . '":"' . $value . '"}}';
+                    if (isset($this->{$key})) {
+                        if (is_array($this->{$key})) {
+                            $filterItems[] = '{"terms":{"' . $matchedKey . '":["' . implode('", "', $this->{$key}) . '"]}}';
+                        } else {
+                            $filterItems[] = '{"term":{"' . $matchedKey . '":"' . $value . '"}}';
+                        }
                     }
                 }
             }
@@ -192,7 +199,7 @@ class ElasticSearchModel extends Model
         $pageSize = $this->pageSize ?? Yii::$app->params['elastic_page_size'];
         $page = $this->page ??  1;
         $pagination = '"from":' . ($page * $pageSize - $pageSize) . ',"size":' . $pageSize . ',';
-        $data_string = '{' . $pagination . '"query":' . $query . '}';
+        $data_string = '{' . $sort . $pagination . '"query":' . $query . '}';
 
         $client = new Client(['transport' => 'yii\httpclient\CurlTransport']);
         $response = $client->createRequest()
