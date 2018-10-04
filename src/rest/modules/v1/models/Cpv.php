@@ -102,12 +102,6 @@ class Cpv extends Model
             }
         }
 
-        return new ArrayWithoutSortDataProvider([
-            'allModels' => $result,
-            'pagination' => [
-                'pageSize' => $pageSize,
-                'totalCount' => $totalCount,
-            ],
-        ]);
+        return $result;
     }
 }
