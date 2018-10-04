@@ -15,9 +15,6 @@ use ustudio\service_mandatory\ServiceException;
  */
 class Cpv extends Model
 {
-    public $pageSize;
-    public $page;
-
     public $language;
     public $idOrName;
 
@@ -31,8 +28,7 @@ class Cpv extends Model
     {
         return [
             ['language', 'required'],
-            ['idOrName', 'string', 'min' => 3],
-            [['pageSize', 'page'], 'integer', 'min' => 1],
+            ['idOrName', 'string', 'min' => 3]
         ];
     }
 
@@ -72,8 +68,8 @@ class Cpv extends Model
         }
 
         // пагинация
-        $pageSize = $this->pageSize ?? Yii::$app->params['elastic_page_size'];
-        $page = $this->page ?? 1;
+        $pageSize = Yii::$app->params['elastic_page_size'];
+        $page = 1;
         $pagination = '"from":' . ($page * $pageSize - $pageSize) . ',"size":' . $pageSize . ',';
         $data_string = '{' . $pagination . '"query":' . $query . '}';
 
