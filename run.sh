@@ -9,9 +9,9 @@ php /var/www/service/init --env=Production --overwrite=y
 
 
 # Run daemon
-if [ -z "$NO_JAVA" ]; then
-    /usr/sbin/nginx
-    java -Xmx128m -jar /maven/prana-plus.jar
-else
-    /usr/sbin/nginx -g 'daemon off;'
-fi
+#if [ -z "$NO_JAVA" ]; then
+#    /usr/sbin/nginx
+#    java -Xmx128m -jar /maven/prana-plus.jar
+#else
+/usr/sbin/nginx -g 'daemon off;'
+#fi
