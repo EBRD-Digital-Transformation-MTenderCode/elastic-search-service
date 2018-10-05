@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "22316e3d28bcea5d33b5c3eba037903d",
@@ -3206,11 +3206,11 @@
         },
         {
             "name": "ustudio/service_mandatory",
-            "version": "v4.3.2.9",
+            "version": "v4.3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://pbox-reader@bitbucket.org/ustudio-llc/service_mandatory_parts-composer_package.git",
-                "reference": "9211481e869c997afe9c5ad7aaea2fe232e61c1e"
+                "reference": "2e216c030d00c96a7e62761d37f98170d7e00494"
             },
             "require": {
                 "swagger-api/swagger-ui": "~3.1",
@@ -3226,7 +3226,7 @@
                 "proprietary"
             ],
             "description": "Represents a contoller to return list of available API endpoints",
-            "time": "2018-10-02T07:08:23+00:00"
+            "time": "2018-10-05T08:22:50+00:00"
         },
         {
             "name": "ustudio/swagger_parser",
