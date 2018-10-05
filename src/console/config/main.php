@@ -33,7 +33,7 @@ return [
             ],
         ],
         'errorHandler' => [
-            'class'=>'ustudio\service_mandatory\ExceptionHandler',
+            'class'=>'ustudio\service_mandatory\ConsoleExceptionHandler',
         ],
     ],
     'params' => $params,

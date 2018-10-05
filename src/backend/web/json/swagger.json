@@ -83,20 +83,6 @@
                     },
                     {
                         "in":"query",
-                        "name":"title",
-                        "type":"string",
-                        "required":false,
-                        "description": "заголовок бюджета"
-                    },
-                    {
-                        "in":"query",
-                        "name":"description",
-                        "type":"string",
-                        "required":false,
-                        "description": "описание бюджета"
-                    },
-                    {
-                        "in":"query",
                         "name":"titlesOrDescriptions",
                         "type":"string",
                         "required":false,
@@ -237,20 +223,6 @@
                         "type": "string",
                         "required":false,
                         "description": "entity id"
-                    },
-                    {
-                        "in":"query",
-                        "name":"title",
-                        "type":"string",
-                        "required":false,
-                        "description": "заголовок тендера"
-                    },
-                    {
-                        "in":"query",
-                        "name":"description",
-                        "type":"string",
-                        "required":false,
-                        "description": "описание тендера"
                     },
                     {
                         "in":"query",
@@ -436,20 +408,6 @@
               "type": "string",
               "required":false,
               "description": "entity id"
-            },
-            {
-              "in":"query",
-              "name":"title",
-              "type":"string",
-              "required":false,
-              "description": "заголовок тендера"
-            },
-            {
-              "in":"query",
-              "name":"description",
-              "type":"string",
-              "required":false,
-              "description": "описание тендера"
             },
             {
               "in":"query",
@@ -642,20 +600,6 @@
               "type": "string",
               "required":false,
               "description": "entity id"
-            },
-            {
-              "in":"query",
-              "name":"title",
-              "type":"string",
-              "required":false,
-              "description": "заголовок котракта"
-            },
-            {
-              "in":"query",
-              "name":"description",
-              "type":"string",
-              "required":false,
-              "description": "описание котракта"
             },
             {
               "in":"query",
