@@ -12,8 +12,6 @@ use common\components\validators\JsonListDatePeriodValidator;
 class Budgets extends ElasticSearchModel
 {
     public $id;
-    public $title;
-    public $description;
     public $titlesOrDescriptions;
     public $titlesOrDescriptionsStrict;
     public $buyersRegions;
@@ -37,8 +35,6 @@ class Budgets extends ElasticSearchModel
             [
                 [
                     'id',
-                    'title',
-                    'description',
                     'titlesOrDescriptions',
                     'buyersRegions',
                     'budgetStatuses',
@@ -102,8 +98,6 @@ class Budgets extends ElasticSearchModel
     {
         return array_merge(parent::fieldsFullText(), [
             'titlesOrDescriptions',
-            'title',
-            'description',
             'buyersNames',
         ]);
     }
