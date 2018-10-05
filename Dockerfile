@@ -1,4 +1,4 @@
-FROM vtshark/php-base
+FROM eprocurementsystems/php-base
 COPY /src /var/www/service/
 
 # RUN cd /var/www/service/ && composer install
