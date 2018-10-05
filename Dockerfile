@@ -1,4 +1,4 @@
-FROM registry.tender.solutions/prozorro-box/dev-php-base
+FROM vtshark/php-base
 COPY /src /var/www/service/
 
 # RUN cd /var/www/service/ && composer install
