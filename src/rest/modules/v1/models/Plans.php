@@ -14,8 +14,6 @@ class Plans extends ElasticSearchModel
     public $cdb;
     public $id;
     public $entityId;
-    public $title;
-    public $description;
     public $tenderId;
     public $titlesOrDescriptions;
     public $titlesOrDescriptionsStrict;
@@ -51,8 +49,6 @@ class Plans extends ElasticSearchModel
                     'cdb',
                     'id',
                     'entityId',
-                    'title',
-                    'description',
                     'tenderId',
                     'titlesOrDescriptions',
                     'buyersRegions',
@@ -132,8 +128,6 @@ class Plans extends ElasticSearchModel
     {
         return array_merge(parent::fieldsFullText(), [
             'titlesOrDescriptions',
-            'title',
-            'description',
             'buyersNames',
         ]);
     }
