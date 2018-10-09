@@ -1,11 +1,9 @@
 <?php
-
 namespace rest\modules\v1\models;
 
 use Yii;
 use yii\httpclient\Client;
 use yii\httpclient\Exception;
-use rest\components\dataProviders\ArrayWithoutSortDataProvider;
 use yii\base\Model;
 use ustudio\service_mandatory\ServiceException;
 
@@ -35,7 +33,7 @@ class Cpv extends Model
     /**
      * Search in elastic by attributes
      * @param $searchAttributes
-     * @return ArrayWithoutSortDataProvider
+     * @return array|\yii\httpclient\Response
      * @throws ServiceException
      */
     public function search($searchAttributes)
@@ -61,10 +59,10 @@ class Cpv extends Model
             $mustItems = [];
 
             if (!empty($this->idOrName)) {
-                $mustItems[] = '{"match": {"name.' . $this->language . '" : "' . $this->idOrName .'"}}';
-                $mustItems[] = '{"match": {"id" : "' . $this->idOrName .'"}}';
+                $mustItems[] = '{"match": {"idOrName.' . $this->language . '":"' . $this->idOrName .'"}}';
+                $mustItems[] = '{"match": {"idOrNameStrict.' . $this->language . '":"' . $this->idOrName .'"}}';
             }
-            $query = '{"bool":{"should":[' . implode(',', $mustItems) . ']}}';
+            $query = '{"bool":{"must":[' . implode(',', $mustItems) . ']}}';
         }
 
         // пагинация
