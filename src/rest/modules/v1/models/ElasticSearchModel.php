@@ -107,6 +107,7 @@ class ElasticSearchModel extends Model
         // формирование json для эластик
         if (!empty($searchAttributes)) {
             $mustItems = [];
+            $shouldItems = [];
             $filterItems = [];
             $filterRangeItems = [];
 
@@ -143,7 +144,7 @@ class ElasticSearchModel extends Model
 
                         //поиск наилучшего совпадения
                         if (isset($this->{$key . self::STRICT_SUFFIX})) {
-                            $mustItems[] = '{"match":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . implode(' ', $filteredWords) . '"}}';
+                            $shouldItems[] = '{"match":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . implode(' ', $filteredWords) . '"}}';
                         }
                     }
                 } elseif (in_array($key, $this->fieldsRange())) {
@@ -195,7 +196,10 @@ class ElasticSearchModel extends Model
                 }
             }
 
-            $query = '{"bool":{"must":[' . implode(',', $mustItems) . '], "filter":[' . implode(',', $filterItems) . ']}}';
+            $must = '"must":[' . implode(',', $mustItems) . ']';
+            $should = '"should":[' . implode(',', $shouldItems) . ']';
+            $filter = '"filter":[' . implode(',', $filterItems) . ']';
+            $query = '{"bool":{' . $must . ',' . $should . ',' . $filter . '}}';
         } else {
             $query = '{}';
         }

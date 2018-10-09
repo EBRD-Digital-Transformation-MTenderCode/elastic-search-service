@@ -57,12 +57,16 @@ class Cpv extends Model
         $query = '{}';
         if (!empty($searchAttributes)) {
             $mustItems = [];
+            $shouldItems = [];
 
             if (!empty($this->idOrName)) {
                 $mustItems[] = '{"match": {"idOrName.' . $this->language . '":"' . $this->idOrName .'"}}';
-                $mustItems[] = '{"match": {"idOrNameStrict.' . $this->language . '":"' . $this->idOrName .'"}}';
+                $shouldItems[] = '{"match": {"idOrNameStrict.' . $this->language . '":"' . $this->idOrName .'"}}';
             }
-            $query = '{"bool":{"must":[' . implode(',', $mustItems) . ']}}';
+
+            $should = '"should":[' . implode(',', $shouldItems) . ']';
+            $must = '"must":[' . implode(',', $mustItems) . ']';
+            $query = '{"bool":{' . $should . ',' . $must . '}}';
         }
 
         // пагинация
