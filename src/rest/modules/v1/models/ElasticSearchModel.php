@@ -140,6 +140,11 @@ class ElasticSearchModel extends Model
                         }
 
                         $mustItems[] = '{"match":{"' . $matchedKey . '":"' . implode(' ', $filteredWords) . '"}}';
+
+                        //поиск наилучшего совпадения
+                        if (isset($this->{$key . self::STRICT_SUFFIX})) {
+                            $mustItems[] = '{"match":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . implode(' ', $filteredWords) . '"}}';
+                        }
                     }
                 } elseif (in_array($key, $this->fieldsRange())) {
                     $from = strpos($key, self::FROM_SUFFIX);
