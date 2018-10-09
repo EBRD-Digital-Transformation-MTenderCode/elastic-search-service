@@ -25,7 +25,7 @@ class Cpv extends Model
     public function rules()
     {
         return [
-            ['language', 'required'],
+            [['language', 'idOrName'], 'required'],
             ['idOrName', 'string', 'min' => 3]
         ];
     }
