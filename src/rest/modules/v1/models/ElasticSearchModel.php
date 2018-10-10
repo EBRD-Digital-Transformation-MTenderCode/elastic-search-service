@@ -215,8 +215,7 @@ class ElasticSearchModel extends Model
             ->setMethod('GET')
             ->setUrl($url)
             ->setContent($data_string)
-            ->setOptions(['HTTPHEADER' => ['Content-Type:application/json']]);
-
+            ->setHeaders(['HTTPHEADER' => ['Content-Type:application/json']]);
         try {
             $result = $response->send();
         } catch (Exception $exception) {
