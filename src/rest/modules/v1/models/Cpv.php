@@ -80,7 +80,7 @@ class Cpv extends Model
             ->setMethod('GET')
             ->setUrl($url)
             ->setContent($data_string)
-            ->setOptions(['HTTPHEADER' => ['Content-Type:application/json']]);
+            ->setHeaders(['content-type' => 'application/json']);
 
         try {
             $result = $response->send();
