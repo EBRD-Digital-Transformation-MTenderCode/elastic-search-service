@@ -201,7 +201,7 @@ class ElasticSearchModel extends Model
             $filter = '"filter":[' . implode(',', $filterItems) . ']';
             $query = '{"bool":{' . $must . ',' . $should . ',' . $filter . '}}';
         } else {
-            $query = '{}';
+            $query = '{"match_all":{}}';
         }
 
         // пагинация
