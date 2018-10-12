@@ -22,6 +22,7 @@ class ElasticSearchModel extends Model
         'buyersRegions'                => 'buyerRegion',
         'proceduresTypes'              => 'procedureType',
         'proceduresStatuses'           => 'procedureStatus',
+        'budgetStatuses'               => 'budgetStatus',
         'periodPublished'              => 'publishedDate',
         'periodTender'                 => 'periodTenderFrom',
         'buyersIdentifiers'            => 'buyerIdentifier',
