@@ -223,6 +223,13 @@
             "type": "string",
             "required": false,
             "description": "Номер страницы для отображения"
+          },
+          {
+            "in": "query",
+            "name": "debug",
+            "type": "boolean",
+            "required": false,
+            "description": "Режим отладки"
           }
         ],
         "responses": {
@@ -411,6 +418,13 @@
             "type": "string",
             "required": false,
             "description": "Номер страницы для отображения"
+          },
+          {
+            "in": "query",
+            "name": "debug",
+            "type": "boolean",
+            "required": false,
+            "description": "Режим отладки"
           }
         ],
         "responses": {
@@ -605,6 +619,13 @@
             "type": "string",
             "required": false,
             "description": "Номер страницы для отображения"
+          },
+          {
+            "in": "query",
+            "name": "debug",
+            "type": "boolean",
+            "required": false,
+            "description": "Режим отладки"
           }
         ],
         "responses": {
@@ -799,6 +820,13 @@
             "type": "string",
             "required": false,
             "description": "Номер страницы для отображения"
+          },
+          {
+            "in": "query",
+            "name": "debug",
+            "type": "boolean",
+            "required": false,
+            "description": "Режим отладки"
           }
         ],
         "responses": {

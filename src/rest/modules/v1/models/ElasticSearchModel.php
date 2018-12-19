@@ -18,6 +18,8 @@ class ElasticSearchModel extends Model
     const FROM_SUFFIX = 'From';
     const TO_SUFFIX = 'To';
     const CHAR_LIMIT = 2;
+    const DEBUG_DIVIDER = '__';
+
     const MATCHED_FIELDS = [
         'buyersRegions'                => 'buyerRegion',
         'proceduresTypes'              => 'procedureType',
@@ -38,9 +40,32 @@ class ElasticSearchModel extends Model
         'periodAward',
         'periodPlanning',
     ];
+    const DEBUG_FIELDS = [
+        'titlesOrDescriptions',
+        'titlesOrDescriptionsStrict',
+        'deliveriesRegions',
+        'classifications',
+        'publishedDate',
+        'periodDeliveryFrom',
+        'periodDeliveryTo',
+        'periodEnquiryFrom',
+        'periodEnquiryTo',
+        'periodOfferFrom',
+        'periodOfferTo',
+        'periodAwardFrom',
+        'periodAwardTo',
+        'periodAuctionFrom',
+        'periodAuctionTo',
+        'buyersNames',
+        'buyerIdentifier',
+        'buyerType',
+        'buyerMainGeneralActivity',
+        'buyerMainSectoralActivity',
+    ];
 
     public $pageSize;
     public $page;
+    public $debug;
 
     protected $index;
     protected $type;
@@ -69,7 +94,7 @@ class ElasticSearchModel extends Model
      */
     public static function fieldsSystem()
     {
-        return ['page', 'pageSize'];
+        return ['page', 'pageSize', 'debug'];
     }
 
     /**
@@ -80,6 +105,8 @@ class ElasticSearchModel extends Model
         return [
             ['pageSize', 'integer', 'min' => 1, 'max' => 100],
             ['page', 'integer', 'min' => 1],
+            ['debug', 'boolean', 'trueValue' => 'true', 'falseValue' => 'false', 'strict' => true],
+            ['debug', 'default', 'value' => 'false'],
         ];
     }
 
@@ -232,8 +259,25 @@ class ElasticSearchModel extends Model
         if (isset($data['hits'])) {
             $totalCount = $data['hits']['total'];
             foreach ($data['hits']['hits'] as $hit) {
-                $item = $hit['_source'];
-                $item['_score'] = $hit['_score'] ?? 0;
+                $item = [];
+
+                if (is_array($hit['_source']) && !empty($hit['_source'])) {
+                    foreach ($hit['_source'] as $fieldKey => $fieldValue) {
+                        if (in_array($fieldKey, self::DEBUG_FIELDS)) {
+                            if ($this->debug === 'true') {
+                                $item[self::DEBUG_DIVIDER . $fieldKey] = $fieldValue;
+                            }
+                        } else {
+                            $item[$fieldKey] = $fieldValue;
+                        }
+                    }
+                }
+
+                if ($this->debug === 'true') {
+                    $item[self::DEBUG_DIVIDER . 'debug'] = true;
+                    $item[self::DEBUG_DIVIDER . 'score'] = $hit['_score'] ?? 0;
+                }
+
                 $result[] = $item;
             }
         }
