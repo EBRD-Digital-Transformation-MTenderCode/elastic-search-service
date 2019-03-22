@@ -20,7 +20,6 @@ class Plans extends ElasticSearchModel
     public $buyersRegions;
     public $deliveriesRegions;
     public $proceduresTypes;
-    public $proceduresStatuses;
     public $amountFrom;
     public $amountTo;
     public $classifications;
@@ -35,6 +34,7 @@ class Plans extends ElasticSearchModel
     public $periodOffer;
     public $periodAuction;
     public $periodAward;
+    public $pins;
 
     public $tags;
 
@@ -54,7 +54,6 @@ class Plans extends ElasticSearchModel
                     'buyersRegions',
                     'deliveriesRegions',
                     'proceduresTypes',
-                    'proceduresStatuses',
                     'classifications',
                     'buyersNames',
                     'buyersIdentifiers',
@@ -67,6 +66,7 @@ class Plans extends ElasticSearchModel
                     'periodOffer',
                     'periodAuction',
                     'periodAward',
+                    'pins',
                 ],
                 'string',
             ],
@@ -87,14 +87,14 @@ class Plans extends ElasticSearchModel
                     'buyersRegions',
                     'deliveriesRegions',
                     'proceduresTypes',
-                    'proceduresStatuses',
                     'classifications',
                     'buyersNames',
                     'buyersIdentifiers',
                     'buyersTypes',
                     'buyersMainGeneralActivities',
                     'buyersMainSectoralActivities',
-                    'tags'
+                    'tags',
+                    'pins',
                 ],
                 JsonListValidator::className(),
                 'skipOnEmpty' => true,
