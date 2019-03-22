@@ -504,12 +504,6 @@
           },
           {
             "in": "query",
-            "name": "proceduresStatuses",
-            "type": "string",
-            "description": "статусы процедур<br /> json array"
-          },
-          {
-            "in": "query",
             "name": "amountFrom",
             "type": "string",
             "description": "бюджет, от"
@@ -597,6 +591,12 @@
             "name": "tags",
             "type": "string",
             "description": "Типы плана<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "pins",
+            "type": "string",
+            "description": "pins<br /> json array"
           },
           {
             "in": "query",

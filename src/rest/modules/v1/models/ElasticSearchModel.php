@@ -30,6 +30,7 @@ class ElasticSearchModel extends Model
         'buyersTypes'                  => 'buyerType',
         'buyersMainGeneralActivities'  => 'buyerMainGeneralActivity',
         'buyersMainSectoralActivities' => 'buyerMainSectoralActivity',
+        'pins'                         => 'pin',
     ];
     const PERIOD_FILEDS = [
         'periodDelivery',
