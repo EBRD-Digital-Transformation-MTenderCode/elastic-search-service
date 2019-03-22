@@ -20,6 +20,7 @@ class ElasticSearchModel extends Model
     const CHAR_LIMIT = 2;
     const MATCHED_FIELDS = [
         'buyersRegions'                => 'buyerRegion',
+        'proceduresOwnerships'         => 'procedureOwnership',
         'proceduresTypes'              => 'procedureType',
         'proceduresStatuses'           => 'procedureStatus',
         'budgetStatuses'               => 'budgetStatus',
