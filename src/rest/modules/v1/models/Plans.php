@@ -34,7 +34,7 @@ class Plans extends ElasticSearchModel
     public $periodOffer;
     public $periodAuction;
     public $periodAward;
-    public $pins;
+    public $pin;
 
     public $tags;
 
@@ -66,7 +66,7 @@ class Plans extends ElasticSearchModel
                     'periodOffer',
                     'periodAuction',
                     'periodAward',
-                    'pins',
+                    'pin',
                 ],
                 'string',
             ],
@@ -94,7 +94,6 @@ class Plans extends ElasticSearchModel
                     'buyersMainGeneralActivities',
                     'buyersMainSectoralActivities',
                     'tags',
-                    'pins',
                 ],
                 JsonListValidator::className(),
                 'skipOnEmpty' => true,
@@ -154,7 +153,10 @@ class Plans extends ElasticSearchModel
      */
     public static function fieldsSystem()
     {
-        return array_merge(parent::fieldsSystem(), ['titlesOrDescriptionsStrict']);
+        return array_merge(parent::fieldsSystem(), [
+            'titlesOrDescriptionsStrict',
+            'pin',
+        ]);
     }
 
     /**
