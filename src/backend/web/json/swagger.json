@@ -608,13 +608,9 @@
           },
           {
             "in": "query",
-            "name": "pin",
-            "type": "boolean",
-            "enum": [
-              "true",
-              "false"
-            ],
-            "description": "pin<br /> json array"
+            "name": "pins",
+            "type": "string",
+            "description": "pins<br /> json array"
           },
           {
             "in": "query",

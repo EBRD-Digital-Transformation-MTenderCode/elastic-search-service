@@ -34,7 +34,7 @@ class Plans extends ElasticSearchModel
     public $periodOffer;
     public $periodAuction;
     public $periodAward;
-    public $pin;
+    public $pins;
 
     public $tags;
 
@@ -66,7 +66,7 @@ class Plans extends ElasticSearchModel
                     'periodOffer',
                     'periodAuction',
                     'periodAward',
-                    'pin',
+                    'pins',
                 ],
                 'string',
             ],
@@ -94,6 +94,7 @@ class Plans extends ElasticSearchModel
                     'buyersMainGeneralActivities',
                     'buyersMainSectoralActivities',
                     'tags',
+                    'pins',
                 ],
                 JsonListValidator::className(),
                 'skipOnEmpty' => true,
