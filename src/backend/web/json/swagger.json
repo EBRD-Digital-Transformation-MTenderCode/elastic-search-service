@@ -311,6 +311,12 @@
           },
           {
             "in": "query",
+            "name": "proceduresOwnerships",
+            "type": "string",
+            "description": "владение<br /> json array"
+          },
+          {
+            "in": "query",
             "name": "proceduresTypes",
             "type": "string",
             "description": "типы процедур<br /> json array"

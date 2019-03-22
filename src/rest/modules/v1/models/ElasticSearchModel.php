@@ -22,6 +22,7 @@ class ElasticSearchModel extends Model
 
     const MATCHED_FIELDS = [
         'buyersRegions'                => 'buyerRegion',
+        'proceduresOwnerships'         => 'procedureOwnership',
         'proceduresTypes'              => 'procedureType',
         'proceduresStatuses'           => 'procedureStatus',
         'budgetStatuses'               => 'budgetStatus',
