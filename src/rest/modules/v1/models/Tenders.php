@@ -86,6 +86,7 @@ class Tenders extends ElasticSearchModel
                 [
                     'buyersRegions',
                     'deliveriesRegions',
+                    'proceduresOwnerships',
                     'proceduresTypes',
                     'proceduresStatuses',
                     'classifications',
