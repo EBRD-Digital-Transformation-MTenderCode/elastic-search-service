@@ -223,6 +223,13 @@
             "type": "string",
             "required": false,
             "description": "Номер страницы для отображения"
+          },
+          {
+            "in": "query",
+            "name": "debug",
+            "type": "boolean",
+            "required": false,
+            "description": "Режим отладки"
           }
         ],
         "responses": {
@@ -301,6 +308,12 @@
             "name": "deliveriesRegions",
             "type": "string",
             "description": "регионы доставки<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "proceduresOwnerships",
+            "type": "string",
+            "description": "владение<br /> json array"
           },
           {
             "in": "query",
@@ -411,6 +424,13 @@
             "type": "string",
             "required": false,
             "description": "Номер страницы для отображения"
+          },
+          {
+            "in": "query",
+            "name": "debug",
+            "type": "boolean",
+            "required": false,
+            "description": "Режим отладки"
           }
         ],
         "responses": {
@@ -495,12 +515,6 @@
             "name": "proceduresTypes",
             "type": "string",
             "description": "типы процедур<br /> json array"
-          },
-          {
-            "in": "query",
-            "name": "proceduresStatuses",
-            "type": "string",
-            "description": "статусы процедур<br /> json array"
           },
           {
             "in": "query",
@@ -594,6 +608,12 @@
           },
           {
             "in": "query",
+            "name": "pins",
+            "type": "string",
+            "description": "pins<br /> json array"
+          },
+          {
+            "in": "query",
             "name": "pageSize",
             "type": "string",
             "required": false,
@@ -605,6 +625,13 @@
             "type": "string",
             "required": false,
             "description": "Номер страницы для отображения"
+          },
+          {
+            "in": "query",
+            "name": "debug",
+            "type": "boolean",
+            "required": false,
+            "description": "Режим отладки"
           }
         ],
         "responses": {
@@ -799,6 +826,13 @@
             "type": "string",
             "required": false,
             "description": "Номер страницы для отображения"
+          },
+          {
+            "in": "query",
+            "name": "debug",
+            "type": "boolean",
+            "required": false,
+            "description": "Режим отладки"
           }
         ],
         "responses": {

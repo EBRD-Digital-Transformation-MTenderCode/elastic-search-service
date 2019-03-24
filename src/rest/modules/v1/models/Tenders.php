@@ -19,6 +19,7 @@ class Tenders extends ElasticSearchModel
     public $titlesOrDescriptionsStrict;
     public $buyersRegions;
     public $deliveriesRegions;
+    public $proceduresOwnerships;
     public $proceduresTypes;
     public $proceduresStatuses;
     public $amountFrom;
@@ -51,6 +52,7 @@ class Tenders extends ElasticSearchModel
                     'titlesOrDescriptions',
                     'buyersRegions',
                     'deliveriesRegions',
+                    'proceduresOwnerships',
                     'proceduresTypes',
                     'proceduresStatuses',
                     'classifications',
@@ -84,6 +86,7 @@ class Tenders extends ElasticSearchModel
                 [
                     'buyersRegions',
                     'deliveriesRegions',
+                    'proceduresOwnerships',
                     'proceduresTypes',
                     'proceduresStatuses',
                     'classifications',
