@@ -129,6 +129,13 @@
           },
           {
             "in": "query",
+            "name": "entityId",
+            "type": "string",
+            "required": false,
+            "description": "entity id"
+          },
+          {
+            "in": "query",
             "name": "titlesOrDescriptions",
             "type": "string",
             "required": false,
