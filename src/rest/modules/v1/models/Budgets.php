@@ -12,6 +12,7 @@ use common\components\validators\JsonListDatePeriodValidator;
 class Budgets extends ElasticSearchModel
 {
     public $id;
+    public $entityId;
     public $titlesOrDescriptions;
     public $titlesOrDescriptionsStrict;
     public $buyersRegions;
@@ -35,6 +36,7 @@ class Budgets extends ElasticSearchModel
             [
                 [
                     'id',
+                    'entityId',
                     'titlesOrDescriptions',
                     'buyersRegions',
                     'budgetStatuses',
