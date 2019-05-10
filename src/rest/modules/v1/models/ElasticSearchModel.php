@@ -144,6 +144,7 @@ class ElasticSearchModel extends Model
             foreach ($searchAttributes as $key => $value) {
                 $matchedKey = self::getMatchedKey($key);
 
+                //полнотекстовый поиск
                 if (in_array($key, $this->fieldsFullText())) {
                     $sort = '';
 
@@ -157,8 +158,15 @@ class ElasticSearchModel extends Model
                     if ($strict_mode) {
                         if (mb_strlen($value) > self::CHAR_LIMIT) {
                             $mustItems[] = '{"match_phrase":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $value . '"}}';
+
+                            //поиск по строке без умлаутов
+                            $filteredUmlautsValue = self::filterUmlauts($value);
+
+                            if ($filteredUmlautsValue) {
+                                $shouldItems[] = '{"match_phrase":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $filteredUmlautsValue . '"}}';
+                            }
                         }
-                        //  не строгое
+                    //  не строгое
                     } else {
                         $words = explode(' ', $value);
                         $filteredWords = [];
@@ -170,13 +178,27 @@ class ElasticSearchModel extends Model
                             }
                         }
 
-                        $mustItems[] = '{"match":{"' . $matchedKey . '":"' . implode(' ', $filteredWords) . '"}}';
+                        $value = implode(' ', $filteredWords);
+                        $filteredUmlautsValue = self::filterUmlauts($value);
+
+                        $mustItems[] = '{"match":{"' . $matchedKey . '":"' . $value . '"}}';
+
+                        //поиск без умлаутов
+                        if ($filteredUmlautsValue) {
+                            $shouldItems[] = '{"match":{"' . $matchedKey . '":"' . $filteredUmlautsValue . '"}}';
+                        }
 
                         //поиск наилучшего совпадения
                         if (isset($this->{$key . self::STRICT_SUFFIX})) {
-                            $shouldItems[] = '{"match":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . implode(' ', $filteredWords) . '"}}';
+                            $shouldItems[] = '{"match":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $value . '"}}';
+                        }
+
+                        //поиск наилучшего совпадения без умлаутов
+                        if ($filteredUmlautsValue) {
+                            $shouldItems[] = '{"match":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $filteredUmlautsValue . '"}}';
                         }
                     }
+                //поиск в диапазоне
                 } elseif (in_array($key, $this->fieldsRange())) {
                     $from = strpos($key, self::FROM_SUFFIX);
                     $to = strpos($key, self::TO_SUFFIX);
@@ -199,13 +221,28 @@ class ElasticSearchModel extends Model
                             $filterRangeItems[($period ? $matchedKey . self::TO_SUFFIX : $matchedKey)]['to'] = $this->{$key}[1];
                         }
                     }
+                // поиск строк
                 } elseif (!in_array($key, $this->fieldsSystem())) {
                     if (isset($this->{$key})) {
+                        $terms = [];
+                        $filteredUmlautsTerms = [];
+
                         if (is_array($this->{$key})) {
-                            $filterItems[] = '{"terms":{"' . $matchedKey . '":["' . implode('", "', $this->{$key}) . '"]}}';
+                            $terms = $this->{$key};
                         } else {
-                            $filterItems[] = '{"term":{"' . $matchedKey . '":"' . $value . '"}}';
+                            $terms[] = $value;
                         }
+
+                        //поиск по строкам без умлаутов
+                        foreach ($terms as $term) {
+                            $filteredUmlautsTerm = self::filterUmlauts($term);
+
+                            if ($filteredUmlautsTerm) {
+                                $filteredUmlautsTerms[] = $filteredUmlautsTerm;
+                            }
+                        }
+
+                        $filterItems[] = '{"terms":{"' . $matchedKey . '":["' . implode('", "', array_merge($terms, $filteredUmlautsTerms)) . '"]}}';
                     }
                 }
             }
@@ -304,6 +341,55 @@ class ElasticSearchModel extends Model
             return self::MATCHED_FIELDS[$key];
         } else {
             return $key;
+        }
+    }
+
+    /**
+     * Make words without romanian umlauts
+     *
+     * Ă=A, ă=a
+     * Â=I, â=i (исключение: слова которые содержат "român", тогда Â=A, â=a)
+     * Î=I, î=i
+     * Ș=S, ș=s
+     * Ț=T, ț=t
+     *
+     * @param $value
+     * @return string | false
+     */
+    private static function filterUmlauts($value)
+    {
+        $filteredValue = str_replace([
+            'Român',
+            'român',
+            'Ă',
+            'Â',
+            'Î',
+            'Ș',
+            'Ț',
+            'ă',
+            'â',
+            'î',
+            'ș',
+            'ț',
+        ], [
+            'Roman',
+            'roman',
+            'A',
+            'I',
+            'I',
+            'S',
+            'T',
+            'a',
+            'i',
+            'i',
+            's',
+            't',
+        ], $value);
+
+        if ($filteredValue != $value) {
+            return $filteredValue;
+        } else {
+            return false;
         }
     }
 }
