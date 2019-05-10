@@ -181,21 +181,15 @@ class ElasticSearchModel extends Model
                         $value = implode(' ', $filteredWords);
                         $filteredUmlautsValue = self::filterUmlauts($value);
 
-                        $mustItems[] = '{"match":{"' . $matchedKey . '":"' . $value . '"}}';
-
-                        //поиск без умлаутов
                         if ($filteredUmlautsValue) {
-                            $shouldItems[] = '{"match":{"' . $matchedKey . '":"' . $filteredUmlautsValue . '"}}';
+                            $value .= ' ' . $filteredUmlautsValue;
                         }
+
+                        $mustItems[] = '{"match":{"' . $matchedKey . '":"' . $value . '"}}';
 
                         //поиск наилучшего совпадения
                         if (isset($this->{$key . self::STRICT_SUFFIX})) {
                             $shouldItems[] = '{"match":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $value . '"}}';
-                        }
-
-                        //поиск наилучшего совпадения без умлаутов
-                        if ($filteredUmlautsValue) {
-                            $shouldItems[] = '{"match":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $filteredUmlautsValue . '"}}';
                         }
                     }
                 //поиск в диапазоне
@@ -354,7 +348,7 @@ class ElasticSearchModel extends Model
      * Ț=T, ț=t
      *
      * @param $value
-     * @return string | false
+     * @return string
      */
     private static function filterUmlauts($value)
     {
@@ -389,7 +383,7 @@ class ElasticSearchModel extends Model
         if ($filteredValue != $value) {
             return $filteredValue;
         } else {
-            return false;
+            return '';
         }
     }
 }
