@@ -160,7 +160,7 @@ class Tenders extends ElasticSearchModel
     /**
      * @inheritdoc
      */
-    public function search($searchAttributes)
+    public function search($searchAttributes, $sortAttribute = 'modifiedDate')
     {
         $this->index = Yii::$app->params['elastic_tenders_index'];
         $this->type = Yii::$app->params['elastic_tenders_type'];

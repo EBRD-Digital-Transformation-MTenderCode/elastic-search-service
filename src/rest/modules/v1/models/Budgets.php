@@ -127,7 +127,7 @@ class Budgets extends ElasticSearchModel
     /**
      * @inheritdoc
      */
-    public function search($searchAttributes)
+    public function search($searchAttributes, $sortAttribute = 'modifiedDate')
     {
         $this->index = Yii::$app->params['elastic_budgets_index'];
         $this->type = Yii::$app->params['elastic_budgets_type'];

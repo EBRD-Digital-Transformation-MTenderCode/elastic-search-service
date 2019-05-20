@@ -115,10 +115,11 @@ class ElasticSearchModel extends Model
     /**
      * Search in elastic by attributes
      * @param $searchAttributes
+     * @param $sortAttribute
      * @return ArrayWithoutSortDataProvider
      * @throws ServiceException
      */
-    public function search($searchAttributes)
+    public function search($searchAttributes, $sortAttribute = 'modifiedDate')
     {
         $this->setAttributes($searchAttributes);
 
@@ -132,7 +133,7 @@ class ElasticSearchModel extends Model
             . $this->index . DIRECTORY_SEPARATOR
             . $this->type . DIRECTORY_SEPARATOR . '_search';
 
-        $sort = '"sort":[{"modifiedDate":{"order": "desc"}}],';
+        $sort = '"sort":[{"' . $sortAttribute . '":{"order": "desc"}}],';
 
         // формирование json для эластик
         if (!empty($searchAttributes)) {
