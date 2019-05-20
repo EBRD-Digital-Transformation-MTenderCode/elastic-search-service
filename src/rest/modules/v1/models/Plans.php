@@ -163,7 +163,7 @@ class Plans extends ElasticSearchModel
     /**
      * @inheritdoc
      */
-    public function search($searchAttributes)
+    public function search($searchAttributes, $sortAttribute = 'modifiedDate')
     {
         $this->index = Yii::$app->params['elastic_plans_index'];
         $this->type = Yii::$app->params['elastic_plans_type'];
