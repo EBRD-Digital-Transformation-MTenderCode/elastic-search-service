@@ -15,9 +15,9 @@ use ustudio\service_mandatory\ServiceException;
 class ElasticSearchModel extends Model
 {
     const STRICT_SUFFIX = 'Strict';
-    const FROM_SUFFIX = 'From';
-    const TO_SUFFIX = 'To';
-    const CHAR_LIMIT = 2;
+    const FROM_SUFFIX   = 'From';
+    const TO_SUFFIX     = 'To';
+    const CHAR_LIMIT    = 2;
     const DEBUG_DIVIDER = '__';
 
     const MATCHED_FIELDS = [
@@ -71,6 +71,7 @@ class ElasticSearchModel extends Model
 
     protected $index;
     protected $type;
+    protected $sortAttribute = 'modifiedDate';
 
     /**
      * Get fulltext search attributes
@@ -115,11 +116,10 @@ class ElasticSearchModel extends Model
     /**
      * Search in elastic by attributes
      * @param $searchAttributes
-     * @param $sortAttribute
      * @return ArrayWithoutSortDataProvider
      * @throws ServiceException
      */
-    public function search($searchAttributes, $sortAttribute = 'modifiedDate')
+    public function search($searchAttributes)
     {
         $this->setAttributes($searchAttributes);
 
@@ -133,7 +133,7 @@ class ElasticSearchModel extends Model
             . $this->index . DIRECTORY_SEPARATOR
             . $this->type . DIRECTORY_SEPARATOR . '_search';
 
-        $sort = '"sort":[{"' . $sortAttribute . '":{"order": "desc"}}],';
+        $sort = '"sort":[{"' . $this->sortAttribute . '":{"order": "desc"}}],';
 
         // формирование json для эластик
         if (!empty($searchAttributes)) {
