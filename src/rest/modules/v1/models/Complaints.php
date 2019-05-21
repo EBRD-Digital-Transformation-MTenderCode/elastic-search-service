@@ -55,11 +55,12 @@ class Complaints extends ElasticSearchModel
     /**
      * @inheritdoc
      */
-    public function search($searchAttributes, $sortAttribute = 'modifiedDate')
+    public function search($searchAttributes)
     {
         $this->index = Yii::$app->params['elastic_complaints_index'];
         $this->type = Yii::$app->params['elastic_complaints_type'];
+        $this->sortAttribute = 'timestamp';
 
-        return parent::search($searchAttributes, 'timestamp');
+        return parent::search($searchAttributes);
     }
 }

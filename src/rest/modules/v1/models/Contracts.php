@@ -160,7 +160,7 @@ class Contracts extends ElasticSearchModel
     /**
      * @inheritdoc
      */
-    public function search($searchAttributes, $sortAttribute)
+    public function search($searchAttributes)
     {
         $this->index = Yii::$app->params['elastic_contracts_index'];
         $this->type = Yii::$app->params['elastic_contracts_type'];

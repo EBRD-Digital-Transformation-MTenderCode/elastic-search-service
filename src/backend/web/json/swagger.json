@@ -891,6 +891,20 @@
             "type": "string",
             "required": false,
             "description": "tenderId"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "type": "string",
+            "required": false,
+            "description": "Кол-во записей на странице"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "string",
+            "required": false,
+            "description": "Номер страницы для отображения"
           }
         ],
         "responses": {
@@ -933,6 +947,20 @@
             "type": "string",
             "required": false,
             "description": "tender_id"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "type": "string",
+            "required": false,
+            "description": "Кол-во записей на странице"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "string",
+            "required": false,
+            "description": "Номер страницы для отображения"
           }
         ],
         "responses": {
