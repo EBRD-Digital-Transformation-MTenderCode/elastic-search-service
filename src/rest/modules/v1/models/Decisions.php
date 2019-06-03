@@ -2,6 +2,7 @@
 namespace rest\modules\v1\models;
 
 use Yii;
+use common\components\validators\JsonListDatePeriodValidator;
 
 /**
  * Class Decisions
@@ -11,6 +12,7 @@ class Decisions extends ElasticSearchModel
 {
     public $id;
     public $NrProcedurii;
+    public $periodTimestamp;
 
     /**
      * @inheritdoc
@@ -22,8 +24,16 @@ class Decisions extends ElasticSearchModel
                 [
                     'id',
                     'NrProcedurii',
+                    'periodTimestamp',
                 ],
                 'string',
+            ],
+            [
+                [
+                    'periodTimestamp',
+                ],
+                JsonListDatePeriodValidator::className(),
+                'skipOnEmpty' => true,
             ],
         ]);
     }
@@ -41,7 +51,7 @@ class Decisions extends ElasticSearchModel
      */
     public static function fieldsRange()
     {
-        return array_merge(parent::fieldsRange(), []);
+        return array_merge(parent::fieldsRange(), ['periodTimestamp']);
     }
 
     /**
