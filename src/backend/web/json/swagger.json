@@ -894,6 +894,12 @@
           },
           {
             "in": "query",
+            "name": "periodTimestamp",
+            "type": "string",
+            "description": "период изменения<br /> json array"
+          },
+          {
+            "in": "query",
             "name": "pageSize",
             "type": "string",
             "required": false,
@@ -947,6 +953,12 @@
             "type": "string",
             "required": false,
             "description": "tender_id"
+          },
+          {
+            "in": "query",
+            "name": "periodTimestamp",
+            "type": "string",
+            "description": "период изменения<br /> json array"
           },
           {
             "in": "query",

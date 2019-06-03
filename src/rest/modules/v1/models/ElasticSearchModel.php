@@ -28,6 +28,7 @@ class ElasticSearchModel extends Model
         'budgetStatuses'               => 'budgetStatus',
         'periodPublished'              => 'publishedDate',
         'periodTender'                 => 'periodTenderFrom',
+        'periodTimestamp'              => 'timestamp',
         'buyersIdentifiers'            => 'buyerIdentifier',
         'buyersTypes'                  => 'buyerType',
         'buyersMainGeneralActivities'  => 'buyerMainGeneralActivity',
