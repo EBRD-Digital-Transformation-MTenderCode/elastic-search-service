@@ -23,6 +23,15 @@
       "description": "Планы."
     },
     {
+      "name": "Complaints",
+      "description": "Complaints."
+    },
+    {
+      "name": "Decisions",
+      "description": "Decisions."
+    },
+
+    {
       "name": "Cpv",
       "description": "Cpv."
     }
@@ -840,6 +849,130 @@
             "type": "boolean",
             "required": false,
             "description": "Режим отладки"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/200Tender"
+            }
+          },
+          "400": {
+            "description": "Data Validation Failed."
+          }
+        }
+      }
+    },
+    "/v1/complaints/search": {
+      "get": {
+        "tags": [
+          "Complaints"
+        ],
+        "summary": "Get all complaints from ElasticSearch",
+        "description": "Get all complaints from ElasticSearch",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "description": "id"
+          },
+          {
+            "in": "query",
+            "name": "NrProcedurii",
+            "type": "string",
+            "required": false,
+            "description": "tenderId"
+          },
+          {
+            "in": "query",
+            "name": "periodTimestamp",
+            "type": "string",
+            "description": "период изменения<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "type": "string",
+            "required": false,
+            "description": "Кол-во записей на странице"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "string",
+            "required": false,
+            "description": "Номер страницы для отображения"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/200Tender"
+            }
+          },
+          "400": {
+            "description": "Data Validation Failed."
+          }
+        }
+      }
+    },
+    "/v1/decisions/search": {
+      "get": {
+        "tags": [
+          "Decisions"
+        ],
+        "summary": "Get all decisions from ElasticSearch",
+        "description": "Get all decisions from ElasticSearch",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "description": "id"
+          },
+          {
+            "in": "query",
+            "name": "NrProcedurii",
+            "type": "string",
+            "required": false,
+            "description": "tender_id"
+          },
+          {
+            "in": "query",
+            "name": "periodTimestamp",
+            "type": "string",
+            "description": "период изменения<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "type": "string",
+            "required": false,
+            "description": "Кол-во записей на странице"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "string",
+            "required": false,
+            "description": "Номер страницы для отображения"
           }
         ],
         "responses": {
