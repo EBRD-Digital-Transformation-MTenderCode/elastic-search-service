@@ -70,6 +70,7 @@ class Decisions extends ElasticSearchModel
         $this->index = Yii::$app->params['elastic_decisions_index'];
         $this->type = Yii::$app->params['elastic_decisions_type'];
         $this->sortAttribute = 'timestamp';
+        $this->sortOrder = 'asc';
 
         return parent::search($searchAttributes);
     }

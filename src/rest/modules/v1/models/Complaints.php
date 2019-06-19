@@ -70,6 +70,7 @@ class Complaints extends ElasticSearchModel
         $this->index = Yii::$app->params['elastic_complaints_index'];
         $this->type = Yii::$app->params['elastic_complaints_type'];
         $this->sortAttribute = 'timestamp';
+        $this->sortOrder = 'asc';
 
         return parent::search($searchAttributes);
     }

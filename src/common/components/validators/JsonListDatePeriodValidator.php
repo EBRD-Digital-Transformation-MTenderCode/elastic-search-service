@@ -37,8 +37,10 @@ class JsonListDatePeriodValidator extends Validator
         if (count($list) == 2) {
             $validator = new DateValidator();
             $validator->format = 'php:' . \DateTime::RFC3339;
+            $validatorExt = new DateValidator();
+            $validatorExt->format = 'php:Y-m-d\TH:i:s.uP';
             foreach ($list as $item) {
-                if (is_string($item) && ($item == '' || $validator->validate($item))) {
+                if (is_string($item) && ($item == '' || $validator->validate($item) || $validatorExt->validate($item))) {
                     $result[] = $item;
                 } else {
                     $hasError = true;
