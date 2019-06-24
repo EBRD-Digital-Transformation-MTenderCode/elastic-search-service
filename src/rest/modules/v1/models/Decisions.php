@@ -12,7 +12,7 @@ class Decisions extends ElasticSearchModel
 {
     public $id;
     public $NrProcedurii;
-    public $periodTimestamp;
+    public $periodRegistered;
 
     /**
      * @inheritdoc
@@ -24,13 +24,13 @@ class Decisions extends ElasticSearchModel
                 [
                     'id',
                     'NrProcedurii',
-                    'periodTimestamp',
+                    'periodRegistered',
                 ],
                 'string',
             ],
             [
                 [
-                    'periodTimestamp',
+                    'periodRegistered',
                 ],
                 JsonListDatePeriodValidator::className(),
                 'skipOnEmpty' => true,
@@ -51,7 +51,7 @@ class Decisions extends ElasticSearchModel
      */
     public static function fieldsRange()
     {
-        return array_merge(parent::fieldsRange(), ['periodTimestamp']);
+        return array_merge(parent::fieldsRange(), ['periodRegistered']);
     }
 
     /**
@@ -69,7 +69,7 @@ class Decisions extends ElasticSearchModel
     {
         $this->index = Yii::$app->params['elastic_decisions_index'];
         $this->type = Yii::$app->params['elastic_decisions_type'];
-        $this->sortAttribute = 'timestamp';
+        $this->sortAttribute = 'registrationDate';
         $this->sortOrder = 'asc';
 
         return parent::search($searchAttributes);

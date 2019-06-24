@@ -894,7 +894,7 @@
           },
           {
             "in": "query",
-            "name": "periodTimestamp",
+            "name": "periodRegistered",
             "type": "string",
             "description": "период изменения<br /> json array"
           },
@@ -956,7 +956,7 @@
           },
           {
             "in": "query",
-            "name": "periodTimestamp",
+            "name": "periodRegistered",
             "type": "string",
             "description": "период изменения<br /> json array"
           },
