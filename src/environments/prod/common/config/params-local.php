@@ -11,6 +11,8 @@ return [
     'elastic_tenders_type' => '{{environments_ELASTIC_TENDERS_TYPE}}',
     'elastic_plans_type' => '{{environments_ELASTIC_PLANS_TYPE}}',
     'elastic_contracts_type' => '{{environments_ELASTIC_CONTRACTS_TYPE}}',
+    'elastic_proceedings_index' => '{{environments_ELASTIC_PROCEEDINGS_INDEX}}',
+    'elastic_proceedings_type' => '{{environments_ELASTIC_PROCEEDINGS_TYPE}}',
     'elastic_complaints_index' => '{{environments_ELASTIC_COMPLAINTS_INDEX}}',
     'elastic_complaints_type' => '{{environments_ELASTIC_COMPLAINTS_TYPE}}',
     'elastic_decisions_index' => '{{environments_ELASTIC_DECISIONS_INDEX}}',

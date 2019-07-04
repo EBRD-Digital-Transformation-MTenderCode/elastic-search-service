@@ -23,6 +23,10 @@
       "description": "Планы."
     },
     {
+      "name": "Proceedings",
+      "description": "Proceedings."
+    },
+    {
       "name": "Complaints",
       "description": "Complaints."
     },
@@ -864,6 +868,61 @@
         }
       }
     },
+    "/v1/proceedings/search": {
+      "get": {
+        "tags": [
+          "Proceedings"
+        ],
+        "summary": "Get all proceedings from ElasticSearch",
+        "description": "Get all proceedings from ElasticSearch",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "ocid",
+            "type": "string",
+            "required": false,
+            "description": "id"
+          },
+          {
+            "in": "query",
+            "name": "date",
+            "type": "string",
+            "description": "период<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "type": "string",
+            "required": false,
+            "description": "Кол-во записей на странице"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "string",
+            "required": false,
+            "description": "Номер страницы для отображения"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/200Tender"
+            }
+          },
+          "400": {
+            "description": "Data Validation Failed."
+          }
+        }
+      }
+    },
     "/v1/complaints/search": {
       "get": {
         "tags": [
@@ -894,7 +953,7 @@
           },
           {
             "in": "query",
-            "name": "periodRegistered",
+            "name": "periodModification",
             "type": "string",
             "description": "период изменения<br /> json array"
           },
