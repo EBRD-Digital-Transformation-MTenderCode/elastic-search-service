@@ -276,11 +276,6 @@ class ElasticSearchModel extends Model
         $pagination = '"from":' . ($page * $pageSize - $pageSize) . ',"size":' . $pageSize . ',';
         $data_string = '{' . $sort . $pagination . '"query":' . $query . '}';
 
-        echo "<pre>";
-        print_r($data_string);
-        echo "</pre>";
-        die();
-
         $client = new Client(['transport' => 'yii\httpclient\CurlTransport']);
         $response = $client->createRequest()
             ->setMethod('GET')
