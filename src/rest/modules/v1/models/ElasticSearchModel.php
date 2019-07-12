@@ -160,15 +160,13 @@ class ElasticSearchModel extends Model
                     $strict_mode = isset($this->{$key . self::STRICT_SUFFIX}) && ($this->{$key . self::STRICT_SUFFIX} == 'true');
                     if ($strict_mode) {
                         if (mb_strlen($value) > self::CHAR_LIMIT) {
-                            $mustItems[] = '{"match_phrase":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $value . '"}}';
-
                             //поиск по строке без умлаутов
                             $filteredUmlautsValue = self::filterUmlauts($value);
 
-                            if ($filteredUmlautsValue) {
-                                $mustItems = [];
-                                $shouldItems[] = '{"match_phrase":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $value . '"}}';
-                                $shouldItems[] = '{"match_phrase":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $filteredUmlautsValue . '"}}';
+                            if (!$filteredUmlautsValue) {
+                                $mustItems[] = '{"match_phrase":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $value . '"}}';
+                            } else {
+                                $mustItems[] = '{"bool":{"should":[{"match_phrase":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $value . '"}},{"match_phrase":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $filteredUmlautsValue . '"}}]}}';
                             }
                         }
                     //  не строгое
