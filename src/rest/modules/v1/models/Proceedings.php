@@ -5,14 +5,13 @@ use Yii;
 use common\components\validators\JsonListDatePeriodValidator;
 
 /**
- * Class Decisions
+ * Class Proceedings
  * @package rest\modules\v1\models
  */
-class Decisions extends ElasticSearchModel
+class Proceedings extends ElasticSearchModel
 {
-    public $id;
-    public $NrProcedurii;
-    public $periodModification;
+    public $ocid;
+    public $date;
 
     /**
      * @inheritdoc
@@ -22,15 +21,14 @@ class Decisions extends ElasticSearchModel
         return array_merge(parent::rules(), [
             [
                 [
-                    'id',
-                    'NrProcedurii',
-                    'periodModification',
+                    'ocid',
+                    'date',
                 ],
                 'string',
             ],
             [
                 [
-                    'periodModification',
+                    'date',
                 ],
                 JsonListDatePeriodValidator::className(),
                 'skipOnEmpty' => true,
@@ -51,7 +49,7 @@ class Decisions extends ElasticSearchModel
      */
     public static function fieldsRange()
     {
-        return array_merge(parent::fieldsRange(), ['periodModification']);
+        return array_merge(parent::fieldsRange(), ['date']);
     }
 
     /**
@@ -67,9 +65,9 @@ class Decisions extends ElasticSearchModel
      */
     public function search($searchAttributes)
     {
-        $this->index = Yii::$app->params['elastic_decisions_index'];
-        $this->type = Yii::$app->params['elastic_decisions_type'];
-        $this->sortAttribute = 'modificationDate';
+        $this->index = Yii::$app->params['elastic_proceedings_index'];
+        $this->type = Yii::$app->params['elastic_proceedings_type'];
+        $this->sortAttribute = 'date';
         $this->sortOrder = 'asc';
 
         return parent::search($searchAttributes);

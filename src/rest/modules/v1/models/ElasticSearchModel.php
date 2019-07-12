@@ -28,7 +28,7 @@ class ElasticSearchModel extends Model
         'budgetStatuses'               => 'budgetStatus',
         'periodPublished'              => 'publishedDate',
         'periodTender'                 => 'periodTenderFrom',
-        'periodTimestamp'              => 'timestamp',
+        'periodModification'           => 'modificationDate',
         'buyersIdentifiers'            => 'buyerIdentifier',
         'buyersTypes'                  => 'buyerType',
         'buyersMainGeneralActivities'  => 'buyerMainGeneralActivity',
@@ -73,6 +73,7 @@ class ElasticSearchModel extends Model
     protected $index;
     protected $type;
     protected $sortAttribute = 'modifiedDate';
+    protected $sortOrder = 'desc';
 
     /**
      * Get fulltext search attributes
@@ -134,7 +135,7 @@ class ElasticSearchModel extends Model
             . $this->index . DIRECTORY_SEPARATOR
             . $this->type . DIRECTORY_SEPARATOR . '_search';
 
-        $sort = '"sort":[{"' . $this->sortAttribute . '":{"order": "desc"}}, {"id":{"order": "asc"}}],';
+        $sort = '"sort":[{"' . $this->sortAttribute . '":{"order": "' . $this->sortOrder . '"}}],';
 
         // формирование json для эластик
         if (!empty($searchAttributes)) {

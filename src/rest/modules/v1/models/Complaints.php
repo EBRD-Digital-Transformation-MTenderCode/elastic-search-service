@@ -12,7 +12,7 @@ class Complaints extends ElasticSearchModel
 {
     public $id;
     public $NrProcedurii;
-    public $periodTimestamp;
+    public $periodModification;
 
     /**
      * @inheritdoc
@@ -24,13 +24,13 @@ class Complaints extends ElasticSearchModel
                 [
                     'id',
                     'NrProcedurii',
-                    'periodTimestamp',
+                    'periodModification',
                 ],
                 'string',
             ],
             [
                 [
-                    'periodTimestamp',
+                    'periodModification',
                 ],
                 JsonListDatePeriodValidator::className(),
                 'skipOnEmpty' => true,
@@ -51,7 +51,7 @@ class Complaints extends ElasticSearchModel
      */
     public static function fieldsRange()
     {
-        return array_merge(parent::fieldsRange(), ['periodTimestamp']);
+        return array_merge(parent::fieldsRange(), ['periodModification']);
     }
 
     /**
@@ -69,7 +69,8 @@ class Complaints extends ElasticSearchModel
     {
         $this->index = Yii::$app->params['elastic_complaints_index'];
         $this->type = Yii::$app->params['elastic_complaints_type'];
-        $this->sortAttribute = 'timestamp';
+        $this->sortAttribute = 'modificationDate';
+        $this->sortOrder = 'asc';
 
         return parent::search($searchAttributes);
     }
