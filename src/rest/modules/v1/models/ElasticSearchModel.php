@@ -347,8 +347,8 @@ class ElasticSearchModel extends Model
      * Ă=A, ă=a
      * Â=I, â=i (исключение: слова которые содержат "român", тогда Â=A, â=a)
      * Î=I, î=i
-     * Ș=S, ș=s ş=s
-     * Ț=T, ț=t ţ=t
+     * Ș=S, Ş=S, ș=s, ş=s
+     * Ț=T, Ţ=T, ț=t, ţ=t
      *
      * @param $value
      * @return string
