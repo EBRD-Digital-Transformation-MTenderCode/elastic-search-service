@@ -161,12 +161,19 @@ class ElasticSearchModel extends Model
                     if ($strict_mode) {
                         if (mb_strlen($value) > self::CHAR_LIMIT) {
                             //поиск по строке без умлаутов
-                            $filteredUmlautsValue = self::filterUmlauts($value);
+                            $filteredUmlautsValues = self::filterUmlauts($value);
 
-                            if (!$filteredUmlautsValue) {
+                            if (empty($filteredUmlautsValues)) {
                                 $mustItems[] = '{"match_phrase":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $value . '"}}';
                             } else {
-                                $mustItems[] = '{"bool":{"should":[{"match_phrase":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $value . '"}},{"match_phrase":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $filteredUmlautsValue . '"}}]}}';
+                                $filteredUmlautsParts = [];
+                                $filteredUmlautsParts[] = '{"match_phrase":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $value . '"}}';
+
+                                foreach ($filteredUmlautsValues as $filteredUmlautsValue) {
+                                    $filteredUmlautsParts[] = '{"match_phrase":{"' . $matchedKey . self::STRICT_SUFFIX . '":"' . $filteredUmlautsValue . '"}}';
+                                }
+
+                                $mustItems[] = '{"bool":{"should":[' . implode(', ', $filteredUmlautsParts) . ']}}';
                             }
                         }
                     //  не строгое
@@ -182,10 +189,12 @@ class ElasticSearchModel extends Model
                         }
 
                         $value = implode(' ', $filteredWords);
-                        $filteredUmlautsValue = self::filterUmlauts($value);
+                        $filteredUmlautsValues = self::filterUmlauts($value);
 
-                        if ($filteredUmlautsValue) {
-                            $value .= ' ' . $filteredUmlautsValue;
+                        if (!empty($filteredUmlautsValues)) {
+                            foreach ($filteredUmlautsValues as $filteredUmlautsValue) {
+                                $value .= ' ' . $filteredUmlautsValue;
+                            }
                         }
 
                         $mustItems[] = '{"match":{"' . $matchedKey . '":"' . $value . '"}}';
@@ -222,7 +231,7 @@ class ElasticSearchModel extends Model
                 } elseif (!in_array($key, $this->fieldsSystem())) {
                     if (isset($this->{$key})) {
                         $terms = [];
-                        $filteredUmlautsTerms = [];
+                        $filteredUmlautsTermsList = [];
 
                         if (is_array($this->{$key})) {
                             $terms = $this->{$key};
@@ -232,14 +241,14 @@ class ElasticSearchModel extends Model
 
                         //поиск по строкам без умлаутов
                         foreach ($terms as $term) {
-                            $filteredUmlautsTerm = self::filterUmlauts($term);
+                            $filteredUmlautsTerms = self::filterUmlauts($term);
 
-                            if ($filteredUmlautsTerm) {
-                                $filteredUmlautsTerms[] = $filteredUmlautsTerm;
+                            if (!empty($filteredUmlautsTerms)) {
+                                $filteredUmlautsTermsList = array_merge($filteredUmlautsTermsList, $filteredUmlautsTerms);
                             }
                         }
 
-                        $filterItems[] = '{"terms":{"' . $matchedKey . '":["' . implode('", "', array_merge($terms, $filteredUmlautsTerms)) . '"]}}';
+                        $filterItems[] = '{"terms":{"' . $matchedKey . '":["' . implode('", "', array_merge($terms, $filteredUmlautsTermsList)) . '"]}}';
                     }
                 }
             }
@@ -345,19 +354,20 @@ class ElasticSearchModel extends Model
      * Make words without romanian umlauts
      *
      * Ă=A, ă=a
-     * Â=I, â=i (исключение: слова которые содержат "român", тогда Â=A, â=a)
+     * Â=I, â=i или же Â=A, â=a
      * Î=I, î=i
      * Ș=S, Ş=S, ș=s, ş=s
      * Ț=T, Ţ=T, ț=t, ţ=t
      *
      * @param $value
-     * @return string
+     * @return array | false
      */
     private static function filterUmlauts($value)
     {
+        $result = [];
+
+        //rule Â=I, â=i
         $filteredValue = str_replace([
-            'Român',
-            'român',
             'Ă',
             'Â',
             'Î',
@@ -373,8 +383,6 @@ class ElasticSearchModel extends Model
             'ț',
             'ţ',
         ], [
-            'Roman',
-            'roman',
             'A',
             'I',
             'I',
@@ -392,9 +400,50 @@ class ElasticSearchModel extends Model
         ], $value);
 
         if ($filteredValue != $value) {
-            return $filteredValue;
+            $result[] = $filteredValue;
+        }
+
+        //rule Â=A, â=a
+        $filteredValue = str_replace([
+            'Ă',
+            'Â',
+            'Î',
+            'Ș',
+            'Ş',
+            'Ț',
+            'Ţ',
+            'ă',
+            'â',
+            'î',
+            'ș',
+            'ş',
+            'ț',
+            'ţ',
+        ], [
+            'A',
+            'A',
+            'I',
+            'S',
+            'S',
+            'T',
+            'T',
+            'a',
+            'a',
+            'i',
+            's',
+            's',
+            't',
+            't',
+        ], $value);
+
+        if ($filteredValue != $value) {
+            $result[] = $filteredValue;
+        }
+
+        if (!empty($result)) {
+            return $result;
         } else {
-            return '';
+            return false;
         }
     }
 }
