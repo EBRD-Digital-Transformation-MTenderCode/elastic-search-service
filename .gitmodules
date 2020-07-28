@@ -1,0 +1,7 @@
+[submodule "ustudio/swagger_parser"]
+  path = src/vendor/ustudio/swagger_parser
+  url = https://bitbucket.org/ustudio-llc/swagger_api_get_methods-composer_package.git
+
+[submodule "ustudio/service_mandatory"]
+  path = src/vendor/ustudio/service_mandatory
+  url = https://bitbucket.org/ustudio-llc/service_mandatory_parts-composer_package.git

@@ -1,0 +1,1189 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "сервис для поиска данных о тендерах и бюджетах в ElasticSearch.",
+    "version": "1.0.0",
+    "title": "Elastic Search service"
+  },
+  "tags": [
+    {
+      "name": "methods",
+      "description": "API-справочник методов сервиса ElasticSearch."
+    },
+    {
+      "name": "Budgets",
+      "description": "Бюджеты."
+    },
+    {
+      "name": "Tenders",
+      "description": "Тендера."
+    },
+    {
+      "name": "Plans",
+      "description": "Планы."
+    },
+    {
+      "name": "Proceedings",
+      "description": "Proceedings."
+    },
+    {
+      "name": "Complaints",
+      "description": "Complaints."
+    },
+    {
+      "name": "Decisions",
+      "description": "Decisions."
+    },
+
+    {
+      "name": "Cpv",
+      "description": "Cpv."
+    }
+  ],
+  "basePath": "/rest-api",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/v1": {
+      "get": {
+        "tags": [
+          "methods"
+        ],
+        "summary": "Get all methods (Получение всех methods)",
+        "description": "Метод является API-справочником методов ElasticSearch и используется для получения информации о каждом методе сервиса ElasticSearch в формате JSON. Это позволяет клиенту выполнить свою автоматическую подстройку под сервис, либо воспользоватся полученными данными в качестве API-версии help page.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "url",
+            "type": "string",
+            "required": false,
+            "description": "При заполнении поля значением url отдельного метода получим инфо о свойствах этого метода (для получения url отдельного метода осуществляем метод Get/methods не заполняя данное поле)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/200Methods"
+            }
+          },
+          "400": {
+            "description": "Data Validation Failed."
+          }
+        }
+      }
+    },
+    "/v1/cpv/search": {
+      "get": {
+        "tags": [
+          "Cpv"
+        ],
+        "summary": "Get all cpv with ElasticSearch (Получение всех cpv через Elasticsearch)",
+        "description": "получение всех записей о cpv через Elasticsearch",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "language",
+            "type": "string",
+            "required": false,
+            "description": "язык перевода"
+          },
+          {
+            "in": "query",
+            "name": "idOrName",
+            "type": "string",
+            "required": false,
+            "description": "номер или название"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/200Budget"
+            }
+          },
+          "400": {
+            "description": "Data Validation Failed."
+          }
+        }
+      }
+    },
+    "/v1/budgets/search": {
+      "get": {
+        "tags": [
+          "Budgets"
+        ],
+        "summary": "Get all budgets with ElasticSearch (Получение всех бюджетов через Elasticsearch)",
+        "description": "получение всех записей о бюджетах через Elasticsearch",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "description": "номер статьи расходов"
+          },
+          {
+            "in": "query",
+            "name": "entityId",
+            "type": "string",
+            "required": false,
+            "description": "entity id"
+          },
+          {
+            "in": "query",
+            "name": "titlesOrDescriptions",
+            "type": "string",
+            "required": false,
+            "description": "поле полнотекстового поиска"
+          },
+          {
+            "in": "query",
+            "name": "titlesOrDescriptionsStrict",
+            "type": "boolean",
+            "enum": [
+              true,
+              false
+            ],
+            "description": "признак строгого соответствия"
+          },
+          {
+            "in": "query",
+            "name": "buyersRegions",
+            "type": "string",
+            "description": "регионы заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "budgetStatuses",
+            "type": "string",
+            "description": "статусы статьи расходов<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "amountFrom",
+            "type": "string",
+            "description": "бюджет, от"
+          },
+          {
+            "in": "query",
+            "name": "amountTo",
+            "type": "string",
+            "description": "бюджет, до"
+          },
+          {
+            "in": "query",
+            "name": "classifications",
+            "type": "string",
+            "description": "классификации<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodPlanning",
+            "type": "string",
+            "description": "период действия<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersNames",
+            "type": "string",
+            "description": "названия заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersIdentifiers",
+            "type": "string",
+            "description": "коды заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersTypes",
+            "type": "string",
+            "description": "типы заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersMainGeneralActivities",
+            "type": "string",
+            "description": "основные типы деятельности заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersMainSectoralActivities",
+            "type": "string",
+            "description": "отраслевые типы деятельности заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "type": "string",
+            "required": false,
+            "description": "Кол-во записей на странице (значение -1 выводит все записи)"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "string",
+            "required": false,
+            "description": "Номер страницы для отображения"
+          },
+          {
+            "in": "query",
+            "name": "debug",
+            "type": "boolean",
+            "required": false,
+            "description": "Режим отладки"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/200Budget"
+            }
+          },
+          "400": {
+            "description": "Data Validation Failed."
+          }
+        }
+      }
+    },
+    "/v1/tenders/search": {
+      "get": {
+        "tags": [
+          "Tenders"
+        ],
+        "summary": "Get all tenders with ElasticSearch (Получение всех тендеров через Elasticsearch)",
+        "description": "получение всех записей о тендерах через Elasticsearch",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "cdb",
+            "type": "string",
+            "required": false,
+            "description": "id"
+          },
+          {
+            "in": "query",
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "description": "id"
+          },
+          {
+            "in": "query",
+            "name": "entityId",
+            "type": "string",
+            "required": false,
+            "description": "entity id"
+          },
+          {
+            "in": "query",
+            "name": "titlesOrDescriptions",
+            "type": "string",
+            "required": false,
+            "description": "поле полнотекстового поиска"
+          },
+          {
+            "in": "query",
+            "name": "titlesOrDescriptionsStrict",
+            "type": "boolean",
+            "enum": [
+              true,
+              false
+            ],
+            "description": "признак строгого соответствия"
+          },
+          {
+            "in": "query",
+            "name": "buyersRegions",
+            "type": "string",
+            "description": "регионы заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "deliveriesRegions",
+            "type": "string",
+            "description": "регионы доставки<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "proceduresOwnerships",
+            "type": "string",
+            "description": "владение<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "proceduresTypes",
+            "type": "string",
+            "description": "типы процедур<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "proceduresStatuses",
+            "type": "string",
+            "description": "статусы процедур<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "amountFrom",
+            "type": "string",
+            "description": "бюджет, от"
+          },
+          {
+            "in": "query",
+            "name": "amountTo",
+            "type": "string",
+            "description": "бюджет, до"
+          },
+          {
+            "in": "query",
+            "name": "classifications",
+            "type": "string",
+            "description": "классификации<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodPublished",
+            "type": "string",
+            "description": "период публикации<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodDelivery",
+            "type": "string",
+            "description": "период доставки<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodEnquiry",
+            "type": "string",
+            "description": "период обсуждения<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodOffer",
+            "type": "string",
+            "description": "период приема предложений<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodAuction",
+            "type": "string",
+            "description": "период аукцииона<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodAward",
+            "type": "string",
+            "description": "период квалификации<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersNames",
+            "type": "string",
+            "description": "названия заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersIdentifiers",
+            "type": "string",
+            "description": "коды заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersTypes",
+            "type": "string",
+            "description": "типы заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersMainGeneralActivities",
+            "type": "string",
+            "description": "основные типы деятельности заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersMainSectoralActivities",
+            "type": "string",
+            "description": "отраслевые типы деятельности заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "type": "string",
+            "required": false,
+            "description": "Кол-во записей на странице"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "string",
+            "required": false,
+            "description": "Номер страницы для отображения"
+          },
+          {
+            "in": "query",
+            "name": "debug",
+            "type": "boolean",
+            "required": false,
+            "description": "Режим отладки"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/200Tender"
+            }
+          },
+          "400": {
+            "description": "Data Validation Failed."
+          }
+        }
+      }
+    },
+    "/v1/plans/search": {
+      "get": {
+        "tags": [
+          "Plans"
+        ],
+        "summary": "Get all tenders with ElasticSearch (Получение всех планов через Elasticsearch)",
+        "description": "получение всех записей о планах через Elasticsearch",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "cdb",
+            "type": "string",
+            "required": false,
+            "description": "id"
+          },
+          {
+            "in": "query",
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "description": "id"
+          },
+          {
+            "in": "query",
+            "name": "entityId",
+            "type": "string",
+            "required": false,
+            "description": "entity id"
+          },
+          {
+            "in": "query",
+            "name": "titlesOrDescriptions",
+            "type": "string",
+            "required": false,
+            "description": "поле полнотекстового поиска"
+          },
+          {
+            "in": "query",
+            "name": "titlesOrDescriptionsStrict",
+            "type": "boolean",
+            "enum": [
+              true,
+              false
+            ],
+            "description": "признак строгого соответствия"
+          },
+          {
+            "in": "query",
+            "name": "buyersRegions",
+            "type": "string",
+            "description": "регионы заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "deliveriesRegions",
+            "type": "string",
+            "description": "регионы доставки<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "proceduresTypes",
+            "type": "string",
+            "description": "типы процедур<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "amountFrom",
+            "type": "string",
+            "description": "бюджет, от"
+          },
+          {
+            "in": "query",
+            "name": "amountTo",
+            "type": "string",
+            "description": "бюджет, до"
+          },
+          {
+            "in": "query",
+            "name": "classifications",
+            "type": "string",
+            "description": "классификации<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodPublished",
+            "type": "string",
+            "description": "период публикации<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodDelivery",
+            "type": "string",
+            "description": "период доставки<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodEnquiry",
+            "type": "string",
+            "description": "период обсуждения<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodOffer",
+            "type": "string",
+            "description": "период приема предложений<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodAuction",
+            "type": "string",
+            "description": "период аукцииона<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodAward",
+            "type": "string",
+            "description": "период квалификации<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersNames",
+            "type": "string",
+            "description": "названия заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersIdentifiers",
+            "type": "string",
+            "description": "коды заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersTypes",
+            "type": "string",
+            "description": "типы заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersMainGeneralActivities",
+            "type": "string",
+            "description": "основные типы деятельности заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersMainSectoralActivities",
+            "type": "string",
+            "description": "отраслевые типы деятельности заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "type": "string",
+            "description": "Типы плана<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "pins",
+            "type": "string",
+            "description": "pins<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "type": "string",
+            "required": false,
+            "description": "Кол-во записей на странице"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "string",
+            "required": false,
+            "description": "Номер страницы для отображения"
+          },
+          {
+            "in": "query",
+            "name": "debug",
+            "type": "boolean",
+            "required": false,
+            "description": "Режим отладки"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/200Tender"
+            }
+          },
+          "400": {
+            "description": "Data Validation Failed."
+          }
+        }
+      }
+    },
+    "/v1/contracts/search": {
+      "get": {
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "Get all contracts with ElasticSearch (Получение всех контракоов через Elasticsearch)",
+        "description": "получение всех записей о котрактах через Elasticsearch",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "cdb",
+            "type": "string",
+            "required": false,
+            "description": "id"
+          },
+          {
+            "in": "query",
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "description": "id"
+          },
+          {
+            "in": "query",
+            "name": "entityId",
+            "type": "string",
+            "required": false,
+            "description": "entity id"
+          },
+          {
+            "in": "query",
+            "name": "titlesOrDescriptions",
+            "type": "string",
+            "required": false,
+            "description": "поле полнотекстового поиска"
+          },
+          {
+            "in": "query",
+            "name": "titlesOrDescriptionsStrict",
+            "type": "boolean",
+            "enum": [
+              true,
+              false
+            ],
+            "description": "признак строгого соответствия"
+          },
+          {
+            "in": "query",
+            "name": "buyersRegions",
+            "type": "string",
+            "description": "регионы заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "deliveriesRegions",
+            "type": "string",
+            "description": "регионы доставки<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "proceduresTypes",
+            "type": "string",
+            "description": "типы процедур<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "proceduresStatuses",
+            "type": "string",
+            "description": "статусы процедур<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "amountFrom",
+            "type": "string",
+            "description": "бюджет, от"
+          },
+          {
+            "in": "query",
+            "name": "amountTo",
+            "type": "string",
+            "description": "бюджет, до"
+          },
+          {
+            "in": "query",
+            "name": "classifications",
+            "type": "string",
+            "description": "классификации<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodPublished",
+            "type": "string",
+            "description": "период публикации<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodDelivery",
+            "type": "string",
+            "description": "период доставки<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodEnquiry",
+            "type": "string",
+            "description": "период обсуждения<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodOffer",
+            "type": "string",
+            "description": "период приема предложений<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodAuction",
+            "type": "string",
+            "description": "период аукцииона<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "periodAward",
+            "type": "string",
+            "description": "период квалификации<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersNames",
+            "type": "string",
+            "description": "названия заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersIdentifiers",
+            "type": "string",
+            "description": "коды заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersTypes",
+            "type": "string",
+            "description": "типы заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersMainGeneralActivities",
+            "type": "string",
+            "description": "основные типы деятельности заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "buyersMainSectoralActivities",
+            "type": "string",
+            "description": "отраслевые типы деятельности заказчиков<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "type": "string",
+            "description": "Типы контракта<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "type": "string",
+            "required": false,
+            "description": "Кол-во записей на странице"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "string",
+            "required": false,
+            "description": "Номер страницы для отображения"
+          },
+          {
+            "in": "query",
+            "name": "debug",
+            "type": "boolean",
+            "required": false,
+            "description": "Режим отладки"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/200Tender"
+            }
+          },
+          "400": {
+            "description": "Data Validation Failed."
+          }
+        }
+      }
+    },
+    "/v1/proceedings/search": {
+      "get": {
+        "tags": [
+          "Proceedings"
+        ],
+        "summary": "Get all proceedings from ElasticSearch",
+        "description": "Get all proceedings from ElasticSearch",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "ocid",
+            "type": "string",
+            "required": false,
+            "description": "id"
+          },
+          {
+            "in": "query",
+            "name": "date",
+            "type": "string",
+            "description": "период<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "type": "string",
+            "required": false,
+            "description": "Кол-во записей на странице"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "string",
+            "required": false,
+            "description": "Номер страницы для отображения"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/200Tender"
+            }
+          },
+          "400": {
+            "description": "Data Validation Failed."
+          }
+        }
+      }
+    },
+    "/v1/complaints/search": {
+      "get": {
+        "tags": [
+          "Complaints"
+        ],
+        "summary": "Get all complaints from ElasticSearch",
+        "description": "Get all complaints from ElasticSearch",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "description": "id"
+          },
+          {
+            "in": "query",
+            "name": "NrProcedurii",
+            "type": "string",
+            "required": false,
+            "description": "tenderId"
+          },
+          {
+            "in": "query",
+            "name": "periodModification",
+            "type": "string",
+            "description": "период изменения<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "type": "string",
+            "required": false,
+            "description": "Кол-во записей на странице"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "string",
+            "required": false,
+            "description": "Номер страницы для отображения"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/200Tender"
+            }
+          },
+          "400": {
+            "description": "Data Validation Failed."
+          }
+        }
+      }
+    },
+    "/v1/decisions/search": {
+      "get": {
+        "tags": [
+          "Decisions"
+        ],
+        "summary": "Get all decisions from ElasticSearch",
+        "description": "Get all decisions from ElasticSearch",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "description": "id"
+          },
+          {
+            "in": "query",
+            "name": "NrProcedurii",
+            "type": "string",
+            "required": false,
+            "description": "tender_id"
+          },
+          {
+            "in": "query",
+            "name": "periodRegistered",
+            "type": "string",
+            "description": "период изменения<br /> json array"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "type": "string",
+            "required": false,
+            "description": "Кол-во записей на странице"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "string",
+            "required": false,
+            "description": "Номер страницы для отображения"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/200Tender"
+            }
+          },
+          "400": {
+            "description": "Data Validation Failed."
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "200Budget": {
+      "type": "object",
+      "required": [
+        "code",
+        "status",
+        "data"
+      ],
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "example": "200"
+        },
+        "status": {
+          "type": "string",
+          "example": "OK"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Budget"
+          }
+        }
+      }
+    },
+    "Budget": {
+      "type": "object",
+      "required": [
+        "ocid",
+        "title",
+        "description"
+      ],
+      "properties": {
+        "ocid": {
+          "type": "string",
+          "example": "ocds-t1s2t3-MD-1533819752081"
+        },
+        "title": {
+          "type": "string",
+          "example": "Stuff hot magazine religious staff."
+        },
+        "description": {
+          "type": "string",
+          "example": "Become those state remain gas floor story south war imagine end card sing important risk less nothing mention lay region rich draw about degree."
+        }
+      }
+    },
+    "200Tender": {
+      "type": "object",
+      "required": [
+        "code",
+        "status",
+        "data"
+      ],
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "example": "200"
+        },
+        "status": {
+          "type": "string",
+          "example": "OK"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tender"
+          }
+        }
+      }
+    },
+    "Tender": {
+      "type": "object",
+      "required": [
+        "tender_id",
+        "title",
+        "description"
+      ],
+      "properties": {
+        "tender_id": {
+          "type": "string",
+          "example": "6c440d4ff3364cac9d9b6bb00ccdaa14"
+        },
+        "title": {
+          "type": "string",
+          "example": "[ТЕСТУВАННЯ] Тест документів 6121323"
+        },
+        "description": {
+          "type": "string",
+          "example": "Тестовий mod"
+        }
+      }
+    },
+    "200Methods": {
+      "type": "object",
+      "required": [
+        "code",
+        "status",
+        "data"
+      ],
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "example": "200"
+        },
+        "status": {
+          "type": "string",
+          "example": "OK"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Methods"
+          }
+        }
+      }
+    },
+    "Methods": {
+      "type": "object",
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "/v1/company-customer-types"
+        },
+        "name": {
+          "type": "string",
+          "example": "Замовник, що здійснює закупівлі для потреб оборони"
+        }
+      }
+    }
+  }
+}
